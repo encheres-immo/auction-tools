@@ -203,7 +203,7 @@ async function getAuctionById(id: string) : Promise<AuctionType> {
         })
         const highestBid = data.bids.reduce((acc: BidType, bid: BidType) => {
             return (bid.amount > acc.amount) ? bid : acc;
-        })
+        }, {id: '', amount: 0, createdAt: '', newEndDate: 0, userAnonymousId: ''})
         return {
             id: data.id,
             startDate: data.startDate,
@@ -221,7 +221,7 @@ async function getAuctionById(id: string) : Promise<AuctionType> {
     });
 }
 
-async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise<AuctionType> {
+async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise<BidType> {
     console.log(auction.id)
     return fetch(`${BASE_URL}/api/v1/bid`, {
         method: 'POST',
@@ -240,6 +240,13 @@ async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise
         return response.json();
     }).then(data => {
         console.log(data.id);
+        return {
+            id: data.id,
+            amount: data.amount,
+            createdAt: data.createdAt,
+            newEndDate: data.newEndDate,
+            userAnonymousId: data.userAnonymousId,
+        };
     }).catch(err => {
         console.log("err", err);
         throw err;

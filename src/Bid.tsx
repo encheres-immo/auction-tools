@@ -55,7 +55,7 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
         <h1>Confirmation</h1>
         <p>Vous allez enchérir {amount()}€</p>
         <button onClick={confirmBid(amount(), props.auction)}>Confirmer</button>
-        <button onClick={closeConfirmBid}>Annuler</button>
+        <button onClick={closeConfirmBid()}>Annuler</button>
       </Show>
     </div>
   );

@@ -9,6 +9,7 @@ import BidHistory from './BidHistory';
 import ParticipateBox from './ParticipateBox';
 import client from './services/client';
 import {AuctionType, BidType} from './types/types';
+import { isAuctionNotStarted, isAuctionInProgress, isAuctionEnded } from './utils';
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
@@ -16,8 +17,8 @@ const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>(
   {
   id: '',
-  startDate: '',
-  endDate: '',
+  startDate: 0,
+  endDate: 0,
   startingPrice: 0,
   step: 0,
   bids: [],
@@ -25,7 +26,7 @@ const [auction, setAuction] = createStore<AuctionType>(
     id: '',
     amount: 0,
     createdAt: '',
-    newEndDate: '',
+    newEndDate: 0,
     userAnonymousId: ''
     },
   agentEmail: '',
@@ -37,7 +38,12 @@ const [auction, setAuction] = createStore<AuctionType>(
   const CLIENT_ID = '2655cded-91ac-454f-a4e2-c7f3d33c8705';
   // STAGING conf
   // const CLIENT_ID = '488fd76e-3ada-4084-a743-8b091c355c9e';
-  const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
+  // in progess
+  // const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
+  // finished
+  // const AUCTION_ID = 'e900b9c9-a2c9-4ecd-9975-6c02e0f71ec2';
+  // to be started
+  const AUCTION_ID = '6eb9a0eb-2585-4a76-83a9-bf023133ac3c';
 
   client.initEIClient(CLIENT_ID, "local");
 
@@ -46,9 +52,11 @@ const [auction, setAuction] = createStore<AuctionType>(
     setBids([...bids, bid]);
     console.log('Bids:', bids);
     // replace highest bid in auction
+    const newEndDate = bid.newEndDate || auction.endDate;
     setAuction({
       ...auction,
-      highestBid: bid
+      highestBid: bid,
+      endDate: newEndDate
     });
   }).then( (channel) => {
       console.log('Subscribed to auction');
@@ -74,18 +82,20 @@ const App: Component = () => {
 
   return (
     <div class={styles.App}>
-      is logged : {isLogged() ? 'true' : 'false'} <br />
-      is logging : {isLogging() ? 'true' : 'false'} <br />
-      <Auction auction={auction}/>
-      <Switch fallback={<div>Not Found</div>}>
-        <Match when={isLogged()}>
-          <Bid auction={auction}/>
-        </Match>
-        <Match when={!isLogged() || isLogging()}>
-          <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} />
-        </Match>
-      </Switch>
-      <BidHistory bids={bids}/>
+      <Show when={auction.id != ''}>
+        <Auction auction={auction}/>
+        <Switch>
+          <Match when={isLogged() && isAuctionInProgress(auction)}>
+            <Bid auction={auction}/>
+          </Match>
+          <Match when={(!isLogged() || isLogging()) && (isAuctionInProgress(auction) || isAuctionNotStarted(auction))}>
+            <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} />
+          </Match>
+        </Switch>
+        <Show when={isAuctionEnded(auction) || isAuctionInProgress(auction)}>
+          <BidHistory bids={bids}/>
+        </Show>
+      </Show>
     </div>
   );
 };
