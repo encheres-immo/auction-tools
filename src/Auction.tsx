@@ -1,14 +1,11 @@
 import { Switch, Match, createSignal, createEffect, on, type Component } from 'solid-js';
 import {AuctionType} from './types/types';
-import {isAuctionNotStarted, isAuctionInProgress, isAuctionEnded} from './utils';
+import {isAuctionNotStarted, isAuctionInProgress, isAuctionEnded, displayAmountWithCurrency, formatDate, parseDate } from './utils';
 
 const Auction: Component<{auction: AuctionType}> = (props) => {
 
   const [remainingTime, setRemainingTime] = createSignal("");
 
-  function parseDate(dateInput: number): Date {
-    return new Date(dateInput * 1000);
-  }
 
   function getTimeRemaining(startDate: Date, currentDate: Date): { days: number, hours: number, minutes: number, seconds: number } {
     const totalSeconds = (startDate.getTime() - currentDate.getTime()) / 1000;
@@ -38,30 +35,63 @@ const Auction: Component<{auction: AuctionType}> = (props) => {
     updateCountdown(props.auction);
   }, 1000)
 
-  function formatDate(date: number): string {
-    return parseDate(date).toLocaleString();
-  }
-
   return (
-    <div>
-      <Switch fallback={<div>loading...</div>}>
-        <Match when={isAuctionNotStarted(props.auction)}>
-          Démarre dans 
-          {remainingTime()}
-        </Match>
-        <Match when={isAuctionInProgress(props.auction)}>
-          Se termine dans 
-          {remainingTime()}
-        </Match>
-        <Match when={isAuctionEnded(props.auction)}>
-          <div>Terminée</div>
-        </Match>
-      </Switch>
-      <p>Date de début : {formatDate(props.auction.startDate)} </p>
-      <p>Date de fin: {formatDate(props.auction.endDate)}</p>
-      <p>Prix de départ: {props.auction.startingPrice} </p>
-      <p>Palier: {props.auction.step} </p>
-      <p>Meilleure enchère: {props.auction.highestBid.amount} </p>
+    <div style="background-color: #002d40">
+      <div class="flex justify-center py-5 font-barnes">
+        <div class="flex flex-col">
+          <Switch fallback={<div>loading...</div>}>
+            <Match when={isAuctionNotStarted(props.auction)}>
+              <div>
+                <p class="py-3 font-semibold text-white / uppercase text-sm tracking-wider text-center font-barnes-title">
+                  Démarre dans 
+                </p>
+                <p class="font-mono text-white text-xl">{remainingTime()}</p>
+              </div>
+            </Match>
+            <Match when={isAuctionInProgress(props.auction)}>
+              <div>
+                <p class="py-3 font-semibold text-white / uppercase text-sm tracking-wider text-center font-barnes-title">
+                  Se termine dans 
+                </p>
+                <p class="font-mono text-white text-xl">{remainingTime()}</p>
+              </div>
+            </Match>
+            <Match when={isAuctionEnded(props.auction)}>
+              <p class="py-3 font-semibold text-white / uppercase text-sm tracking-wider text-center font-barnes-title">
+                Vente terminée
+              </p>
+            </Match>
+          </Switch>
+        </div>
+      </div>
+      <div class="bg-white">
+        <div class="font-barnes">
+          <div class="grid grid-cols-2 gap-4 p-4">
+            <div class="relative text-sm text-dark tracking-wider">
+              <p class="font-semibold uppercase font-barnes-title">Début</p>
+              <p>{formatDate(props.auction.startDate)} </p>
+            </div>
+            <div class="relative text-sm text-dark tracking-wider">
+              <p class="font-semibold uppercase font-barnes-title">Fin</p>
+              <p>{formatDate(props.auction.endDate)}</p>
+            </div>
+            <div class="relative text-sm text-dark tracking-wider">
+              <p class="font-semibold uppercase font-barnes-title">Prix de départ</p>
+              <p>{displayAmountWithCurrency(props.auction.startingPrice)} </p>
+            </div>
+            <div class="relative text-sm text-dark tracking-wider">
+              <p class="font-semibold uppercase font-barnes-title">Palier</p>
+              <p>{props.auction.step} </p>
+            </div>
+          </div>
+          <div class="py-4 mx-4 border-t border-dark text-center">
+            <div class="relative text-sm text-dark tracking-wider">
+              <p class="font-semibold uppercase font-barnes-title">Meilleure offre</p>
+              <p class="font-semibold text-secondary">{displayAmountWithCurrency(props.auction.highestBid.amount, props.auction.currency)} </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

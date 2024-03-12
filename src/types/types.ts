@@ -8,12 +8,24 @@ export type AuctionType = {
     highestBid: BidType;
     agentEmail: string;
     agentPhone: string;
+    currency: CurrencyType;
 }
 
 export type BidType = {
     id: string;
     amount: number;
-    createdAt: string;
+    createdAt: number;
     newEndDate: number;
     userAnonymousId: string;
+    participantId: string;
+}
+
+export type CurrencyType = {
+    isBefore: boolean;
+    symbol: string;
+    code: string;
+}
+
+export type UserType = {
+    id: string;
 }

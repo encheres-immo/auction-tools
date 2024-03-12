@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js';
 import { createStore } from "solid-js/store";
-import { For, Show, Switch, Match, createSignal } from 'solid-js';
+import { For, Show, Switch, Match, createSignal, createEffect } from 'solid-js';
 
 import styles from './App.module.css';
 import Auction from './Auction';
@@ -8,11 +8,12 @@ import Bid from './Bid';
 import BidHistory from './BidHistory';
 import ParticipateBox from './ParticipateBox';
 import client from './services/client';
-import {AuctionType, BidType} from './types/types';
+import {AuctionType, BidType, UserType} from './types/types';
 import { isAuctionNotStarted, isAuctionInProgress, isAuctionEnded } from './utils';
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
+const [user, setUser] = createSignal<UserType>({id: ''});
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>(
   {
@@ -25,12 +26,18 @@ const [auction, setAuction] = createStore<AuctionType>(
   highestBid: {
     id: '',
     amount: 0,
-    createdAt: '',
+    createdAt: 0,
     newEndDate: 0,
-    userAnonymousId: ''
+    userAnonymousId: '',
+    participantId: '',
     },
   agentEmail: '',
-  agentPhone: ''
+  agentPhone: '',
+  currency: {
+    symbol: '',
+    code: '',
+    isBefore: false,
+    }
   }
 );
 
@@ -39,11 +46,11 @@ const [auction, setAuction] = createStore<AuctionType>(
   // STAGING conf
   // const CLIENT_ID = '488fd76e-3ada-4084-a743-8b091c355c9e';
   // in progess
-  // const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
+  const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
   // finished
   // const AUCTION_ID = 'e900b9c9-a2c9-4ecd-9975-6c02e0f71ec2';
   // to be started
-  const AUCTION_ID = '6eb9a0eb-2585-4a76-83a9-bf023133ac3c';
+  // const AUCTION_ID = '6eb9a0eb-2585-4a76-83a9-bf023133ac3c';
 
   client.initEIClient(CLIENT_ID, "local");
 
@@ -81,21 +88,25 @@ const App: Component = () => {
   }
 
   return (
-    <div class={styles.App}>
-      <Show when={auction.id != ''}>
-        <Auction auction={auction}/>
-        <Switch>
-          <Match when={isLogged() && isAuctionInProgress(auction)}>
-            <Bid auction={auction}/>
-          </Match>
-          <Match when={(!isLogged() || isLogging()) && (isAuctionInProgress(auction) || isAuctionNotStarted(auction))}>
-            <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} />
-          </Match>
-        </Switch>
-        <Show when={isAuctionEnded(auction) || isAuctionInProgress(auction)}>
-          <BidHistory bids={bids}/>
-        </Show>
-      </Show>
+    <div class="bg-dark">
+      <div class="w-screen h-screen bg-white">
+        <div class="overflow-hidden">
+          <Show when={auction.id != ''}>
+            <Auction auction={auction}/>
+            <Switch>
+              <Match when={isLogged() && isAuctionInProgress(auction)}>
+                <Bid auction={auction}/>
+              </Match>
+              <Match when={(!isLogged() || isLogging()) && (isAuctionInProgress(auction) || isAuctionNotStarted(auction))}>
+                <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} setUser={setUser}/>
+              </Match>
+            </Switch>
+            <Show when={isAuctionEnded(auction) || isAuctionInProgress(auction)}>
+              <BidHistory bids={bids} auction={auction} user={user()} />
+            </Show>
+          </Show>
+        </div>
+      </div>
     </div>
   );
 };

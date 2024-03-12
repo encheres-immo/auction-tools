@@ -1,5 +1,5 @@
 import {Socket} from 'phoenix'
-import {AuctionType, BidType} from '../types/types';
+import {AuctionType, BidType, UserType} from '../types/types';
 
 let BASE_URL: string = "";
 let WS_URL: string = "";
@@ -160,13 +160,11 @@ function subscribeToAuction(auctionId: string, messageCallback: (payload: BidTyp
     });
 }
 
-
-async function me(){
-    fetch(`${BASE_URL}/api/v1/me`, {
-        // headers: {
-        //     'Authorization': 'Bearer ' + accessToken,
-        // },
-        // credentials: 'include' 
+async function me() : Promise<UserType>{
+    return fetch(`${BASE_URL}/api/v1/me`, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+        },
     }).then(response => {
         if(response.status === 401){
             console.log("Unauthorized")
@@ -175,8 +173,12 @@ async function me(){
         }
     }).then(data => {
         console.log(data);
+        return {
+            id: data.id,
+        };
     }).catch(err => {
         console.log("err", err);
+        throw err;
     });
 }
 
@@ -199,6 +201,7 @@ async function getAuctionById(id: string) : Promise<AuctionType> {
                 createdAt: bid.createdAt,
                 newEndDate: bid.newEndDate,
                 userAnonymousId: bid.userAnonymousId,
+                participantId: bid.participantId,
             };
         })
         const highestBid = data.bids.reduce((acc: BidType, bid: BidType) => {
@@ -214,6 +217,11 @@ async function getAuctionById(id: string) : Promise<AuctionType> {
             highestBid: highestBid,
             agentEmail: data.agentEmail,
             agentPhone: data.agentPhone,
+            currency: {
+                symbol: data.currency.symbol,
+                code: data.currency.code,
+                isBefore: data.currency.isBefore,
+            },
         };
     }).catch(err => {
         console.log("err", err);
@@ -246,6 +254,7 @@ async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise
             createdAt: data.createdAt,
             newEndDate: data.newEndDate,
             userAnonymousId: data.userAnonymousId,
+            participantId: data.participantId,
         };
     }).catch(err => {
         console.log("err", err);
