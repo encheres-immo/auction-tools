@@ -1,11 +1,10 @@
-import { Switch, Match, createSignal, createEffect, on, type Component } from 'solid-js';
-import {AuctionType} from './types/types';
+import { Switch, Match, createSignal, createEffect, on, type Component, Show } from 'solid-js';
+import {AuctionType, UserType} from './types/types';
 import {isAuctionNotStarted, isAuctionInProgress, isAuctionEnded, displayAmountWithCurrency, formatDate, parseDate } from './utils';
 
-const Auction: Component<{auction: AuctionType}> = (props) => {
+const Auction: Component<{auction: AuctionType, user: UserType}> = (props) => {
 
   const [remainingTime, setRemainingTime] = createSignal("");
-
 
   function getTimeRemaining(startDate: Date, currentDate: Date): { days: number, hours: number, minutes: number, seconds: number } {
     const totalSeconds = (startDate.getTime() - currentDate.getTime()) / 1000;
@@ -86,8 +85,10 @@ const Auction: Component<{auction: AuctionType}> = (props) => {
           </div>
           <div class="py-4 mx-4 border-t border-dark text-center">
             <div class="relative text-sm text-dark tracking-wider">
-              <p class="font-semibold uppercase font-barnes-title">Meilleure offre</p>
-              <p class="font-semibold text-secondary">{displayAmountWithCurrency(props.auction.highestBid.amount, props.auction.currency)} </p>
+              <Show when={props.auction.isUserAllowed} fallback={<div><p class="font-semibold uppercase font-barnes-title">Vente privée</p><p>Inscrivez-vous pour voir les participations</p></div>}>
+                <p class="font-semibold uppercase font-barnes-title">Meilleure offre</p>
+                <p class="font-semibold text-secondary">{displayAmountWithCurrency(props.auction.highestBid.amount, props.auction.currency)} </p>
+              </Show>
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ export type AuctionType = {
     agentEmail: string;
     agentPhone: string;
     currency: CurrencyType;
+    isUserAllowed: boolean;
 }
 
 export type BidType = {

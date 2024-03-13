@@ -4,7 +4,7 @@ import client from './services/client';
 import {AuctionType} from './types/types';
 import CenteredModal from './CenteredModal';
 
-const ParticipateBox: Component<{setterIsLogged: any, setUser: any, isLogging: boolean, auction: AuctionType}> = (props) => {
+const ParticipateBox: Component<{setterIsLogged: any, updateUser: any, isLogging: boolean, auction: AuctionType}> = (props) => {
   if(props.isLogging) {
     tryToConnect();
   }
@@ -24,7 +24,7 @@ const ParticipateBox: Component<{setterIsLogged: any, setUser: any, isLogging: b
     client.authenticate().then( () => {
       props.setterIsLogged(true);
       client.me().then((user) => {
-        props.setUser(user)
+        props.updateUser(user)
       });
     });
   }

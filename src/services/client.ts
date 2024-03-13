@@ -155,6 +155,7 @@ function subscribeToAuction(auctionId: string, messageCallback: (payload: BidTyp
             })
             .receive("error", (resp: any) => {
                 console.log("Unable to join", resp);
+                socket.disconnect();
                 reject(resp); // Reject the promise on error
             });
     });
@@ -217,6 +218,7 @@ async function getAuctionById(id: string) : Promise<AuctionType> {
             highestBid: highestBid,
             agentEmail: data.agentEmail,
             agentPhone: data.agentPhone,
+            isUserAllowed: data.isUserAllowed,
             currency: {
                 symbol: data.currency.symbol,
                 code: data.currency.code,

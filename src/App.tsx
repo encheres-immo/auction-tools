@@ -23,6 +23,7 @@ const [auction, setAuction] = createStore<AuctionType>(
   startingPrice: 0,
   step: 0,
   bids: [],
+  isUserAllowed: false,
   highestBid: {
     id: '',
     amount: 0,
@@ -46,6 +47,7 @@ const [auction, setAuction] = createStore<AuctionType>(
   // STAGING conf
   // const CLIENT_ID = '488fd76e-3ada-4084-a743-8b091c355c9e';
   // in progess
+  // TODO: should we be able to retrieve the auction_id based on the URL??
   const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
   // finished
   // const AUCTION_ID = 'e900b9c9-a2c9-4ecd-9975-6c02e0f71ec2';
@@ -54,29 +56,32 @@ const [auction, setAuction] = createStore<AuctionType>(
 
   client.initEIClient(CLIENT_ID, "local");
 
-  client.subscribeToAuction(AUCTION_ID, (bid) => {
-    console.log('Auction data:', bid);
-    setBids([...bids, bid]);
-    console.log('Bids:', bids);
-    // replace highest bid in auction
-    const newEndDate = bid.newEndDate || auction.endDate;
-    setAuction({
-      ...auction,
-      highestBid: bid,
-      endDate: newEndDate
+  function refreshAuction(){
+    client.subscribeToAuction(AUCTION_ID, (bid) => {
+      console.log('Auction data:', bid);
+      setBids([...bids, bid]);
+      console.log('Bids:', bids);
+      // replace highest bid in auction
+      const newEndDate = bid.newEndDate || auction.endDate;
+      setAuction({
+        ...auction,
+        highestBid: bid,
+        endDate: newEndDate
+      });
+    }).then( (channel) => {
+        console.log('Subscribed to auction');
+        console.log('Channel:', channel);
+    }).catch( (err) => {
+        console.error('Error subscribing to auction:', err);
     });
-  }).then( (channel) => {
-      console.log('Subscribed to auction');
-      console.log('Channel:', channel);
-  }).catch( (err) => {
-      console.error('Error subscribing to auction:', err);
-  });
-  // client.callToTestEndpoint();
-  client.getAuctionById(AUCTION_ID).then( (auction: AuctionType) => {
-    console.log('Auction:', auction)
-    setAuction(auction)
-    setBids(auction.bids)
-  })
+    client.getAuctionById(AUCTION_ID).then( (auction: AuctionType) => {
+      console.log('Auction:', auction)
+      setAuction(auction)
+      setBids(auction.bids)
+    })
+  }
+
+  refreshAuction();
 
 const App: Component = () => {
 
@@ -87,21 +92,26 @@ const App: Component = () => {
     setIsLogging(true);
   }
 
+  function updateUser(user: UserType){
+    setUser(user);
+    refreshAuction();
+  }
+
   return (
     <div class="bg-dark">
       <div class="w-screen h-screen bg-white">
         <div class="overflow-hidden">
           <Show when={auction.id != ''}>
-            <Auction auction={auction}/>
+            <Auction auction={auction} user={user()} />
             <Switch>
               <Match when={isLogged() && isAuctionInProgress(auction)}>
                 <Bid auction={auction}/>
               </Match>
               <Match when={(!isLogged() || isLogging()) && (isAuctionInProgress(auction) || isAuctionNotStarted(auction))}>
-                <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} setUser={setUser}/>
+                <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} updateUser={updateUser}/>
               </Match>
             </Switch>
-            <Show when={isAuctionEnded(auction) || isAuctionInProgress(auction)}>
+            <Show when={auction.isUserAllowed && (isAuctionEnded(auction) || isAuctionInProgress(auction))}>
               <BidHistory bids={bids} auction={auction} user={user()} />
             </Show>
           </Show>
