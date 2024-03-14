@@ -4,6 +4,7 @@ import {AuctionType, BidType, UserType} from '../types/types';
 let BASE_URL: string = "";
 let WS_URL: string = "";
 let accessToken: string | null = null;
+let socket: Socket | null = null;
 
 // TODO: only connect if we have an access token
 // TODO: implement refresh token?
@@ -110,27 +111,13 @@ async function authenticate(){
     }
 }
 
-// function subscribeToAuction(auctionId){
-//     // connect to channel
-//     let socket = new Socket(WS_URL, {debug: true
-//         , params: {token: accessToken}
-//     } )
-//     socket.connect()
-//     let channel = socket.channel(`auction:${auctionId}`, {})
-
-//     channel.on("new_msg", payload => {
-//         console.log("Got message", payload)
-//     })
-
-//     channel.join()
-//     .receive("ok", resp => { console.log("Joined successfully", resp) })
-//     .receive("error", resp => { console.log("Unable to join", resp) })
-// }
-
 function subscribeToAuction(auctionId: string, messageCallback: (payload: BidType) => void) {
     return new Promise((resolve, reject) => {
+        if(socket != null){
+            socket.disconnect();
+        }
         // connect to channel
-        let socket = new Socket(WS_URL, {
+        socket = new Socket(WS_URL, {
             // debug: true,
             params: { token: accessToken }
         });
@@ -155,7 +142,9 @@ function subscribeToAuction(auctionId: string, messageCallback: (payload: BidTyp
             })
             .receive("error", (resp: any) => {
                 console.log("Unable to join", resp);
-                socket.disconnect();
+                if(socket != null){
+                    socket.disconnect();
+                }
                 reject(resp); // Reject the promise on error
             });
     });
@@ -219,6 +208,7 @@ async function getAuctionById(id: string) : Promise<AuctionType> {
             agentEmail: data.agentEmail,
             agentPhone: data.agentPhone,
             isUserAllowed: data.isUserAllowed,
+            isUserRegistered: data.isUserRegistered,
             currency: {
                 symbol: data.currency.symbol,
                 code: data.currency.code,

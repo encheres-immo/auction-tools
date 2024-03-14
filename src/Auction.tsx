@@ -5,6 +5,9 @@ import {isAuctionNotStarted, isAuctionInProgress, isAuctionEnded, displayAmountW
 const Auction: Component<{auction: AuctionType, user: UserType}> = (props) => {
 
   const [remainingTime, setRemainingTime] = createSignal("");
+  const [isAuctionNotStartedVal, setIsAuctionNotStartedVal] = createSignal(isAuctionNotStarted(props.auction));
+  const [isAuctionInProgressVal, setIsAuctionInProgressVal] = createSignal(isAuctionInProgress(props.auction));
+  const [isAuctionEndedVal, setIsAuctionEndedVal] = createSignal(isAuctionEnded(props.auction));
 
   function getTimeRemaining(startDate: Date, currentDate: Date): { days: number, hours: number, minutes: number, seconds: number } {
     const totalSeconds = (startDate.getTime() - currentDate.getTime()) / 1000;
@@ -18,6 +21,10 @@ const Auction: Component<{auction: AuctionType, user: UserType}> = (props) => {
   }
 
   function updateCountdown(auction: AuctionType) {
+    setIsAuctionEndedVal(isAuctionEnded(props.auction));
+    setIsAuctionInProgressVal(isAuctionInProgress(props.auction));
+    setIsAuctionNotStartedVal(isAuctionNotStarted(props.auction));
+
     if(isAuctionEnded(auction)) {
       clearInterval(interval);
       return;
@@ -38,29 +45,27 @@ const Auction: Component<{auction: AuctionType, user: UserType}> = (props) => {
     <div style="background-color: #002d40">
       <div class="flex justify-center py-5 font-barnes">
         <div class="flex flex-col">
-          <Switch fallback={<div>loading...</div>}>
-            <Match when={isAuctionNotStarted(props.auction)}>
+            <Show when={isAuctionNotStartedVal()}>
               <div>
                 <p class="py-3 font-semibold text-white / uppercase text-sm tracking-wider text-center font-barnes-title">
                   Démarre dans 
                 </p>
                 <p class="font-mono text-white text-xl">{remainingTime()}</p>
               </div>
-            </Match>
-            <Match when={isAuctionInProgress(props.auction)}>
+            </Show>
+            <Show when={isAuctionInProgressVal()}>
               <div>
                 <p class="py-3 font-semibold text-white / uppercase text-sm tracking-wider text-center font-barnes-title">
                   Se termine dans 
                 </p>
                 <p class="font-mono text-white text-xl">{remainingTime()}</p>
               </div>
-            </Match>
-            <Match when={isAuctionEnded(props.auction)}>
+            </Show>
+            <Show when={isAuctionEndedVal()}>
               <p class="py-3 font-semibold text-white / uppercase text-sm tracking-wider text-center font-barnes-title">
                 Vente terminée
               </p>
-            </Match>
-          </Switch>
+            </Show>
         </div>
       </div>
       <div class="bg-white">
@@ -80,7 +85,7 @@ const Auction: Component<{auction: AuctionType, user: UserType}> = (props) => {
             </div>
             <div class="relative text-sm text-dark tracking-wider">
               <p class="font-semibold uppercase font-barnes-title">Palier</p>
-              <p>{props.auction.step} </p>
+              <p>{displayAmountWithCurrency(props.auction.step)}</p>
             </div>
           </div>
           <div class="py-4 mx-4 border-t border-dark text-center">

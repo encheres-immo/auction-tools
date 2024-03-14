@@ -1,15 +1,22 @@
 import { AuctionType, CurrencyType } from './types/types';
 
 function isAuctionNotStarted(auction: AuctionType): boolean {
-    return Date.now() < auction.startDate;
+    let now: number = new Date().setMilliseconds(0);
+    const startDate: number = new Date(auction.startDate).setMilliseconds(0);
+    return now < startDate;
 }
 
 function isAuctionInProgress(auction: AuctionType): boolean {
-    return Date.now() < auction.endDate && Date.now() > auction.startDate;
+    let now: number = new Date().setMilliseconds(0);
+    const endDate: number = new Date(auction.endDate).setMilliseconds(0);
+    const startDate: number = new Date(auction.startDate).setMilliseconds(0);
+    return now <= endDate && now >= startDate;
 }
 
 function isAuctionEnded(auction: AuctionType): boolean {
-    return Date.now() > auction.endDate;
+    let now: number = new Date().setMilliseconds(0);
+    const endDate: number = new Date(auction.endDate).setMilliseconds(0);
+    return now > endDate;
 }
 
 function displayAmountWithCurrency(amount: number, currency?: CurrencyType): string {

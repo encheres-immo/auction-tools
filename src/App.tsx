@@ -24,6 +24,7 @@ const [auction, setAuction] = createStore<AuctionType>(
   step: 0,
   bids: [],
   isUserAllowed: false,
+  isUserRegistered: false,
   highestBid: {
     id: '',
     amount: 0,
@@ -48,15 +49,23 @@ const [auction, setAuction] = createStore<AuctionType>(
   // const CLIENT_ID = '488fd76e-3ada-4084-a743-8b091c355c9e';
   // in progess
   // TODO: should we be able to retrieve the auction_id based on the URL??
-  const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
+  // const AUCTION_ID = '8d03e116-799d-4dd8-9367-218d40dc74e0';
   // finished
   // const AUCTION_ID = 'e900b9c9-a2c9-4ecd-9975-6c02e0f71ec2';
-  // to be started
-  // const AUCTION_ID = '6eb9a0eb-2585-4a76-83a9-bf023133ac3c';
+  // to be started 
+
+
+
+  const AUCTION_ID = 'd2244f47-7c07-4809-ad96-1d4822880c6d';
+
+
+
+
 
   client.initEIClient(CLIENT_ID, "local");
 
   function refreshAuction(){
+    console.log("refreshAuction")
     client.subscribeToAuction(AUCTION_ID, (bid) => {
       console.log('Auction data:', bid);
       setBids([...bids, bid]);
@@ -104,10 +113,10 @@ const App: Component = () => {
           <Show when={auction.id != ''}>
             <Auction auction={auction} user={user()} />
             <Switch>
-              <Match when={isLogged() && isAuctionInProgress(auction)}>
+              <Match when={isLogged() && auction.isUserRegistered && isAuctionInProgress(auction)}>
                 <Bid auction={auction}/>
               </Match>
-              <Match when={(!isLogged() || isLogging()) && (isAuctionInProgress(auction) || isAuctionNotStarted(auction))}>
+              <Match when={(!isLogged() || isLogging() || auction.isUserRegistered) && (isAuctionInProgress(auction) || isAuctionNotStarted(auction))}>
                 <ParticipateBox setterIsLogged={setIsLogged} isLogging={isLogging()} auction={auction} updateUser={updateUser}/>
               </Match>
             </Switch>
