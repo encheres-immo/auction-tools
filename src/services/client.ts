@@ -237,6 +237,11 @@ async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise
         if(response.status === 401){
             console.log("Unauthorized")
         }
+        if(response.status === 422){
+            return response.json().then(data => {
+                throw data;
+            });
+        }
         return response.json();
     }).then(data => {
         console.log(data.id);
@@ -253,7 +258,6 @@ async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise
         throw err;
     });
 }
-
 async function oAuthIntrospect(){
     // call to introspect endpoint 
     // (doesn't seem to work with a bearer token, requires a basic token instead)

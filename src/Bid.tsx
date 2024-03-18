@@ -11,12 +11,15 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
   const defaultAmount = props.auction.highestBid ? props.auction.highestBid.amount + props.auction.step : props.auction.startingPrice;
   let [amount, setAmount] = createSignal(defaultAmount);
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
+  const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
+  const [minValue, setMinValue] = createSignal(0);
 
   function placeStepBid(stepMultiplier: number, auction: AuctionType) {
     return () => {
       console.log(auction.step)
       console.log('Highest bid', auction.highestBid.amount);
-      const newAmount = auction.highestBid.amount + stepMultiplier * auction.step;
+      const highestBid = auction.highestBid.amount || auction.startingPrice;
+      const newAmount = highestBid + stepMultiplier * auction.step;
       setAmount(newAmount);
 
       console.log('Placing bid', amount());
@@ -31,15 +34,23 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
   }
   
   function closeConfirmBid() {
-    return () => setIsConfirmBidOpen(false);
+    return () => {
+      setIsShowMinMessage(false)
+      setIsConfirmBidOpen(false)
+    }
   }
 
   function confirmBid(amount: number, auction: AuctionType) {
     return () => {
       client.placeBidOnAuction(auction, amount).then((newAuction) => {
-        
+        setIsConfirmBidOpen(false);
+        setIsShowMinMessage(false);
+      }).catch((err) => {
+        if(err.code == 'bid_amount_too_low') {
+          setIsShowMinMessage(true)
+          setMinValue(err.min)
+        }
       });
-      setIsConfirmBidOpen(false);
     }
   }
 
@@ -87,6 +98,9 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
                 </svg>
               </div>
               <div class="mt-4">
+                <Show when={isShowMinMessage()}>
+                  <p class="mt-2 text-sm text-red-600" id="email-error">Vous devez au moins enchérir {displayAmountWithCurrency(minValue())}</p>
+                </Show>
                 <table>
                   <tbody>
                     <tr>
