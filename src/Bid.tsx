@@ -17,14 +17,19 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
   function placeStepBid(stepMultiplier: number, auction: AuctionType) {
     return () => {
       console.log(auction.step)
-      console.log('Highest bid', auction.highestBid.amount);
-      const highestBid = auction.highestBid.amount || auction.startingPrice;
-      const newAmount = highestBid + stepMultiplier * auction.step;
+      let highestBid = auction.highestBid ? auction.highestBid.amount : null;
+      let newAmount;
+
+      if (highestBid) {
+        newAmount = highestBid + stepMultiplier * auction.step;
+      } else {
+        newAmount = auction.startingPrice + auction.step * (stepMultiplier - 1);
+      }
+
       setAmount(newAmount);
 
       console.log('Placing bid', amount());
       console.log('Auction', auction);
-      // return openConfirmBid();
       setIsConfirmBidOpen(true);
     }
   }
@@ -54,6 +59,16 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
     }
   }
 
+  function displayAmountOfStep(stepMultiplier: number, auction: AuctionType) {
+    let amount;
+    if (auction.bids && auction.bids.length > 0) {
+      amount = stepMultiplier * auction.step;
+    } else {
+      amount = (stepMultiplier - 1) * auction.step;
+    }
+    return displayAmountWithCurrency(amount, auction.currency);
+  }
+
   return (
     <div class="mx-4 py-4 border-t border-dark flex flex-col gap-4">
       <div class="relative text-sm text-dark tracking-wider">
@@ -61,17 +76,17 @@ const Bid: Component<{auction: AuctionType}> = (props) => {
         <div class="pt-1 grid grid-cols-3 gap-2">
           <span>
             <button class="group inline-flex items-center font-medium border justify-center cursor-pointer px-3 py-2 text-sm rounded-lg leading-5 gap-x-2 w-full bg-secondary border-secondary text-white hover:bg-opacity-80 active:ring-2 active:ring-secondary" onClick={placeStepBid(1, props.auction)}>
-              +{displayAmountWithCurrency(props.auction.step, props.auction.currency)}
+              +{displayAmountOfStep(1, props.auction)}
             </button>
             </span>
           <span>
             <button class="group inline-flex items-center font-medium border justify-center cursor-pointer px-3 py-2 text-sm rounded-lg leading-5 gap-x-2 w-full bg-secondary border-secondary text-white hover:bg-opacity-80 active:ring-2 active:ring-secondary" onClick={placeStepBid(2, props.auction)}>
-              +{displayAmountWithCurrency(props.auction.step * 2, props.auction.currency)}
+              +{displayAmountOfStep(2, props.auction)}
             </button>
           </span>
           <span>
             <button class="group inline-flex items-center font-medium border justify-center cursor-pointer px-3 py-2 text-sm rounded-lg leading-5 gap-x-2 w-full bg-secondary border-secondary text-white hover:bg-opacity-80 active:ring-2 active:ring-secondary" onClick={placeStepBid(3, props.auction)}>
-              +{displayAmountWithCurrency(props.auction.step * 3, props.auction.currency)}
+              +{displayAmountOfStep(3, props.auction)}
             </button>
           </span>
         </div>

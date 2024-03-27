@@ -258,24 +258,5 @@ async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise
         throw err;
     });
 }
-async function oAuthIntrospect(){
-    // call to introspect endpoint 
-    // (doesn't seem to work with a bearer token, requires a basic token instead)
-    fetch(`${BASE_URL}/oauth/introspect`, {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken,
-        }
-    }).then(response => {
-        if(response.status === 401){
-            console.log("Unauthorized")
-        }
-        return response.json();
-    }).then(data => {
-        console.log(data);
-    }).catch(err => {
-        console.log("err", err);
-    });
-}
 
-export default {initEIClient, getAuctionById, authenticate, subscribeToAuction, me, placeBidOnAuction, oAuthIntrospect}
+export default {initEIClient, getAuctionById, authenticate, subscribeToAuction, me, placeBidOnAuction}
