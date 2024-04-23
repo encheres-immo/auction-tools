@@ -42,15 +42,20 @@ const [auction, setAuction] = createStore<AuctionType>({
 });
 
 // CONFIG
-const CLIENT_ID = "c7279cf3-e709-45b7-a537-bf334ef40a5a";
-const AUCTION_ID = "d38cc413-6dd4-4a0b-94bc-f724ab35ed6c";
+const CLIENT_ID = 'e4cd125a-80eb-4ce9-8407-2464928d9259';
+const PROPERTY_ID = '50d5dcb4-54b6-4773-a758-f181802c8f9c';
 
 client.initEIClient(CLIENT_ID, "local");
 
 function refreshAuction() {
   console.log("refreshAuction");
-  client
-    .subscribeToAuction(AUCTION_ID, (bid) => {
+  client.getNextAuctionById(PROPERTY_ID).then((auction: AuctionType) => {
+    console.log("Auction:", auction);
+    setAuction(auction);
+    setBids(auction.bids);
+
+    client
+    .subscribeToAuction(auction.id, (bid) => {
       console.log("Auction data:", bid);
       setBids([...bids, bid]);
       console.log("Bids:", bids);
@@ -69,10 +74,6 @@ function refreshAuction() {
     .catch((err) => {
       console.error("Error subscribing to auction:", err);
     });
-  client.getAuctionById(AUCTION_ID).then((auction: AuctionType) => {
-    console.log("Auction:", auction);
-    setAuction(auction);
-    setBids(auction.bids);
   });
 }
 

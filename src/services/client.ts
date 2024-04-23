@@ -172,8 +172,8 @@ async function me() : Promise<UserType>{
     });
 }
 
-async function getAuctionById(id: string) : Promise<AuctionType> {
-    return fetch(`${BASE_URL}/api/v1/auction/${id}`, {
+async function getNextAuctionById(propertyId: string) : Promise<AuctionType> {
+    return fetch(`${BASE_URL}/api/v1/next_auction/${propertyId}`, {
         headers: {
             'Authorization': 'Bearer ' + accessToken,
         }
@@ -259,4 +259,4 @@ async function placeBidOnAuction(auction: AuctionType, amount: number) : Promise
     });
 }
 
-export default {initEIClient, getAuctionById, authenticate, subscribeToAuction, me, placeBidOnAuction}
+export default {initEIClient, getNextAuctionById, authenticate, subscribeToAuction, me, placeBidOnAuction}
