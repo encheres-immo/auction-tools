@@ -1,0 +1,4 @@
+packages:
+  - "packages/auction-widget"
+  - "example"
+  - "docs"
