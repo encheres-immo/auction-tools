@@ -1,0 +1,15 @@
+{
+  "name": "@encheres-immo/widget-client",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Middleware to use Enchères Immo's API in your JavaScript application",
+  "scripts": {},
+  "license": "MIT",
+  "devDependencies": {
+    "@types/phoenix": "^1.6.4",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "phoenix": "^1.7.12"
+  }
+}

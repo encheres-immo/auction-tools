@@ -1,12 +1,12 @@
 import type { Component } from "solid-js";
 import { createStore } from "solid-js/store";
+import client from "@encheres-immo/widget-client";
 import { For, Show, Switch, Match, createSignal, createEffect } from "solid-js";
 
 import Auction from "./Auction";
 import Bid from "./Bid";
 import BidHistory from "./BidHistory";
 import ParticipateBox from "./ParticipateBox";
-import client from "./services/client";
 import { AuctionType, BidType, UserType } from "./types/types";
 import {
   isAuctionNotStarted,
