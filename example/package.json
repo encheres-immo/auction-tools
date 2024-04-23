@@ -2,7 +2,17 @@
   "name": "@encheres-immo/auction-widget-example",
   "version": "0.1.0",
   "private": true,
-  "description": "",
-  "scripts": {},
-  "keywords": []
+  "description": "An example project using Encheres Immo's auction widget",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.6.3",
+    "@astrojs/check": "^0.5.10",
+    "typescript": "^5.4.5"
+  }
 }
