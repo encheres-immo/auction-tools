@@ -1,9 +1,9 @@
 import type { Component } from "solid-js";
 import { Show, createSignal } from "solid-js";
-import { AuctionType, BidType } from "./types/types";
+import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
 import client from "@encheres-immo/widget-client";
-import { displayCurrencySymbol, displayAmountWithCurrency } from "./utils";
-import CenteredModal from "./CenteredModal";
+import { displayCurrencySymbol, displayAmountWithCurrency } from "./utils.js";
+import CenteredModal from "./CenteredModal.js";
 
 const Bid: Component<{ auction: AuctionType }> = (props) => {
   const defaultAmount = props.auction.highestBid

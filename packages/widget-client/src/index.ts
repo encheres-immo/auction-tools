@@ -1,9 +1,5 @@
 import { Socket } from "phoenix";
-import {
-  AuctionType,
-  BidType,
-  UserType,
-} from "../auction-widget/src/types/types";
+import type { AuctionType, BidType, UserType } from "./types.js";
 
 let BASE_URL: string = "";
 let WS_URL: string = "";

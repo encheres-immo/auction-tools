@@ -13,6 +13,7 @@
   "dependencies": {
     "astro": "^4.6.3",
     "@astrojs/check": "^0.5.10",
+    "@encheres-immo/auction-widget": "workspace:*",
     "typescript": "^5.4.5"
   }
 }

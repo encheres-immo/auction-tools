@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Middleware to use Enchères Immo's API in your JavaScript application",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
   "license": "MIT",
+  "exports": {
+    ".": "./dist/index.js",
+    "./types": "./dist/types.js"
+  },
   "devDependencies": {
     "@types/phoenix": "^1.6.4",
     "typescript": "^5.4.5"

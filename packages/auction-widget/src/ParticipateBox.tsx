@@ -1,8 +1,8 @@
 import type { Component } from "solid-js";
 import { createSignal } from "solid-js";
 import client from "@encheres-immo/widget-client";
-import { AuctionType } from "./types/types";
-import CenteredModal from "./CenteredModal";
+import { AuctionType } from "@encheres-immo/widget-client/types";
+import CenteredModal from "./CenteredModal.js";
 
 const ParticipateBox: Component<{
   setterIsLogged: any;

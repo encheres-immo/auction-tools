@@ -3,16 +3,20 @@ import { createStore } from "solid-js/store";
 import client from "@encheres-immo/widget-client";
 import { For, Show, Switch, Match, createSignal, createEffect } from "solid-js";
 
-import Auction from "./Auction";
-import Bid from "./Bid";
-import BidHistory from "./BidHistory";
-import ParticipateBox from "./ParticipateBox";
-import { AuctionType, BidType, UserType } from "./types/types";
+import Auction from "./Auction.js";
+import Bid from "./Bid.js";
+import BidHistory from "./BidHistory.js";
+import ParticipateBox from "./ParticipateBox.js";
+import {
+  AuctionType,
+  BidType,
+  UserType,
+} from "@encheres-immo/widget-client/types";
 import {
   isAuctionNotStarted,
   isAuctionInProgress,
   isAuctionEnded,
-} from "./utils";
+} from "./utils.js";
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
