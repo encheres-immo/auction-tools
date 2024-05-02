@@ -11,6 +11,8 @@ export type AuctionType = {
     currency: CurrencyType;
     isUserAllowed: boolean;
     isUserRegistered: boolean;
+    isRegistrationAccepted: boolean | null;
+    isParticipant: boolean;
 }
 
 export type BidType = {

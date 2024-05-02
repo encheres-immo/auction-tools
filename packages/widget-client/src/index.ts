@@ -227,6 +227,8 @@ async function getNextAuctionById(propertyId: string): Promise<AuctionType> {
         agentPhone: data.agentPhone,
         isUserAllowed: data.isUserAllowed,
         isUserRegistered: data.isUserRegistered,
+        isRegistrationAccepted: data.isRegistrationAccepted,
+        isParticipant: data.isParticipant,
         currency: {
           symbol: data.currency.symbol,
           code: data.currency.code,

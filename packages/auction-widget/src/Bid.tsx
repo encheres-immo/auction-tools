@@ -12,6 +12,15 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
   let [amount, setAmount] = createSignal(defaultAmount);
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
   const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
+  const [fastBidMsg1, setFastBidMsg1] = createSignal(
+    displayAmountOfStep(1, false, props.auction)
+  );
+  const [fastBidMsg2, setFastBidMsg2] = createSignal(
+    displayAmountOfStep(2, false, props.auction)
+  );
+  const [fastBidMsg3, setFastBidMsg3] = createSignal(
+    displayAmountOfStep(3, false, props.auction)
+  );
   const [minValue, setMinValue] = createSignal(0);
 
   function placeStepBid(stepMultiplier: number, auction: AuctionType) {
@@ -49,9 +58,13 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
     return () => {
       client
         .placeBidOnAuction(auction, amount)
-        .then((newAuction) => {
+        .then((newBid) => {
           setIsConfirmBidOpen(false);
           setIsShowMinMessage(false);
+
+          setFastBidMsg1(displayAmountOfStep(1, true, auction));
+          setFastBidMsg2(displayAmountOfStep(2, true, auction));
+          setFastBidMsg3(displayAmountOfStep(3, true, auction));
         })
         .catch((err) => {
           if (err.code == "bid_amount_too_low") {
@@ -62,9 +75,9 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
     };
   }
 
-  function displayAmountOfStep(stepMultiplier: number, auction: AuctionType) {
+  function displayAmountOfStep(stepMultiplier: number, isNewBid: boolean, auction: AuctionType) {
     let amount;
-    if (auction.bids && auction.bids.length > 0) {
+    if (isNewBid || (auction.bids && auction.bids.length > 0)) {
       amount = stepMultiplier * auction.step;
     } else {
       amount = (stepMultiplier - 1) * auction.step;
@@ -82,7 +95,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
               class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
               onClick={placeStepBid(1, props.auction)}
             >
-              +{displayAmountOfStep(1, props.auction)}
+              +{fastBidMsg1()}
             </button>
           </span>
           <span>
@@ -90,7 +103,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
               class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
               onClick={placeStepBid(2, props.auction)}
             >
-              +{displayAmountOfStep(2, props.auction)}
+              +{fastBidMsg2()}
             </button>
           </span>
           <span>
@@ -98,7 +111,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
               class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
               onClick={placeStepBid(3, props.auction)}
             >
-              +{displayAmountOfStep(3, props.auction)}
+              +{fastBidMsg3()}
             </button>
           </span>
         </div>

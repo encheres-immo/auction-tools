@@ -31,6 +31,8 @@ const [auction, setAuction] = createStore<AuctionType>({
   bids: [],
   isUserAllowed: false,
   isUserRegistered: false,
+  isRegistrationAccepted: null,
+  isParticipant: false,
   highestBid: {
     id: "",
     amount: 0,
@@ -49,8 +51,9 @@ const [auction, setAuction] = createStore<AuctionType>({
 });
 
 // CONFIG
-const CLIENT_ID = "e4cd125a-80eb-4ce9-8407-2464928d9259";
-const PROPERTY_ID = "50d5dcb4-54b6-4773-a758-f181802c8f9c";
+const CLIENT_ID = "f88243ad-679a-4517-9129-665d43eb78b8";
+// const PROPERTY_ID = "fd5d0271-038b-4798-ba9e-26a8cbba7353";
+const PROPERTY_ID = "fd5d0271-038b-4798-ba9e-26a8cbba7353";
 
 client.initEIClient(CLIENT_ID, "local");
 
@@ -97,6 +100,7 @@ const App: Component = () => {
   function updateUser(user: UserType) {
     setUser(user);
     refreshAuction();
+    setIsLogging(false);
   }
 
   return (
@@ -105,11 +109,24 @@ const App: Component = () => {
         <div class="overflow-hidden">
           <Show when={auction.id != ""}>
             <Auction auction={auction} user={user()} />
+            <Show 
+              when={
+                (!isLogged() || isLogging()) &&
+                (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
+              }
+            >
+              <ParticipateBox
+                setterIsLogged={setIsLogged}
+                isLogging={isLogging()}
+                auction={auction}
+                updateUser={updateUser}
+              />
+            </Show>
             <Switch>
               <Match
                 when={
                   isLogged() &&
-                  auction.isUserRegistered &&
+                  auction.isUserRegistered && auction.isRegistrationAccepted && auction.isParticipant &&
                   isAuctionInProgress(auction)
                 }
               >
@@ -117,16 +134,38 @@ const App: Component = () => {
               </Match>
               <Match
                 when={
-                  (!isLogged() || isLogging() || auction.isUserRegistered) &&
-                  (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
+                  isLogged() &&
+                  auction.isRegistrationAccepted && !auction.isParticipant &&
+                  isAuctionInProgress(auction)
                 }
               >
-                <ParticipateBox
-                  setterIsLogged={setIsLogged}
-                  isLogging={isLogging()}
-                  auction={auction}
-                  updateUser={updateUser}
-                />
+                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Vous êtes observateur pour cette vente. Vous ne pouvez pas enchérir.</p>
+              </Match>
+              <Match
+                when={
+                  isLogged() &&
+                  auction.isUserRegistered === true &&
+                  auction.isRegistrationAccepted && !auction.isParticipant &&
+                  isAuctionNotStarted(auction)
+                }
+              >
+                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande d'observation pour cette vente a été acceptée. Attendez le début de l'enchère pour voir les participations.</p>
+              </Match>
+              <Match
+                when={
+                  isLogged() &&
+                  auction.isUserRegistered === true &&
+                  auction.isRegistrationAccepted === true &&
+                  isAuctionNotStarted(auction)
+                }
+              >
+                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation pour cette vente a été acceptée. Attendez le début de l'enchère pour enchérir.</p>
+              </Match>
+              <Match when={isLogged() && auction.isUserRegistered === true && auction.isRegistrationAccepted === false}>
+                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation pour cette vente a été refusée.</p>
+              </Match>
+              <Match when={isLogged() && auction.isUserRegistered === true && auction.isRegistrationAccepted == null}>
+                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation a été transmise à l'agent responsable du bien. Vous serez informé par email lorsqu'elle sera validée.</p>
               </Match>
             </Switch>
             <Show
