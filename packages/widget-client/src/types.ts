@@ -9,8 +9,10 @@ export type AuctionType = {
     agentEmail: string;
     agentPhone: string;
     currency: CurrencyType;
+    registration: RegistrationType | null;
+}
+export type RegistrationType = {
     isUserAllowed: boolean;
-    isUserRegistered: boolean;
     isRegistrationAccepted: boolean | null;
     isParticipant: boolean;
 }

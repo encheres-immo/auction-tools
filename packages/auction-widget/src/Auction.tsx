@@ -122,7 +122,7 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
           <div class="border-dark mx-4 border-t py-4 text-center">
             <div class="text-dark relative text-sm tracking-wider">
               <Show
-                when={props.auction.isUserAllowed}
+                when={props.auction.registration && props.auction.registration.isUserAllowed}
                 fallback={
                   <div>
                     <p class="font-barnes-title font-semibold uppercase">

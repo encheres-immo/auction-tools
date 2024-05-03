@@ -215,6 +215,11 @@ async function getNextAuctionById(propertyId: string): Promise<AuctionType> {
         },
         { id: "", amount: 0, createdAt: "", newEndDate: 0, userAnonymousId: "" }
       );
+      const registration = data.registration ? {
+        isUserAllowed: data.registration.isUserAllowed,
+        isRegistrationAccepted: data.registration.isRegistrationAccepted,
+        isParticipant: data.registration.isParticipant,
+      } : null;
       return {
         id: data.id,
         startDate: data.startDate,
@@ -225,10 +230,7 @@ async function getNextAuctionById(propertyId: string): Promise<AuctionType> {
         highestBid: highestBid,
         agentEmail: data.agentEmail,
         agentPhone: data.agentPhone,
-        isUserAllowed: data.isUserAllowed,
-        isUserRegistered: data.isUserRegistered,
-        isRegistrationAccepted: data.isRegistrationAccepted,
-        isParticipant: data.isParticipant,
+        registration: registration,
         currency: {
           symbol: data.currency.symbol,
           code: data.currency.code,

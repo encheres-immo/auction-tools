@@ -29,10 +29,11 @@ const [auction, setAuction] = createStore<AuctionType>({
   startingPrice: 0,
   step: 0,
   bids: [],
-  isUserAllowed: false,
-  isUserRegistered: false,
-  isRegistrationAccepted: null,
-  isParticipant: false,
+  registration: {
+    isUserAllowed: false,
+    isRegistrationAccepted: null,
+    isParticipant: false,
+  },
   highestBid: {
     id: "",
     amount: 0,
@@ -111,7 +112,7 @@ const App: Component = () => {
             <Auction auction={auction} user={user()} />
             <Show 
               when={
-                (!isLogged() || isLogging()) &&
+                (!isLogged() || isLogging() || (isLogged() && auction.registration == null)) &&
                 (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
               }
             >
@@ -126,7 +127,7 @@ const App: Component = () => {
               <Match
                 when={
                   isLogged() &&
-                  auction.isUserRegistered && auction.isRegistrationAccepted && auction.isParticipant &&
+                  auction.registration && auction.registration.isRegistrationAccepted && auction.registration.isParticipant &&
                   isAuctionInProgress(auction)
                 }
               >
@@ -135,7 +136,8 @@ const App: Component = () => {
               <Match
                 when={
                   isLogged() &&
-                  auction.isRegistrationAccepted && !auction.isParticipant &&
+                  auction.registration &&
+                  auction.registration.isRegistrationAccepted && !auction.registration.isParticipant &&
                   isAuctionInProgress(auction)
                 }
               >
@@ -144,8 +146,8 @@ const App: Component = () => {
               <Match
                 when={
                   isLogged() &&
-                  auction.isUserRegistered === true &&
-                  auction.isRegistrationAccepted && !auction.isParticipant &&
+                  auction.registration &&
+                  auction.registration.isRegistrationAccepted && !auction.registration.isParticipant &&
                   isAuctionNotStarted(auction)
                 }
               >
@@ -154,23 +156,27 @@ const App: Component = () => {
               <Match
                 when={
                   isLogged() &&
-                  auction.isUserRegistered === true &&
-                  auction.isRegistrationAccepted === true &&
+                  auction.registration &&
+                  auction.registration.isRegistrationAccepted === true &&
                   isAuctionNotStarted(auction)
                 }
               >
                 <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation pour cette vente a été acceptée. Attendez le début de l'enchère pour enchérir.</p>
               </Match>
-              <Match when={isLogged() && auction.isUserRegistered === true && auction.isRegistrationAccepted === false}>
+              <Match when={isLogged() && auction.registration && auction.registration.isRegistrationAccepted === false}>
                 <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation pour cette vente a été refusée.</p>
               </Match>
-              <Match when={isLogged() && auction.isUserRegistered === true && auction.isRegistrationAccepted == null}>
+              <Match when={isLogged() && auction.registration && auction.registration.isRegistrationAccepted == null}>
                 <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation a été transmise à l'agent responsable du bien. Vous serez informé par email lorsqu'elle sera validée.</p>
+              </Match>
+              <Match when={isLogged() && !auction.registration}>
+                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Vous n'êtes pas inscrit à cette vente, veuillez contacter l'agent responsable.</p>
               </Match>
             </Switch>
             <Show
               when={
-                auction.isUserAllowed &&
+                auction.registration &&
+                auction.registration.isUserAllowed &&
                 (isAuctionEnded(auction) || isAuctionInProgress(auction))
               }
             >
