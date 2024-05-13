@@ -106,7 +106,7 @@ const App: Component = () => {
 
   return (
     <div class="bg-dark" id="test">
-      <div class="h-screen w-screen bg-white">
+      <div class="bg-white">
         <div class="overflow-hidden">
           <Show when={auction.id != ""}>
             <Auction auction={auction} user={user()} />
