@@ -8,7 +8,8 @@
   },
   "license": "MIT",
   "exports": {
-    ".": "./index.tsx"
+    ".": "./dist/output.js",
+    "./dist/output.css": "./dist/output.css"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^6.0.4",

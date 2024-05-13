@@ -2,6 +2,7 @@ import type { Component } from "solid-js";
 import { createStore } from "solid-js/store";
 import client from "@encheres-immo/widget-client";
 import { For, Show, Switch, Match, createSignal, createEffect } from "solid-js";
+import "../assets/app.css"
 
 import Auction from "./Auction.js";
 import Bid from "./Bid.js";
@@ -52,9 +53,8 @@ const [auction, setAuction] = createStore<AuctionType>({
 });
 
 // CONFIG
-const CLIENT_ID = "f88243ad-679a-4517-9129-665d43eb78b8";
-// const PROPERTY_ID = "fd5d0271-038b-4798-ba9e-26a8cbba7353";
-const PROPERTY_ID = "fd5d0271-038b-4798-ba9e-26a8cbba7353";
+const CLIENT_ID = "2a89e5ef-996e-4c5c-8a0e-5226698755e4";
+const PROPERTY_ID = "111d4754-056e-4167-8ba2-0041501bc0e7";
 
 client.initEIClient(CLIENT_ID, "local");
 
@@ -105,7 +105,7 @@ const App: Component = () => {
   }
 
   return (
-    <div class="bg-dark">
+    <div class="bg-dark" id="test">
       <div class="h-screen w-screen bg-white">
         <div class="overflow-hidden">
           <Show when={auction.id != ""}>
