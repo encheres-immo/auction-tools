@@ -8,6 +8,10 @@
     "watch": "tsc -w"
   },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "exports": {
     ".": "./dist/index.js",
     "./types": "./dist/types.js"

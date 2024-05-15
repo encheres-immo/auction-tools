@@ -1,6 +1,6 @@
 {
   "name": "@encheres-immo/auction-widget-example",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "description": "An example project using Encheres Immo's auction widget",
   "scripts": {
