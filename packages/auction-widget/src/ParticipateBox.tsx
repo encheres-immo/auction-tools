@@ -38,9 +38,9 @@ const ParticipateBox: Component<{
   const [isOpenAgentBox, setIsOpenAgentBox] = createSignal(false);
   return (
     <div>
-      <div class="p-4">
+      <div class="section">
         <button
-          class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
+          class="btn custom"
           onClick={() => setIsOpenBox(!isOpenBox())}
         >
           Je veux participer
@@ -56,13 +56,13 @@ const ParticipateBox: Component<{
           >
             <div class="mt-5 flex flex-col space-y-2 sm:mt-6">
               <button
-                class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
+                class="btn custom"
                 onClick={connect()}
               >
                 Se connecter
               </button>
               <button
-                class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
+                class="btn custom"
                 onClick={() => {
                   setIsOpenAgentBox(true);
                   setIsOpenBox(false);
@@ -71,7 +71,7 @@ const ParticipateBox: Component<{
                 Je veux participer
               </button>
               <button
-                class="group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium leading-5 hover:bg-gray-50"
+                class="btn"
                 onClick={() => setIsOpenBox(false)}
               >
                 Annuler
@@ -103,7 +103,7 @@ const ParticipateBox: Component<{
               {props.auction.agentPhone}
             </a>
             <button
-              class="group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium leading-5 hover:bg-gray-50"
+              class="btn"
               onClick={() => setIsOpenAgentBox(false)}
             >
               Annuler
