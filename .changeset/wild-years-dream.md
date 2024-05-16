@@ -3,4 +3,4 @@
 "@encheres-immo/widget-client": patch
 ---
 
-Fix: the auction was displayed as private by default (even if it's public), so we now rely on the `isPrivate` field
+Fixes the auction being displayed as private by default (even if it is public) in the widget. For that, adds a `isPrivate` field in the auction client.
