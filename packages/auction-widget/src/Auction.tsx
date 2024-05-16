@@ -124,7 +124,10 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
           <div class="section border-t">
             <div>
               <Show
-                when={props.auction.registration && props.auction.registration.isUserAllowed}
+                when={
+                  !props.auction.isPrivate || 
+                  (props.auction.isPrivate && props.auction.registration && props.auction.registration.isUserAllowed)
+                }
                 fallback={
                   <div>
                     <p class="detail label">

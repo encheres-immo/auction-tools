@@ -35,6 +35,7 @@ const [auction, setAuction] = createStore<AuctionType>({
     isRegistrationAccepted: null,
     isParticipant: false,
   },
+  isPrivate: false,
   highestBid: {
     id: "",
     amount: 0,
