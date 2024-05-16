@@ -31,6 +31,12 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
+      - name: Build packages/widget-client needed by auction-widget, then back to root
+        run: cd packages/widget-client/ && pnpm run build && cd ../..
+
+      - name: Build packages/auction-widget package for CDN, then back to root
+        run: cd packages/auction-widget/ && pnpm run build && cd ../..
+
       - name: Create Release Pull Request
         uses: changesets/action@v1
         with:

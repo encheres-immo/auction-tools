@@ -12,8 +12,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "exports": {
-    ".": "./dist/output.js",
-    "./dist/output.css": "./dist/output.css"
+    ".": "./dist/auction-widget.js",
+    "./dist/auction-widget.css": "./dist/auction-widget.css"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^6.0.4",
