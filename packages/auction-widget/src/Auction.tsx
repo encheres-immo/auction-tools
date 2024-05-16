@@ -71,71 +71,76 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
   }, 1000);
 
   return (
-    <div style="background-color: #002d40">
-      <div class="font-barnes flex justify-center py-5">
-        <div class="flex flex-col">
-          <Show when={isAuctionNotStartedVal()}>
-            <div>
-              <p class="/ font-barnes-title py-3 text-center text-sm font-semibold uppercase tracking-wider text-white">
-                Démarre dans
-              </p>
-              <p class="font-mono text-xl text-white">{remainingTime()}</p>
-            </div>
-          </Show>
+    <div>
+      <div>
+        <div>
+          <div id="header">
+            <Show when={isAuctionNotStartedVal()}>
+              <div>
+                <p id="status">
+                  Démarre dans
+                </p>
+                <p id="countdown">{remainingTime()}</p>
+              </div>
+            </Show>
+          </div>
           <Show when={isAuctionInProgressVal()}>
             <div>
-              <p class="/ font-barnes-title py-3 text-center text-sm font-semibold uppercase tracking-wider text-white">
+              <p id="status">
                 Se termine dans
               </p>
-              <p class="font-mono text-xl text-white">{remainingTime()}</p>
+              <p id="countdown">{remainingTime()}</p>
             </div>
           </Show>
           <Show when={isAuctionEndedVal()}>
-            <p class="/ font-barnes-title py-3 text-center text-sm font-semibold uppercase tracking-wider text-white">
+            <p id="status">
               Vente terminée
             </p>
           </Show>
         </div>
       </div>
-      <div class="bg-white">
-        <div class="font-barnes">
-          <div class="grid grid-cols-2 gap-4 p-4">
-            <div class="text-dark relative text-sm tracking-wider">
-              <p class="font-barnes-title font-semibold uppercase">Début</p>
-              <p>{formatDate(props.auction.startDate)} </p>
+      <div>
+        <div>
+          <div id="description">
+            <div>
+              <p class="detail label">Début</p>
+              <p class="detail">{formatDate(props.auction.startDate)} </p>
             </div>
-            <div class="text-dark relative text-sm tracking-wider">
-              <p class="font-barnes-title font-semibold uppercase">Fin</p>
-              <p>{formatDate(props.auction.endDate)}</p>
+            <div>
+              <p class="detail label">Fin</p>
+              <p class="detail">{formatDate(props.auction.endDate)}</p>
             </div>
-            <div class="text-dark relative text-sm tracking-wider">
-              <p class="font-barnes-title font-semibold uppercase">
+            <div>
+              <p class="detail label">
                 Prix de départ
               </p>
-              <p>{displayAmountWithCurrency(props.auction.startingPrice)} </p>
+              <p class="detail accent">{displayAmountWithCurrency(props.auction.startingPrice)} </p>
             </div>
-            <div class="text-dark relative text-sm tracking-wider">
-              <p class="font-barnes-title font-semibold uppercase">Palier</p>
-              <p>{displayAmountWithCurrency(props.auction.step)}</p>
+            <div>
+              <p class="detail label">Palier</p>
+              <p class="detail accent">{displayAmountWithCurrency(props.auction.step)}</p>
             </div>
           </div>
-          <div class="border-dark mx-4 border-t py-4 text-center">
-            <div class="text-dark relative text-sm tracking-wider">
+          <div class="section border-t">
+            <div>
               <Show
-                when={props.auction.registration && props.auction.registration.isUserAllowed}
+                when={
+                  !props.auction.isPrivate || 
+                  (props.auction.isPrivate && props.auction.registration && props.auction.registration.isUserAllowed)
+                }
                 fallback={
                   <div>
-                    <p class="font-barnes-title font-semibold uppercase">
+                    <p class="detail label">
                       Vente privée
                     </p>
-                    <p>Inscrivez-vous pour voir les participations</p>
+                    <p class="detail">Inscrivez-vous pour voir les participations</p>
                   </div>
                 }
               >
-                <p class="font-barnes-title font-semibold uppercase">
+                <p class="detail label">
                   Meilleure offre
                 </p>
-                <p class="text-secondary font-semibold">
+                <p class="detail accent">
                   {displayAmountWithCurrency(
                     props.auction.highestBid.amount,
                     props.auction.currency

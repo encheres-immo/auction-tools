@@ -35,6 +35,7 @@ const [auction, setAuction] = createStore<AuctionType>({
     isRegistrationAccepted: null,
     isParticipant: false,
   },
+  isPrivate: false,
   highestBid: {
     id: "",
     amount: 0,
@@ -105,9 +106,9 @@ const App: Component = () => {
   }
 
   return (
-    <div class="bg-dark" id="test">
-      <div class="h-screen w-screen bg-white">
-        <div class="overflow-hidden">
+    <div id="box">
+      <div>
+        <div>
           <Show when={auction.id != ""}>
             <Auction auction={auction} user={user()} />
             <Show 
@@ -141,7 +142,7 @@ const App: Component = () => {
                   isAuctionInProgress(auction)
                 }
               >
-                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Vous êtes observateur pour cette vente. Vous ne pouvez pas enchérir.</p>
+                <p class="note">Vous êtes observateur pour cette vente. Vous ne pouvez pas enchérir.</p>
               </Match>
               <Match
                 when={
@@ -151,7 +152,7 @@ const App: Component = () => {
                   isAuctionNotStarted(auction)
                 }
               >
-                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande d'observation pour cette vente a été acceptée. Attendez le début de l'enchère pour voir les participations.</p>
+                <p class="note">Votre demande d'observation pour cette vente a été acceptée. Attendez le début de l'enchère pour voir les participations.</p>
               </Match>
               <Match
                 when={
@@ -161,16 +162,16 @@ const App: Component = () => {
                   isAuctionNotStarted(auction)
                 }
               >
-                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation pour cette vente a été acceptée. Attendez le début de l'enchère pour enchérir.</p>
+                <p class="note">Votre demande de participation pour cette vente a été acceptée. Attendez le début de l'enchère pour enchérir.</p>
               </Match>
               <Match when={isLogged() && auction.registration && auction.registration.isRegistrationAccepted === false}>
-                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation pour cette vente a été refusée.</p>
+                <p class="note">Votre demande de participation pour cette vente a été refusée.</p>
               </Match>
               <Match when={isLogged() && auction.registration && auction.registration.isRegistrationAccepted == null}>
-                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Votre demande de participation a été transmise à l'agent responsable du bien. Vous serez informé par email lorsqu'elle sera validée.</p>
+                <p class="note">Votre demande de participation a été transmise à l'agent responsable du bien. Vous serez informé par email lorsqu'elle sera validée.</p>
               </Match>
               <Match when={isLogged() && !auction.registration}>
-                <p class="p-4 text-sm leading-5 text-slate-500 text-center">Vous n'êtes pas inscrit à cette vente, veuillez contacter l'agent responsable.</p>
+                <p class="note">Vous n'êtes pas inscrit à cette vente, veuillez contacter l'agent responsable.</p>
               </Match>
             </Switch>
             <Show

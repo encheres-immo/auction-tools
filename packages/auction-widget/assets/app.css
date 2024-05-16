@@ -1,4 +1,118 @@
-#test {
-    background-color: blueviolet !important;
-    color: blueviolet !important;
+@layer default {    
+    #box {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        overflow: hidden;
+    }
+
+    #header {
+        background-color: var(--dark-color, #002d40);
+        color: white;
+        text-align: center;
+        padding: 1.25rem 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #status {
+        text-transform: uppercase;
+        font-size: .875rem;
+        line-height: 1.25rem;
+        margin: 0;
+        letter-spacing: 0.05em;
+    }
+
+    #countdown {
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+        margin: 0;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .note {
+        padding: 1rem;
+        font-size: .875rem;
+        line-height: 1.25rem;
+        text-align: center;
+        color: rgb(100 116 139);
+    }
+
+    #description {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .detail {
+        font-size: .875rem;
+        line-height: 1.25rem;
+        letter-spacing: .05em;
+        margin: 0;
+    }
+
+    .section {
+        padding: 1rem 0;
+        margin: 0 1rem;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: white;
+        border: 1px solid rgb(209 213 219);
+        width: 100%;
+        font-size: .875rem;
+        font-weight: 500;
+        line-height: 1.25rem;
+        display: inline-flex;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        column-gap: .5rem;
+        border-radius: .5rem;
+        padding: .5rem .75rem;
+        font-family: inherit;
+    }
+
+    .btn:active {
+        outline: solid 1px;
+        outline-offset: 1px;
+    }
+
+    .btn:hover {
+        background-color: rgb(243 244 246);
+    }
+}
+
+@layer custom-theme {
+    .custom {
+        background-color: var(--highlight-color);
+        border-color: var(--highlight-color);
+        color: white;
+    }
+
+    .custom:active {
+        outline-color: var(--highlight-color);
+    }
+
+    .custom:hover {
+        opacity: .9;
+    }
+
+    .accent {
+        color: var(--highlight-color);
+        font-weight: 600;
+    }
+}
+
+@layer utilities {
+    .border-t {
+        border-top: solid 1px var(--dark-color, #002d40);
+    }
+
+    .label {
+        text-transform: uppercase;
+        font-weight: 600;
+    }
 }
