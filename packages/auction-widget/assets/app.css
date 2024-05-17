@@ -1,233 +1,233 @@
-/* Priority order of layers from least to most important. */
-@layer default, modal, utilities, custom-theme;
+@layer default, components, auction-widget;
 
-/* Default widget theme */
-@layer default {    
-    #box {
-        background-color: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-        overflow: hidden;
-    }
-
-    #header {
-        color: white;
-        text-align: center;
-        padding: 1.25rem 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #status {
-        text-transform: uppercase;
-        font-size: .875rem;
-        font-weight: 700;
-        line-height: 1.25rem;
-        margin: 0;
-        letter-spacing: .05em;
-    }
-
-    #countdown {
-        font-size: 1.25rem;
-        line-height: 1.75rem;
-        margin: 0;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-
-    .note {
-        padding: 1rem;
-        font-size: .875rem;
-        line-height: 1.25rem;
-        text-align: center;
-        color: rgb(100 116 139);
-    }
-
-    #description {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-        padding: 1rem;
-    }
-
-    .detail {
-        font-size: .875rem;
-        line-height: 1.25rem;
-        letter-spacing: .05em;
-        margin: 0;
-    }
-
-    .section {
-        padding: 1rem 0;
-        margin: 0 1rem;
-        text-align: center;
-    }
-
-    .btn {
-        background-color: white;
-        border: 1px solid rgb(209 213 219);
-        font-size: .875rem;
-        font-weight: 500;
-        line-height: 1.25rem;
-        display: inline-flex;
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-        column-gap: .5rem;
-        border-radius: .5rem;
-        padding: .5rem .75rem;
-        font-family: inherit;
-        text-decoration-line: none;
-    }
-
-    .btn:active {
-        outline: solid 1px;
-        outline-offset: 1px;
-    }
-
-    .btn:hover {
-        background-color: rgb(243 244 246);
-    }
+@layer default {
+  :root {
+    --auction-widget-highlight-color: #ef673d;
+    --auction-widget-dark-color: #002d40;
+    --auction-widget-border-radius: 0.5rem;
+    --auction-widget-base-font: sans-serif;
+    --auction-widget-title-font: sans-serif;
+    --auction-widget-countdown-font: monospace;
+  }
 }
 
-/* To customize widget colors 
-*   Usage example
-*   main {
-*       --highlight-color: orange;
-*       --dark-color: blueviolet;
-*   }
-*/
+@layer components {
+  /* Base elements & reset */
+  #bg {
+    position: fixed;
+    inset: 0;
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
 
-@layer custom-theme {
-    .custom {
-        background-color: var(--highlight-color);
-        border-color: var(--highlight-color);
-        color: white;
-    }
+  #bg-color {
+    position: absolute;
+    inset: 0;
+    background-color: #6b7280;
+    opacity: 0.75;
+  }
 
-    .custom:active {
-        outline-color: var(--highlight-color);
-    }
+  #box {
+    background-color: white;
+    border-radius: var(--auction-widget-border-radius);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    font-family: var(--auction-widget-base-font);
+  }
 
-    .custom:hover {
-        opacity: .9;
-    }
+  .border-t {
+    border-top: solid 1px var(--auction-widget-dark-color);
+  }
 
-    .accent {
-        color: var(--highlight-color);
-        font-weight: 700;
-    }
+  .full {
+    width: 100%;
+  }
 
-    #header, .icon {
-        background-color: var(--dark-color, #002d40);
-    }
-}
+  /* Typography */
+  .label {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: var(--auction-widget-title-font);
+  }
 
-/* Special cases */
-@layer utilities {
-    .border-t {
-        border-top: solid 1px var(--dark-color, #002d40);
-    }
+  #status {
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
 
-    .label {
-        text-transform: uppercase;
-        font-weight: 700;
-    }
+  .detail {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
 
-    .full {
-        width: 100%;
-    }
-}
+  .accent {
+    color: var(--auction-widget-highlight-color);
+    font-weight: 700;
+  }
 
-/* Used for CenteredModal */
-@layer modal {
+  .note {
+    padding: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-align: center;
+    color: rgb(100 116 139);
+  }
+
+  /* Containers */
+  .modal {
+    z-index: 50;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 0 1rem 1.5rem;
+  }
+
+  #modal-content {
+    z-index: 100;
+    overflow: hidden;
+    padding: 1rem;
+    border-radius: var(--auction-widget-border-radius);
+    max-width: 24rem;
+    background-color: #ffffff;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .action {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  #description {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .section {
+    padding: 1rem 0;
+    margin: 0 1rem;
+    text-align: center;
+  }
+
+  /* Buttons & links */
+  .btn {
+    background-color: white;
+    border: 1px solid rgb(209 213 219);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.5rem;
+    border-radius: var(--auction-widget-border-radius);
+    padding: 0.5rem 0.75rem;
+    text-decoration-line: none;
+  }
+
+  .btn:active {
+    outline: solid 1px;
+    outline-offset: 1px;
+  }
+
+  .btn:hover {
+    background-color: rgb(243 244 246);
+  }
+
+  .custom {
+    background-color: var(--auction-widget-highlight-color);
+    border-color: var(--auction-widget-highlight-color);
+    color: white;
+  }
+
+  .custom:active {
+    outline-color: var(--auction-widget-highlight-color);
+  }
+
+  .custom:hover {
+    opacity: 0.9;
+  }
+
+  /* Specific elements */
+  #header {
+    color: white;
+    text-align: center;
+    padding: 1.25rem 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--auction-widget-dark-color);
+  }
+
+  #countdown {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    margin: 0;
+    font-family: var(--auction-widget-countdown-font);
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    border-radius: 9999px;
+    width: 3rem;
+    height: 3rem;
+    color: white;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    background-color: var(--auction-widget-dark-color);
+  }
+
+  #modal-content h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+  }
+
+  /* Responsive */
+  @media (min-width: 640px) {
     .modal {
-        z-index: 50;
-        position: fixed; 
-        bottom: 0; 
-        right: 0;
-        left: 0;
-        padding: 0 1rem 1.5rem;
-    }
-
-    #bg {
-        position: fixed; 
-        inset: 0;
-        transition-property: opacity;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 300ms; 
-    }
-
-    #bg-color {
-        position: absolute; 
-        inset: 0;
-        background-color: #6B7280; 
-        opacity: .75; 
+      display: flex;
+      top: 0;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
     }
 
     #modal-content {
-        z-index: 100;
-        overflow: hidden; 
-        padding: 1rem;
-        border-radius: 0.5rem; 
-        max-width: 24rem; 
-        background-color: #ffffff; 
-        transition-property: all;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 300ms; 
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
-    }
-
-    .icon {
-        display: flex; 
-        justify-content: center; 
-        margin-left: auto;
-        margin-right: auto;
-        align-items: center; 
-        border-radius: 9999px;
-        width: 3rem; 
-        height: 3rem;
-        color: white;
-        font-size: 1.25rem;
-        line-height: 1.75rem; 
-    }
-
-    #modal-content h3 {
-        font-size: 1.125rem;
-        font-weight: 700; 
-        line-height: 1.5rem; 
+      padding: 1.5rem;
+      width: 100%;
     }
 
     .action {
-        margin-top: 1.25rem;
-        display: flex;
-        flex-direction: column;
-        gap: .5rem;
+      margin-top: 1.5rem;
     }
+  }
 
-    /* CenteredModal responsive*/
-    @media (min-width: 640px) { 
-        .modal {
-            display: flex; 
-            top: 0;
-            padding: 0; 
-            justify-content: center; 
-            align-items: center;
-        }
-
-        #modal-content {
-            padding: 1.5rem; 
-            width: 100%;
-        }
-
-        .action {
-            margin-top: 1.5rem;
-        }
+  @media (min-width: 768px) {
+    #modal-content {
+      max-width: 32rem;
     }
-
-    @media (min-width: 768px) {
-        #modal-content {
-            max-width: 32rem; 
-        }
-    }
-      
+  }
 }
