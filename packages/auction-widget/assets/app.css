@@ -1,3 +1,7 @@
+/* Priority order of layers from least to most important. */
+@layer default, modal, utilities, custom-theme;
+
+/* Default widget theme */
 @layer default {    
     #box {
         background-color: white;
@@ -7,7 +11,6 @@
     }
 
     #header {
-        background-color: var(--dark-color, #002d40);
         color: white;
         text-align: center;
         padding: 1.25rem 0;
@@ -18,9 +21,10 @@
     #status {
         text-transform: uppercase;
         font-size: .875rem;
+        font-weight: 700;
         line-height: 1.25rem;
         margin: 0;
-        letter-spacing: 0.05em;
+        letter-spacing: .05em;
     }
 
     #countdown {
@@ -61,7 +65,6 @@
     .btn {
         background-color: white;
         border: 1px solid rgb(209 213 219);
-        width: 100%;
         font-size: .875rem;
         font-weight: 500;
         line-height: 1.25rem;
@@ -73,6 +76,7 @@
         border-radius: .5rem;
         padding: .5rem .75rem;
         font-family: inherit;
+        text-decoration-line: none;
     }
 
     .btn:active {
@@ -84,6 +88,14 @@
         background-color: rgb(243 244 246);
     }
 }
+
+/* To customize widget colors 
+*   Usage example
+*   main {
+*       --highlight-color: orange;
+*       --dark-color: blueviolet;
+*   }
+*/
 
 @layer custom-theme {
     .custom {
@@ -102,10 +114,15 @@
 
     .accent {
         color: var(--highlight-color);
-        font-weight: 600;
+        font-weight: 700;
+    }
+
+    #header, .icon {
+        background-color: var(--dark-color, #002d40);
     }
 }
 
+/* Special cases */
 @layer utilities {
     .border-t {
         border-top: solid 1px var(--dark-color, #002d40);
@@ -113,6 +130,104 @@
 
     .label {
         text-transform: uppercase;
-        font-weight: 600;
+        font-weight: 700;
     }
+
+    .full {
+        width: 100%;
+    }
+}
+
+/* Used for CenteredModal */
+@layer modal {
+    .modal {
+        z-index: 50;
+        position: fixed; 
+        bottom: 0; 
+        right: 0;
+        left: 0;
+        padding: 0 1rem 1.5rem;
+    }
+
+    #bg {
+        position: fixed; 
+        inset: 0;
+        transition-property: opacity;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms; 
+    }
+
+    #bg-color {
+        position: absolute; 
+        inset: 0;
+        background-color: #6B7280; 
+        opacity: .75; 
+    }
+
+    #modal-content {
+        z-index: 100;
+        overflow: hidden; 
+        padding: 1rem;
+        border-radius: 0.5rem; 
+        max-width: 24rem; 
+        background-color: #ffffff; 
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms; 
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
+    }
+
+    .icon {
+        display: flex; 
+        justify-content: center; 
+        margin-left: auto;
+        margin-right: auto;
+        align-items: center; 
+        border-radius: 9999px;
+        width: 3rem; 
+        height: 3rem;
+        color: white;
+        font-size: 1.25rem;
+        line-height: 1.75rem; 
+    }
+
+    #modal-content h3 {
+        font-size: 1.125rem;
+        font-weight: 700; 
+        line-height: 1.5rem; 
+    }
+
+    .action {
+        margin-top: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
+
+    /* CenteredModal responsive*/
+    @media (min-width: 640px) { 
+        .modal {
+            display: flex; 
+            top: 0;
+            padding: 0; 
+            justify-content: center; 
+            align-items: center;
+        }
+
+        #modal-content {
+            padding: 1.5rem; 
+            width: 100%;
+        }
+
+        .action {
+            margin-top: 1.5rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        #modal-content {
+            max-width: 32rem; 
+        }
+    }
+      
 }

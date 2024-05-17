@@ -72,32 +72,28 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
 
   return (
     <div>
-      <div>
-        <div>
-          <div id="header">
-            <Show when={isAuctionNotStartedVal()}>
-              <div>
-                <p id="status">
-                  Démarre dans
-                </p>
-                <p id="countdown">{remainingTime()}</p>
-              </div>
-            </Show>
-          </div>
-          <Show when={isAuctionInProgressVal()}>
-            <div>
-              <p id="status">
-                Se termine dans
-              </p>
-              <p id="countdown">{remainingTime()}</p>
-            </div>
-          </Show>
-          <Show when={isAuctionEndedVal()}>
+      <div id="header">
+        <Show when={isAuctionNotStartedVal()}>
+          <div>
             <p id="status">
-              Vente terminée
+              Démarre dans
             </p>
-          </Show>
-        </div>
+            <p id="countdown">{remainingTime()}</p>
+          </div>
+        </Show>
+        <Show when={isAuctionInProgressVal()}>
+          <div>
+            <p id="status">
+              Se termine dans
+            </p>
+            <p id="countdown">{remainingTime()}</p>
+          </div>
+        </Show>
+        <Show when={isAuctionEndedVal()}>
+          <p id="status">
+            Vente terminée
+          </p>
+        </Show>
       </div>
       <div>
         <div>
