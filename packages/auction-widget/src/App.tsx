@@ -101,10 +101,14 @@ function updateUser(user: UserType, propertyId: string) {
  * App component, base component of our auction widget
  * @param props - apiKey and propertyId
  */
-const App: Component<{ apiKey: string; propertyId: string }> = (props) => {
-  const { apiKey, propertyId } = props;
+const App: Component<{
+  apiKey: string;
+  propertyId: string;
+  environment: string;
+}> = (props) => {
+  const { apiKey, propertyId, environment } = props;
   // Initialize client and auction
-  client.initEIClient(apiKey, "local");
+  client.initEIClient(apiKey, environment);
   refreshAuction(propertyId);
 
   // Check URL if user is logged

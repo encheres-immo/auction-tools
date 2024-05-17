@@ -23,7 +23,15 @@ function initEIClient(userClientId: string, environment: string) {
       BASE_URL = `https://${DOMAIN}`;
       WS_URL = `wss://${DOMAIN}/api/socket`;
       break;
+    case "production":
+      DOMAIN = "encheres-immo.com";
+      BASE_URL = `https://${DOMAIN}`;
+      WS_URL = `wss://${DOMAIN}/api/socket`;
+      break;
     default:
+      console.log(
+        "Widget client: Unknown environment, defaulting to production."
+      );
       DOMAIN = "encheres-immo.com";
       BASE_URL = `https://${DOMAIN}`;
       WS_URL = `wss://${DOMAIN}/api/socket`;
@@ -215,11 +223,13 @@ async function getNextAuctionById(propertyId: string): Promise<AuctionType> {
         },
         { id: "", amount: 0, createdAt: "", newEndDate: 0, userAnonymousId: "" }
       );
-      const registration = data.registration ? {
-        isUserAllowed: data.registration.isUserAllowed,
-        isRegistrationAccepted: data.registration.isRegistrationAccepted,
-        isParticipant: data.registration.isParticipant,
-      } : null;
+      const registration = data.registration
+        ? {
+            isUserAllowed: data.registration.isUserAllowed,
+            isRegistrationAccepted: data.registration.isRegistrationAccepted,
+            isParticipant: data.registration.isParticipant,
+          }
+        : null;
       return {
         id: data.id,
         startDate: data.startDate,

@@ -9,6 +9,7 @@ const root = document.getElementById("auction-widget");
 // Get params from root element attributes
 const apiKey = root?.getAttribute("api-key") || "";
 const propertyId = root?.getAttribute("property-id") || "";
+const environment = root?.getAttribute("api-env") || "production";
 
 if (!(root instanceof HTMLElement)) {
   throw new Error(
@@ -26,4 +27,9 @@ if (propertyId == "") {
   );
 }
 
-render(() => <App apiKey={apiKey} propertyId={propertyId} />, root!);
+render(
+  () => (
+    <App apiKey={apiKey} propertyId={propertyId} environment={environment} />
+  ),
+  root!
+);
