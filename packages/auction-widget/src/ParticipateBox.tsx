@@ -40,7 +40,7 @@ const ParticipateBox: Component<{
     <div>
       <div class="section">
         <button
-          class="btn custom"
+          class="btn custom full"
           onClick={() => setIsOpenBox(!isOpenBox())}
         >
           Je veux participer
@@ -50,11 +50,10 @@ const ParticipateBox: Component<{
         <div>
           <CenteredModal
             title="Vous devez être connecté"
-            icon_class="fas fa-user-shield text-secondary text-lg"
-            icon_bg_class="bg-secondary bg-opacity-25"
+            icon_class="fas fa-user-lock"
             success={false}
           >
-            <div class="mt-5 flex flex-col space-y-2 sm:mt-6">
+            <div class="action">
               <button
                 class="btn custom"
                 onClick={connect()}
@@ -68,7 +67,7 @@ const ParticipateBox: Component<{
                   setIsOpenBox(false);
                 }}
               >
-                Je veux participer
+                Contacter l'agent
               </button>
               <button
                 class="btn"
@@ -83,23 +82,22 @@ const ParticipateBox: Component<{
       {isOpenAgentBox() && (
         <CenteredModal
           title="Demande de participation"
-          icon_bg_class={"bg-secondary bg-opacity-25"}
-          icon_class={"fad fa-gavel text-secondary text-2xl"}
+          icon_class={"fas fa-gavel"}
           success={false}
         >
-          <div class="mt-6 grid grid-cols-1 gap-2">
+          <div class="action">
             <a
-              class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
+              class="btn custom"
               href={"mailto:" + props.auction.agentEmail}
             >
-              <i class="fas fa-envelope mr-2"></i>
+              <i class="fas fa-envelope"></i>
               {props.auction.agentEmail}
             </a>
             <a
-              class="bg-secondary border-secondary active:ring-secondary group inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-medium leading-5 text-white hover:bg-opacity-80 active:ring-2"
+              class="btn custom"
               href={"tel:" + props.auction.agentPhone}
             >
-              <i class="fas fa-phone mr-2"></i>
+              <i class="fas fa-phone"></i>
               {props.auction.agentPhone}
             </a>
             <button

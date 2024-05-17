@@ -145,7 +145,6 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
           title="Vous êtes sur le point d'enchérir"
           success={false}
           icon_class=""
-          icon_bg_class=""
         >
           <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
             <div class="sm:flex sm:items-start">

@@ -40,9 +40,34 @@ Replace `YOUR API KEY` with your Enchères Immo API key and `PROPERTY ID` with t
 
 You can customize the widget by setting CSS variables in your website's stylesheet. Here are the available variables:
 
-***WORK IN PROGRESS.***
+| Variable name                      | Default value |
+| ---------------------------------- | ------------- |
+| `--auction-widget-highlight-color` | `#ef673d`     |
+| `--auction-widget-dark-color`      | `#002d40`     |
+| `--auction-widget-border-radius`   | `0.5rem`      |
+| `--auction-widget-base-font`       | `sans-serif`  |
+| `--auction-widget-title-font`      | `sans-serif`  |
+| `--auction-widget-countdown-font`  | `monospace`   |
 
-Also, as required by OAuth2, authentication pages are hosted on the Enchères Immo domain. You can customize the look and feel of these pages through your Enchères Immo "Custom Theme" settings.
+For example, to change the highlight color to blue, add the following CSS to your website's stylesheet:
+
+```css
+:root {
+  --auction-widget-highlight-color: blue;
+}
+```
+
+To override the default styles, you can also use the layer `@auction-widget` :
+
+```css
+@auction-widget {
+  .label {
+    border-radius: 1rem;
+  }
+}
+```
+
+Finally—as required by OAuth2—authentication pages are hosted on the Enchères Immo domain. You can customize the look and feel of these pages through your Enchères Immo "Custom Theme" settings.
 
 ## How to contribute
 
