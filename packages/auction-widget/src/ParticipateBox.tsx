@@ -67,7 +67,7 @@ const ParticipateBox: Component<{
                   setIsOpenBox(false);
                 }}
               >
-                Je veux participer
+                Contacter l'agent
               </button>
               <button
                 class="btn"
