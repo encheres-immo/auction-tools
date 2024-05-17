@@ -1,8 +1,8 @@
 import type { Component } from "solid-js";
 import { createStore } from "solid-js/store";
 import client from "@encheres-immo/widget-client";
-import { For, Show, Switch, Match, createSignal, createEffect } from "solid-js";
-import "../assets/app.css"
+import { Show, Switch, Match, createSignal } from "solid-js";
+import "../assets/app.css";
 
 import Auction from "./Auction.js";
 import Bid from "./Bid.js";
@@ -53,15 +53,12 @@ const [auction, setAuction] = createStore<AuctionType>({
   },
 });
 
-// CONFIG
-const CLIENT_ID = "2a89e5ef-996e-4c5c-8a0e-5226698755e4";
-const PROPERTY_ID = "111d4754-056e-4167-8ba2-0041501bc0e7";
-
-client.initEIClient(CLIENT_ID, "local");
-
-function refreshAuction() {
-  console.log("refreshAuction");
-  client.getNextAuctionById(PROPERTY_ID).then((auction: AuctionType) => {
+/**
+ * Refresh auction data and subscribe to auction events (new bid, end of auction)
+ * @param propertyId - retreive next auction data for this property
+ */
+function refreshAuction(propertyId: string) {
+  client.getNextAuctionById(propertyId).then((auction: AuctionType) => {
     console.log("Auction:", auction);
     setAuction(auction);
     setBids(auction.bids);
@@ -89,20 +86,33 @@ function refreshAuction() {
   });
 }
 
-refreshAuction();
+/**
+ * Update user data and refresh auction data based on user permissions
+ * @param user - user to update
+ * @param propertyId - refresh auction data for this property
+ */
+function updateUser(user: UserType, propertyId: string) {
+  setUser(user);
+  refreshAuction(propertyId);
+  setIsLogging(false);
+}
 
-const App: Component = () => {
+/**
+ * App component, base component of our auction widget
+ * @param props - apiKey and propertyId
+ */
+const App: Component<{ apiKey: string; propertyId: string }> = (props) => {
+  const { apiKey, propertyId } = props;
+  // Initialize client and auction
+  client.initEIClient(apiKey, "local");
+  refreshAuction(propertyId);
+
+  // Check URL if user is logged
   const url = window.location.href;
   const params = new URLSearchParams(url.split("?")[1]);
   const code = params.get("code");
   if (code != "" && code != null) {
     setIsLogging(true);
-  }
-
-  function updateUser(user: UserType) {
-    setUser(user);
-    refreshAuction();
-    setIsLogging(false);
   }
 
   return (
@@ -111,9 +121,11 @@ const App: Component = () => {
         <div>
           <Show when={auction.id != ""}>
             <Auction auction={auction} user={user()} />
-            <Show 
+            <Show
               when={
-                (!isLogged() || isLogging() || (isLogged() && auction.registration == null)) &&
+                (!isLogged() ||
+                  isLogging() ||
+                  (isLogged() && auction.registration == null)) &&
                 (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
               }
             >
@@ -121,14 +133,16 @@ const App: Component = () => {
                 setterIsLogged={setIsLogged}
                 isLogging={isLogging()}
                 auction={auction}
-                updateUser={updateUser}
+                updateUser={updateUser(user(), propertyId)}
               />
             </Show>
             <Switch>
               <Match
                 when={
                   isLogged() &&
-                  auction.registration && auction.registration.isRegistrationAccepted && auction.registration.isParticipant &&
+                  auction.registration &&
+                  auction.registration.isRegistrationAccepted &&
+                  auction.registration.isParticipant &&
                   isAuctionInProgress(auction)
                 }
               >
@@ -138,21 +152,29 @@ const App: Component = () => {
                 when={
                   isLogged() &&
                   auction.registration &&
-                  auction.registration.isRegistrationAccepted && !auction.registration.isParticipant &&
+                  auction.registration.isRegistrationAccepted &&
+                  !auction.registration.isParticipant &&
                   isAuctionInProgress(auction)
                 }
               >
-                <p class="note">Vous êtes observateur pour cette vente. Vous ne pouvez pas enchérir.</p>
+                <p class="note">
+                  Vous êtes observateur pour cette vente. Vous ne pouvez pas
+                  enchérir.
+                </p>
               </Match>
               <Match
                 when={
                   isLogged() &&
                   auction.registration &&
-                  auction.registration.isRegistrationAccepted && !auction.registration.isParticipant &&
+                  auction.registration.isRegistrationAccepted &&
+                  !auction.registration.isParticipant &&
                   isAuctionNotStarted(auction)
                 }
               >
-                <p class="note">Votre demande d'observation pour cette vente a été acceptée. Attendez le début de l'enchère pour voir les participations.</p>
+                <p class="note">
+                  Votre demande d'observation pour cette vente a été acceptée.
+                  Attendez le début de l'enchère pour voir les participations.
+                </p>
               </Match>
               <Match
                 when={
@@ -162,16 +184,40 @@ const App: Component = () => {
                   isAuctionNotStarted(auction)
                 }
               >
-                <p class="note">Votre demande de participation pour cette vente a été acceptée. Attendez le début de l'enchère pour enchérir.</p>
+                <p class="note">
+                  Votre demande de participation pour cette vente a été
+                  acceptée. Attendez le début de l'enchère pour enchérir.
+                </p>
               </Match>
-              <Match when={isLogged() && auction.registration && auction.registration.isRegistrationAccepted === false}>
-                <p class="note">Votre demande de participation pour cette vente a été refusée.</p>
+              <Match
+                when={
+                  isLogged() &&
+                  auction.registration &&
+                  auction.registration.isRegistrationAccepted === false
+                }
+              >
+                <p class="note">
+                  Votre demande de participation pour cette vente a été refusée.
+                </p>
               </Match>
-              <Match when={isLogged() && auction.registration && auction.registration.isRegistrationAccepted == null}>
-                <p class="note">Votre demande de participation a été transmise à l'agent responsable du bien. Vous serez informé par email lorsqu'elle sera validée.</p>
+              <Match
+                when={
+                  isLogged() &&
+                  auction.registration &&
+                  auction.registration.isRegistrationAccepted == null
+                }
+              >
+                <p class="note">
+                  Votre demande de participation a été transmise à l'agent
+                  responsable du bien. Vous serez informé par email lorsqu'elle
+                  sera validée.
+                </p>
               </Match>
               <Match when={isLogged() && !auction.registration}>
-                <p class="note">Vous n'êtes pas inscrit à cette vente, veuillez contacter l'agent responsable.</p>
+                <p class="note">
+                  Vous n'êtes pas inscrit à cette vente, veuillez contacter
+                  l'agent responsable.
+                </p>
               </Match>
             </Switch>
             <Show
