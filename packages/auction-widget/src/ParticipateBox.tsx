@@ -38,9 +38,9 @@ const ParticipateBox: Component<{
   const [isOpenAgentBox, setIsOpenAgentBox] = createSignal(false);
   return (
     <div>
-      <div class="section">
+      <div class="auction-widget-section">
         <button
-          class="btn custom full"
+          class="auction-widget-btn auction-widget-custom auction-widget-full"
           onClick={() => setIsOpenBox(!isOpenBox())}
         >
           Je veux participer
@@ -53,15 +53,15 @@ const ParticipateBox: Component<{
             icon_class="fas fa-user-lock"
             success={false}
           >
-            <div class="action">
+            <div class="auction-widget-action">
               <button
-                class="btn custom"
+                class="auction-widget-btn auction-widget-custom"
                 onClick={connect()}
               >
                 Se connecter
               </button>
               <button
-                class="btn custom"
+                class="auction-widget-btn auction-widget-custom"
                 onClick={() => {
                   setIsOpenAgentBox(true);
                   setIsOpenBox(false);
@@ -70,7 +70,7 @@ const ParticipateBox: Component<{
                 Contacter l'agent
               </button>
               <button
-                class="btn"
+                class="auction-widget-btn"
                 onClick={() => setIsOpenBox(false)}
               >
                 Annuler
@@ -85,23 +85,23 @@ const ParticipateBox: Component<{
           icon_class={"fas fa-gavel"}
           success={false}
         >
-          <div class="action">
+          <div class="auction-widget-action">
             <a
-              class="btn custom"
+              class="auction-widget-btn auction-widget-custom"
               href={"mailto:" + props.auction.agentEmail}
             >
               <i class="fas fa-envelope"></i>
               {props.auction.agentEmail}
             </a>
             <a
-              class="btn custom"
+              class="auction-widget-btn auction-widget-custom"
               href={"tel:" + props.auction.agentPhone}
             >
               <i class="fas fa-phone"></i>
               {props.auction.agentPhone}
             </a>
             <button
-              class="btn"
+              class="auction-widget-btn"
               onClick={() => setIsOpenAgentBox(false)}
             >
               Annuler

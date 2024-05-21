@@ -72,52 +72,52 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
 
   return (
     <div>
-      <div id="header">
+      <div id="auction-widget-header">
         <Show when={isAuctionNotStartedVal()}>
           <div>
-            <p id="status">
+            <p id="auction-widget-status">
               Démarre dans
             </p>
-            <p id="countdown">{remainingTime()}</p>
+            <p id="auction-widget-countdown">{remainingTime()}</p>
           </div>
         </Show>
         <Show when={isAuctionInProgressVal()}>
           <div>
-            <p id="status">
+            <p id="auction-widget-status">
               Se termine dans
             </p>
-            <p id="countdown">{remainingTime()}</p>
+            <p id="auction-widget-countdown">{remainingTime()}</p>
           </div>
         </Show>
         <Show when={isAuctionEndedVal()}>
-          <p id="status">
+          <p id="auction-widget-status">
             Vente terminée
           </p>
         </Show>
       </div>
       <div>
         <div>
-          <div id="description">
+          <div id="auction-widget-description">
             <div>
-              <p class="detail label">Début</p>
-              <p class="detail">{formatDate(props.auction.startDate)} </p>
+              <p class="auction-widget-detail auction-widget-label">Début</p>
+              <p class="auction-widget-detail">{formatDate(props.auction.startDate)} </p>
             </div>
             <div>
-              <p class="detail label">Fin</p>
-              <p class="detail">{formatDate(props.auction.endDate)}</p>
+              <p class="auction-widget-detail auction-widget-label">Fin</p>
+              <p class="auction-widget-detail">{formatDate(props.auction.endDate)}</p>
             </div>
             <div>
-              <p class="detail label">
+              <p class="auction-widget-detail auction-widget-label">
                 Prix de départ
               </p>
-              <p class="detail accent">{displayAmountWithCurrency(props.auction.startingPrice)} </p>
+              <p class="auction-widget-detail auction-widget-accent">{displayAmountWithCurrency(props.auction.startingPrice)} </p>
             </div>
             <div>
-              <p class="detail label">Palier</p>
-              <p class="detail accent">{displayAmountWithCurrency(props.auction.step)}</p>
+              <p class="auction-widget-detail auction-widget-label">Palier</p>
+              <p class="auction-widget-detail auction-widget-accent">{displayAmountWithCurrency(props.auction.step)}</p>
             </div>
           </div>
-          <div class="section border-t">
+          <div class="auction-widget-section auction-widget-border-t">
             <div>
               <Show
                 when={
@@ -126,17 +126,17 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
                 }
                 fallback={
                   <div>
-                    <p class="detail label">
+                    <p class="auction-widget-detail auction-widget-label">
                       Vente privée
                     </p>
-                    <p class="detail">Inscrivez-vous pour voir les participations</p>
+                    <p class="auction-widget-detail">Inscrivez-vous pour voir les participations</p>
                   </div>
                 }
               >
-                <p class="detail label">
+                <p class="auction-widget-detail auction-widget-label">
                   Meilleure offre
                 </p>
-                <p class="detail accent">
+                <p class="auction-widget-detail auction-widget-accent">
                   {displayAmountWithCurrency(
                     props.auction.highestBid.amount,
                     props.auction.currency

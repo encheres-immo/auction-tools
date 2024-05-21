@@ -120,7 +120,7 @@ const App: Component<{
   }
 
   return (
-    <div id="box">
+    <div id="auction-widget-box">
       <div>
         <div>
           <Show when={auction.id != ""}>
@@ -161,7 +161,7 @@ const App: Component<{
                   isAuctionInProgress(auction)
                 }
               >
-                <p class="note">
+                <p class="auction-widget-note">
                   Vous êtes observateur pour cette vente. Vous ne pouvez pas
                   enchérir.
                 </p>
@@ -175,7 +175,7 @@ const App: Component<{
                   isAuctionNotStarted(auction)
                 }
               >
-                <p class="note">
+                <p class="auction-widget-note">
                   Votre demande d'observation pour cette vente a été acceptée.
                   Attendez le début de l'enchère pour voir les participations.
                 </p>
@@ -188,7 +188,7 @@ const App: Component<{
                   isAuctionNotStarted(auction)
                 }
               >
-                <p class="note">
+                <p class="auction-widget-note">
                   Votre demande de participation pour cette vente a été
                   acceptée. Attendez le début de l'enchère pour enchérir.
                 </p>
@@ -200,7 +200,7 @@ const App: Component<{
                   auction.registration.isRegistrationAccepted === false
                 }
               >
-                <p class="note">
+                <p class="auction-widget-note">
                   Votre demande de participation pour cette vente a été refusée.
                 </p>
               </Match>
@@ -211,14 +211,14 @@ const App: Component<{
                   auction.registration.isRegistrationAccepted == null
                 }
               >
-                <p class="note">
+                <p class="auction-widget-note">
                   Votre demande de participation a été transmise à l'agent
                   responsable du bien. Vous serez informé par email lorsqu'elle
                   sera validée.
                 </p>
               </Match>
               <Match when={isLogged() && !auction.registration}>
-                <p class="note">
+                <p class="auction-widget-note">
                   Vous n'êtes pas inscrit à cette vente, veuillez contacter
                   l'agent responsable.
                 </p>
@@ -226,8 +226,6 @@ const App: Component<{
             </Switch>
             <Show
               when={
-                auction.registration &&
-                auction.registration.isUserAllowed &&
                 (isAuctionEnded(auction) || isAuctionInProgress(auction))
               }
             >

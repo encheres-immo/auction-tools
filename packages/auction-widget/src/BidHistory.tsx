@@ -13,41 +13,41 @@ const BidHistory: Component<{
   user: UserType;
 }> = (props: any) => {
   return (
-    <div class="border-dark mx-4 border-t py-4">
-      <div class="text-dark relative text-sm tracking-wider">
-        <p class="font-barnes-title font-semibold uppercase">
+    <div class="auction-widget-section auction-widget-border-t">
+      <div id="auction-widget-history-area">
+        <p class="auction-widget-label">
           Historique des offres
         </p>
-        <ul class="mt-2 max-h-72 overflow-y-scroll">
+        <ul id="auction-widget-scroll">
           <For each={[...props.bids].sort((a, b) => b.amount - a.amount)}>
             {(bid, i) => (
-              <li class="animate-slidein mb-3 flex">
+              <li>
                 <Show
                   when={bid.participantId === props.user.id}
                   fallback={
-                    <div class="w-2/3 grow">
-                      <p class="text-dark text-xs leading-normal">
+                    <div>
+                      <p class="auction-widget-date">
                         Le {formatDate(bid.createdAt)}
                       </p>
-                      <span class="bg-secondary inline-flex cursor-default items-center rounded-full px-2.5 pb-[3px] pt-1 text-xs font-medium leading-4 text-white">
-                        <i class="fas fa-user pr-1"></i>
+                      <span class="auction-widget-user">
+                        <i class="fas fa-user"></i>
                         {bid.userAnonymousId}
                       </span>
                       a enchéri
                     </div>
                   }
                 >
-                  <div class="w-2/3 grow">
-                    <p class="text-dark text-xs leading-normal">
+                  <div>
+                    <p class="auction-widget-date">
                       Le {formatDate(bid.createdAt)}
                     </p>
-                    <span class="bg-secondary inline-flex cursor-default items-center rounded-full px-2.5 pb-[3px] pt-1 text-xs font-medium leading-4 text-white">
-                      <i class="fas fa-user pr-1"></i>Vous
+                    <span class="auction-widget-user">
+                      <i class="fas fa-user"></i>Vous
                     </span>
                     avez enchéri
                   </div>
                 </Show>
-                <p class="text-dark py-1 text-sm leading-loose">
+                <p id="auction-widget-bid">
                   {displayAmountWithCurrency(
                     bid.amount,
                     props.auction.currency
