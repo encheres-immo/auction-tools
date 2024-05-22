@@ -75,7 +75,11 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
     };
   }
 
-  function displayAmountOfStep(stepMultiplier: number, isNewBid: boolean, auction: AuctionType) {
+  function displayAmountOfStep(
+    stepMultiplier: number,
+    isNewBid: boolean,
+    auction: AuctionType
+  ) {
     let amount;
     if (isNewBid || (auction.bids && auction.bids.length > 0)) {
       amount = stepMultiplier * auction.step;
@@ -88,7 +92,9 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
   return (
     <div class="auction-widget-section auction-widget-border-t">
       <div id="auction-widget-bid">
-        <p class="auction-widget-detail auction-widget-label auction-widget-text-left">Enchère rapide</p>
+        <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
+          Enchère rapide
+        </p>
         <div id="auction-widget-fast-bid">
           <span>
             <button
@@ -116,10 +122,11 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
           </span>
         </div>
         <div class="auction-widget-history-area">
-          <p class="auction-widget-detail auction-widget-label auction-widget-text-left">Votre montant</p>
-          <div id="auction-widget-test">
+          <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
+            Votre montant
+          </p>
+          <div id="auction-widget-bid-form">
             <input
-              id="auction-widget-input"
               type="number"
               value={amount()}
               onInput={(e) => setAmount(parseInt(e.currentTarget.value))}
@@ -127,9 +134,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
               step="1"
             />
             <div id="auction-widget-currency">
-              <span>
-                {displayCurrencySymbol(props.auction.currency)}
-              </span>
+              <span>{displayCurrencySymbol(props.auction.currency)}</span>
             </div>
             <button
               class="auction-widget-btn auction-widget-custom"
@@ -149,19 +154,13 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
           <table id="auction-widget-table">
             <tbody>
               <tr>
-                <td class="auction-widget-td">
-                  Offre précédente
-                </td>
+                <td class="auction-widget-td">Offre précédente</td>
                 <td class="auction-widget-amount">
-                  {displayAmountWithCurrency(
-                    props.auction.highestBid.amount
-                  )}
+                  {displayAmountWithCurrency(props.auction.highestBid.amount)}
                 </td>
               </tr>
               <tr>
-                <td class="auction-widget-td">
-                  Votre offre
-                </td>
+                <td class="auction-widget-td">Votre offre</td>
                 <td class="auction-widget-amount">
                   {displayAmountWithCurrency(amount())}
                 </td>
@@ -181,10 +180,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
             >
               Confirmer
             </button>
-            <button
-              class="auction-widget-btn"
-              onClick={closeConfirmBid()}
-            >
+            <button class="auction-widget-btn" onClick={closeConfirmBid()}>
               Annuler
             </button>
           </div>
