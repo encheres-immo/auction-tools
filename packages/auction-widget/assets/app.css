@@ -173,8 +173,8 @@
   }
 
   #auction-widget-fast-bid {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     margin-bottom: 1rem;
     gap: .5rem;
   }
