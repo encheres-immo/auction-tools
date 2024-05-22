@@ -40,7 +40,7 @@ const ParticipateBox: Component<{
     <div>
       <div class="auction-widget-section">
         <button
-          class="auction-widget-btn auction-widget-custom auction-widget-full"
+          class="auction-widget-btn auction-widget-custom"
           onClick={() => setIsOpenBox(!isOpenBox())}
         >
           Je veux participer
@@ -61,19 +61,24 @@ const ParticipateBox: Component<{
                 Se connecter
               </button>
               <button
-                class="auction-widget-btn auction-widget-custom"
+                class="auction-widget-btn"
+                onClick={() => setIsOpenBox(false)}
+              >
+                Annuler
+              </button>
+            </div>
+            <div id="auction-widget-agent-link">
+              <p class="auction-widget-modal-note">
+                Pas encore de compte ?
+              </p>
+              <button
+                id="auction-widget-link"
                 onClick={() => {
                   setIsOpenAgentBox(true);
                   setIsOpenBox(false);
                 }}
               >
                 Contacter l'agent
-              </button>
-              <button
-                class="auction-widget-btn"
-                onClick={() => setIsOpenBox(false)}
-              >
-                Annuler
               </button>
             </div>
           </CenteredModal>
@@ -85,26 +90,22 @@ const ParticipateBox: Component<{
           icon_class={"fas fa-gavel"}
           success={false}
         >
-          <div class="auction-widget-action">
-            <a
-              class="auction-widget-btn auction-widget-custom"
-              href={"mailto:" + props.auction.agentEmail}
-            >
+          <div class="auction-widget-contact">
+            <a href={"mailto:" + props.auction.agentEmail}>
               <i class="fas fa-envelope"></i>
               {props.auction.agentEmail}
             </a>
-            <a
-              class="auction-widget-btn auction-widget-custom"
-              href={"tel:" + props.auction.agentPhone}
-            >
+            <a href={"tel:" + props.auction.agentPhone}>
               <i class="fas fa-phone"></i>
               {props.auction.agentPhone}
             </a>
+          </div>
+          <div class="auction-widget-action">
             <button
               class="auction-widget-btn"
               onClick={() => setIsOpenAgentBox(false)}
             >
-              Annuler
+              Fermer
             </button>
           </div>
         </CenteredModal>

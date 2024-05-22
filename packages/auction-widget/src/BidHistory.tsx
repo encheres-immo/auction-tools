@@ -47,7 +47,7 @@ const BidHistory: Component<{
                     avez enchéri
                   </div>
                 </Show>
-                <p id="auction-widget-bid">
+                <p id="auction-widget-bid-amount">
                   {displayAmountWithCurrency(
                     bid.amount,
                     props.auction.currency
