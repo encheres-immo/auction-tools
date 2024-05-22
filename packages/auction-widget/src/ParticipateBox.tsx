@@ -38,9 +38,9 @@ const ParticipateBox: Component<{
   const [isOpenAgentBox, setIsOpenAgentBox] = createSignal(false);
   return (
     <div>
-      <div class="section">
+      <div class="auction-widget-section">
         <button
-          class="btn custom full"
+          class="auction-widget-btn auction-widget-custom"
           onClick={() => setIsOpenBox(!isOpenBox())}
         >
           Je veux participer
@@ -53,27 +53,32 @@ const ParticipateBox: Component<{
             icon_class="fas fa-user-lock"
             success={false}
           >
-            <div class="action">
+            <div class="auction-widget-action">
               <button
-                class="btn custom"
+                class="auction-widget-btn auction-widget-custom"
                 onClick={connect()}
               >
                 Se connecter
               </button>
               <button
-                class="btn custom"
+                class="auction-widget-btn"
+                onClick={() => setIsOpenBox(false)}
+              >
+                Annuler
+              </button>
+            </div>
+            <div id="auction-widget-agent-link">
+              <p class="auction-widget-modal-note">
+                Pas encore de compte ?
+              </p>
+              <button
+                id="auction-widget-link"
                 onClick={() => {
                   setIsOpenAgentBox(true);
                   setIsOpenBox(false);
                 }}
               >
                 Contacter l'agent
-              </button>
-              <button
-                class="btn"
-                onClick={() => setIsOpenBox(false)}
-              >
-                Annuler
               </button>
             </div>
           </CenteredModal>
@@ -85,26 +90,22 @@ const ParticipateBox: Component<{
           icon_class={"fas fa-gavel"}
           success={false}
         >
-          <div class="action">
-            <a
-              class="btn custom"
-              href={"mailto:" + props.auction.agentEmail}
-            >
+          <div class="auction-widget-contact">
+            <a href={"mailto:" + props.auction.agentEmail}>
               <i class="fas fa-envelope"></i>
               {props.auction.agentEmail}
             </a>
-            <a
-              class="btn custom"
-              href={"tel:" + props.auction.agentPhone}
-            >
+            <a href={"tel:" + props.auction.agentPhone}>
               <i class="fas fa-phone"></i>
               {props.auction.agentPhone}
             </a>
+          </div>
+          <div class="auction-widget-action">
             <button
-              class="btn"
+              class="auction-widget-btn"
               onClick={() => setIsOpenAgentBox(false)}
             >
-              Annuler
+              Fermer
             </button>
           </div>
         </CenteredModal>

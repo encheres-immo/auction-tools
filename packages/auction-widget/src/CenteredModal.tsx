@@ -1,22 +1,22 @@
 import { Show, type Component, JSXElement } from 'solid-js';
 const CenteredModal: Component<{children: JSXElement, success: boolean | void, icon_class: string | void, title: string | void}> = (props: any) => {
     return (
-    <div class="section">
-      <div class="modal">
+    <div class="auction-widget-section">
+      <div class="auction-widget-modal">
 
-        <div id="bg">
-          <div id="bg-color" />
+        <div id="auction-widget-bg">
+          <div id="auction-widget-bg-color" />
         </div>
 
-        <div id="modal-content">
+        <div id="auction-widget-modal-content">
           <div>
               <Show when={props.success}>
-                  <div class="icon">
+                  <div class="auction-widget-icon">
                     <i class="fas fa-check" />
                   </div>
               </Show>
               <Show when={props.icon_class}>
-                  <div class="icon">
+                  <div class="auction-widget-icon">
                       <i class={props.icon_class} />
                   </div>
               </Show>
