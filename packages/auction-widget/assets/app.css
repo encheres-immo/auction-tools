@@ -127,12 +127,12 @@
   .auction-widget-modal {
     z-index: 50;
     position: fixed;
+    display: block;
     inset: 0;
     padding: 0 1rem 1.5rem;
   }
 
   #auction-widget-modal-content {
-    z-index: 50;
     overflow: hidden;
     padding: 1rem;
     border-radius: var(--auction-widget-border-radius);
