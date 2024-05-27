@@ -15,7 +15,7 @@ const BidHistory: Component<{
   return (
     <div class="auction-widget-section auction-widget-border-t">
       <div id="auction-widget-history-area">
-        <p class="auction-widget-label">
+        <p class="auction-widget-label auction-widget-detail">
           Historique des offres
         </p>
         <ul id="auction-widget-scroll">
