@@ -14,19 +14,14 @@
 
 @layer components {
   /* Base elements & reset */
-  #auction-widget-bg {
+  #auction-widget-modal-background {
     position: fixed;
-    inset: 0;
-    transition-property: opacity;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
-  }
-
-  #auction-widget-bg-color {
-    position: absolute;
     inset: 0;
     background-color: #6b7280;
     opacity: 0.75;
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
 
   #auction-widget-box {
@@ -127,12 +122,14 @@
   .auction-widget-modal {
     z-index: 50;
     position: fixed;
-    display: block;
-    inset: 0;
+    bottom: 2rem;
+    right: 0;
+    left: 0;
     padding: 0 1rem 1.5rem;
   }
 
   #auction-widget-modal-content {
+    z-index: 100;
     overflow: hidden;
     padding: 1rem;
     border-radius: var(--auction-widget-border-radius);
@@ -183,7 +180,6 @@
   }
 
   #auction-widget-history-area {
-    position: relative;
     font-size: 0.875rem;
     line-height: 1.25rem;
     letter-spacing: 0.05em;
@@ -399,6 +395,7 @@
     .auction-widget-modal {
       display: flex;
       padding: 0;
+      inset: 0;
       justify-content: center;
       align-items: center;
     }
