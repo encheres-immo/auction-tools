@@ -127,9 +127,7 @@ const App: Component<{
             <Auction auction={auction} user={user()} />
             <Show
               when={
-                (!isLogged() ||
-                  isLogging() ||
-                  (isLogged() && auction.registration == null)) &&
+                (!isLogged() || isLogging()) &&
                 (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
               }
             >
@@ -226,7 +224,8 @@ const App: Component<{
             </Switch>
             <Show
               when={
-                (isAuctionEnded(auction) || isAuctionInProgress(auction))
+                isAuctionEnded(auction) ||
+                (isAuctionInProgress(auction) && bids.length > 0)
               }
             >
               <BidHistory bids={bids} auction={auction} user={user()} />
