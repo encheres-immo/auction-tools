@@ -1,6 +1,6 @@
-@layer default, components, auction-widget;
+@layer auction-widget, auction-widget-override;
 
-@layer default {
+@layer auction-widget {
   :root {
     --auction-widget-highlight-color: #ef673d;
     --auction-widget-dark-color: #002d40;
@@ -10,9 +10,7 @@
     --auction-widget-title-font: sans-serif;
     --auction-widget-countdown-font: monospace;
   }
-}
 
-@layer components {
   /* Base elements & reset */
   #auction-widget-modal-background {
     position: fixed;

@@ -58,7 +58,7 @@ For example, to change the highlight color to blue, add the following CSS to you
 }
 ```
 
-To override the default styles, you can also use the layer `@auction-widget` :
+To override the default styles, you can also use the layer `@auction-widget-override` :
 
 ```css
 @auction-widget {
