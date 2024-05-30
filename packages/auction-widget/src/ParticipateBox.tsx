@@ -91,11 +91,11 @@ const ParticipateBox: Component<{
           success={false}
         >
           <div class="auction-widget-contact">
-            <a href={"mailto:" + props.auction.agentEmail}>
+            <a href={"mailto:" + props.auction.agentEmail} class="auction-widget-btn auction-widget-custom">
               <i class="fas fa-envelope"></i>
               {props.auction.agentEmail}
             </a>
-            <a href={"tel:" + props.auction.agentPhone}>
+            <a href={"tel:" + props.auction.agentPhone} class="auction-widget-btn auction-widget-custom">
               <i class="fas fa-phone"></i>
               {props.auction.agentPhone}
             </a>

@@ -101,21 +101,6 @@
     color: var(--auction-widget-highlight-color);
   }
 
-  .auction-widget-contact a {
-    font-size: 1rem;
-    line-height: 1.5rem;
-    text-decoration: none;
-    color: inherit;
-    display: inline-flex;
-    flex-direction: row;
-    align-content: center;
-    gap: 0.5rem;
-  }
-
-  .auction-widget-contact i {
-    color: var(--auction-widget-highlight-color);
-  }
-
   /* Containers */
   .auction-widget-modal {
     z-index: 50;
@@ -300,6 +285,7 @@
     font-size: 1.125rem;
     font-weight: 700;
     line-height: 1.5rem;
+    text-align: center;
   }
 
   #auction-widget-scroll li {
