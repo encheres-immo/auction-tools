@@ -75,24 +75,18 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
       <div id="auction-widget-header">
         <Show when={isAuctionNotStartedVal()}>
           <div>
-            <p id="auction-widget-status">
-              Démarre dans
-            </p>
+            <p id="auction-widget-status">Démarre dans</p>
             <p id="auction-widget-countdown">{remainingTime()}</p>
           </div>
         </Show>
         <Show when={isAuctionInProgressVal()}>
           <div>
-            <p id="auction-widget-status">
-              Se termine dans
-            </p>
+            <p id="auction-widget-status">Se termine dans</p>
             <p id="auction-widget-countdown">{remainingTime()}</p>
           </div>
         </Show>
         <Show when={isAuctionEndedVal()}>
-          <p id="auction-widget-status">
-            Vente terminée
-          </p>
+          <p id="auction-widget-status">Vente terminée</p>
         </Show>
       </div>
       <div>
@@ -100,36 +94,48 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
           <div id="auction-widget-description">
             <div>
               <p class="auction-widget-detail auction-widget-label">Début</p>
-              <p class="auction-widget-detail">{formatDate(props.auction.startDate)} </p>
+              <p class="auction-widget-detail">
+                {formatDate(props.auction.startDate)}{" "}
+              </p>
             </div>
             <div>
               <p class="auction-widget-detail auction-widget-label">Fin</p>
-              <p class="auction-widget-detail">{formatDate(props.auction.endDate)}</p>
+              <p class="auction-widget-detail">
+                {formatDate(props.auction.endDate)}
+              </p>
             </div>
             <div>
               <p class="auction-widget-detail auction-widget-label">
                 Prix de départ
               </p>
-              <p class="auction-widget-detail auction-widget-accent">{displayAmountWithCurrency(props.auction.startingPrice)} </p>
+              <p class="auction-widget-detail auction-widget-accent">
+                {displayAmountWithCurrency(props.auction.startingPrice)}{" "}
+              </p>
             </div>
             <div>
               <p class="auction-widget-detail auction-widget-label">Palier</p>
-              <p class="auction-widget-detail auction-widget-accent">{displayAmountWithCurrency(props.auction.step)}</p>
+              <p class="auction-widget-detail auction-widget-accent">
+                {displayAmountWithCurrency(props.auction.step)}
+              </p>
             </div>
           </div>
           <div class="auction-widget-section auction-widget-border-t">
             <div>
               <Show
                 when={
-                  !props.auction.isPrivate || 
-                  (props.auction.isPrivate && props.auction.registration && props.auction.registration.isUserAllowed)
+                  !props.auction.isPrivate ||
+                  (props.auction.isPrivate &&
+                    props.auction.registration &&
+                    props.auction.registration.isUserAllowed)
                 }
                 fallback={
                   <div>
                     <p class="auction-widget-detail auction-widget-label">
                       Vente privée
                     </p>
-                    <p class="auction-widget-detail">Inscrivez-vous pour voir les participations</p>
+                    <p class="auction-widget-detail">
+                      Inscrivez-vous pour voir les participations
+                    </p>
                   </div>
                 }
               >
@@ -137,10 +143,12 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
                   Meilleure offre
                 </p>
                 <p class="auction-widget-detail auction-widget-accent">
-                  {displayAmountWithCurrency(
-                    props.auction.highestBid.amount,
-                    props.auction.currency
-                  )}{" "}
+                  {props.auction.highestBid.participantId
+                    ? displayAmountWithCurrency(
+                        props.auction.highestBid.amount,
+                        props.auction.currency
+                      )
+                    : displayAmountWithCurrency(null, props.auction.currency)}
                 </p>
               </Show>
             </div>

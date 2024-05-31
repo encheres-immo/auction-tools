@@ -153,12 +153,14 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
         >
           <table id="auction-widget-table">
             <tbody>
-              <tr>
-                <td class="auction-widget-td">Offre précédente</td>
-                <td class="auction-widget-amount">
-                  {displayAmountWithCurrency(props.auction.highestBid.amount)}
-                </td>
-              </tr>
+              <Show when={props.auction.highestBid.participantId}>
+                <tr>
+                  <td class="auction-widget-td">Offre précédente</td>
+                  <td class="auction-widget-amount">
+                    {displayAmountWithCurrency(props.auction.highestBid.amount)}
+                  </td>
+                </tr>
+              </Show>
               <tr>
                 <td class="auction-widget-td">Votre offre</td>
                 <td class="auction-widget-amount">

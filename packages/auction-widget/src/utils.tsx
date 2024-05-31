@@ -19,18 +19,26 @@ function isAuctionEnded(auction: AuctionType): boolean {
   return now > endDate;
 }
 
+/**
+ * Display amount with currency symbol or code.
+ * if currency is not provided, default to €
+ * if amount not provided or 0, display --.
+ * @param amount - a number to display
+ * @param currency - all currency informations
+ */
 function displayAmountWithCurrency(
-  amount: number,
+  amount: number | null,
   currency?: CurrencyType
 ): string {
+  const amountStr = amount == null ? "--" : amount.toString();
   if (currency) {
     if (currency.isBefore) {
-      return `${displayCurrencySymbol(currency)} ${amount}`;
+      return `${displayCurrencySymbol(currency)} ${amountStr}`;
     } else {
-      return `${amount} ${displayCurrencySymbol(currency)}`;
+      return `${amountStr} ${displayCurrencySymbol(currency)}`;
     }
   } else {
-    return `${amount} €`;
+    return `${amountStr} €`;
   }
 }
 
