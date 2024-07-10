@@ -36,3 +36,10 @@ export type CurrencyType = {
 export type UserType = {
     id: string;
 }
+
+export type PropertyInfoType = {
+    propertyId?: string;
+    source?: string;
+    sourceAgencyId?: string;
+    sourceId?: string;
+}
