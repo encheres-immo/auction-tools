@@ -5,6 +5,7 @@ let BASE_URL: string = "";
 let WS_URL: string = "";
 let accessToken: string | null = null;
 let socket: Socket | null = null;
+let DOMAIN: string = "";
 
 // TODO: only connect if we have an access token
 // TODO: implement refresh token?
@@ -14,7 +15,7 @@ function initEIClient(userClientId: string, environment: string) {
   clientId = userClientId;
   switch (environment) {
     case "local":
-      let DOMAIN = "localhost:4000";
+      DOMAIN = "localhost:4000";
       BASE_URL = `http://${DOMAIN}`;
       WS_URL = `ws://${DOMAIN}/api/socket`;
       break;
