@@ -3,4 +3,8 @@
 "@encheres-immo/widget-client": minor
 ---
 
-Support of CRM to retrieve the next_auction for a given property. Also fix a bug: having a path in the URL didn't work (we always returned to the root of the domain). And also fix a bug support other domains (than localhost)
+You can now retrieve properties from a CRM by replacing `property-id` by `source` (e.g. `source="APIMO"`), `source-id` (the ID of the property in the CRM), and `source-agency-id` (the ID of the agency in the CRM).
+
+```html
+<div id="auction-widget" api-key="YOUR API KEY" source="APIMO" source-id="APIMO PROPERTY ID" source-agency-id="APIMO AGENCY ID"></div>
+```
