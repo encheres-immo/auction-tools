@@ -17,10 +17,10 @@
     "./types": "./dist/types.js"
   },
   "devDependencies": {
-    "@types/phoenix": "^1.6.4",
-    "typescript": "^5.4.5"
+    "@types/phoenix": "^1.6.5",
+    "typescript": "^5.6.3"
   },
   "dependencies": {
-    "phoenix": "^1.7.12"
+    "phoenix": "^1.7.14"
   }
 }
