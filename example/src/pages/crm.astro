@@ -1,0 +1,76 @@
+---
+import Layout from "../layouts/Layout.astro"
+import "@encheres-immo/auction-widget/dist/auction-widget.css"
+---
+
+<Layout title="Welcome to Astro.">
+  <main>
+    <h1>Agence <span class="text-gradient">Tartempion</span></h1>
+    <!-- get key & id from env variables -->
+    <div
+      id="auction-widget"
+      api-key={import.meta.env.API_KEY}
+      api-env={import.meta.env.API_ENV}
+      source={import.meta.env.SOURCE}
+      source-id={import.meta.env.SOURCE_ID}
+      source-agency-id={import.meta.env.SOURCE_AGENCY_ID}
+    >
+    </div>
+    <link
+      rel="stylesheet"
+      href="http://localhost:4000/webfonts/font-awesome.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
+  </main>
+
+  <style>
+    :root {
+      --auction-widget-highlight-color: orange;
+      --auction-widget-dark-color: blueviolet;
+      --auction-widget-border-radius: 0px;
+      --auction-widget-btn-radius: 50px;
+      --auction-widget-base-font: "Nunito", sans-serif;
+      --auction-widget-title-font: "Nunito", sans-serif;
+    }
+
+    main {
+      margin: auto;
+      padding: 1rem;
+      max-width: 500px;
+      font-size: 20px;
+      line-height: 1.6;
+      font-family: "Nunito", sans-serif;
+    }
+    .astro-a {
+      position: absolute;
+      top: -32px;
+      left: 50%;
+      transform: translatex(-50%);
+      width: 220px;
+      height: auto;
+      z-index: -1;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .text-gradient {
+      background-image: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 400%;
+      background-position: 0%;
+    }
+  </style>
+  <script>
+    import "@encheres-immo/auction-widget"
+  </script>
+</Layout>

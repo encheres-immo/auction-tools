@@ -1,10 +1,11 @@
 import { Socket } from "phoenix";
-import type { AuctionType, BidType, UserType } from "./types.js";
+import type { AuctionType, BidType, UserType, PropertyInfoType } from "./types.js";
 
 let BASE_URL: string = "";
 let WS_URL: string = "";
 let accessToken: string | null = null;
 let socket: Socket | null = null;
+let DOMAIN: string = "";
 
 // TODO: only connect if we have an access token
 // TODO: implement refresh token?
@@ -14,7 +15,7 @@ function initEIClient(userClientId: string, environment: string) {
   clientId = userClientId;
   switch (environment) {
     case "local":
-      let DOMAIN = "localhost:4000";
+      DOMAIN = "localhost:4000";
       BASE_URL = `http://${DOMAIN}`;
       WS_URL = `ws://${DOMAIN}/api/socket`;
       break;
@@ -79,10 +80,17 @@ async function authenticate() {
   const code = params.get("code");
 
   // const redirect_uri = encodeURIComponent(window.location.href);
+  const redirect_uri = window.location.href;
   // console.log(redirect_uri)
-  const redirect_uri = window.location.origin;
   // try to extract the oauth code from the query string
   if (code) {
+    // remove code details from URL
+    const url = window.location.href;
+    const parsedUrl = new URL(url);
+    parsedUrl.search = '';
+
+    window.history.replaceState({}, "", parsedUrl);
+
     // if there is a code in the query, then fetch the access token
     return fetch(`${BASE_URL}/oauth/token`, {
       method: "POST",
@@ -93,7 +101,7 @@ async function authenticate() {
         grant_type: "authorization_code",
         client_id: clientId,
         code: code,
-        redirect_uri: redirect_uri,
+        redirect_uri: window.location.href,
         code_verifier: localStorage.getItem("pkce_code_verifier"),
       }),
     })
@@ -101,8 +109,6 @@ async function authenticate() {
         return response.json();
       })
       .then((data) => {
-        // remove code details from URL
-        window.history.replaceState({}, "", "/");
 
         // with the access token, we can now access the protected resource
         localStorage.removeItem("pkce_code_verifier");
@@ -193,8 +199,11 @@ async function me(): Promise<UserType> {
     });
 }
 
-async function getNextAuctionById(propertyId: string): Promise<AuctionType> {
-  return fetch(`${BASE_URL}/api/v1/next_auction/${propertyId}`, {
+async function getNextAuctionById(propertyInfo: PropertyInfoType): Promise<AuctionType> {
+  const url = propertyInfo.propertyId ?
+    `${BASE_URL}/api/v1/next_auction/${propertyInfo.propertyId}` : 
+    `${BASE_URL}/api/v1/next_auction/${propertyInfo.source}/${propertyInfo.sourceAgencyId}/${propertyInfo.sourceId}`; 
+  return fetch(url, {
     headers: {
       Authorization: "Bearer " + accessToken,
     },

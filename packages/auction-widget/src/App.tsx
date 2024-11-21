@@ -12,6 +12,7 @@ import {
   AuctionType,
   BidType,
   UserType,
+  PropertyInfoType,
 } from "@encheres-immo/widget-client/types";
 import {
   isAuctionNotStarted,
@@ -55,10 +56,10 @@ const [auction, setAuction] = createStore<AuctionType>({
 
 /**
  * Refresh auction data and subscribe to auction events (new bid, end of auction)
- * @param propertyId - retreive next auction data for this property
+ * @param propertyInfo - retreive next auction data for this property
  */
-function refreshAuction(propertyId: string) {
-  client.getNextAuctionById(propertyId).then((auction: AuctionType) => {
+function refreshAuction(propertyInfo: PropertyInfoType) {
+  client.getNextAuctionById(propertyInfo).then((auction: AuctionType) => {
     console.log("Auction:", auction);
     setAuction(auction);
     setBids(auction.bids);
@@ -89,11 +90,11 @@ function refreshAuction(propertyId: string) {
 /**
  * Update user data and refresh auction data based on user permissions
  * @param user - user to update
- * @param propertyId - refresh auction data for this property
+ * @param propertyInfo - refresh auction data for this property
  */
-function updateUser(user: UserType, propertyId: string) {
+function updateUser(user: UserType, propertyInfo: PropertyInfoType) {
   setUser(user);
-  refreshAuction(propertyId);
+  refreshAuction(propertyInfo);
   setIsLogging(false);
 }
 
@@ -103,13 +104,13 @@ function updateUser(user: UserType, propertyId: string) {
  */
 const App: Component<{
   apiKey: string;
-  propertyId: string;
+  propertyInfo: PropertyInfoType;
   environment: string;
 }> = (props) => {
-  const { apiKey, propertyId, environment } = props;
+  const { apiKey, propertyInfo, environment } = props;
   // Initialize client and auction
   client.initEIClient(apiKey, environment);
-  refreshAuction(propertyId);
+  refreshAuction(propertyInfo);
 
   // Check URL if user is logged
   const url = window.location.href;
@@ -135,7 +136,7 @@ const App: Component<{
                 setterIsLogged={setIsLogged}
                 isLogging={isLogging()}
                 auction={auction}
-                updateUser={updateUser(user(), propertyId)}
+                updateUser={updateUser(user(), propertyInfo)}
               />
             </Show>
             <Switch>
