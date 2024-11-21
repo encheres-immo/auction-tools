@@ -1,5 +1,29 @@
 # @encheres-immo/auction-widget
 
+## 0.3.0
+
+### Minor Changes
+
+- 435e9a1: You can now retrieve properties from a CRM by replacing `property-id` by `source` (e.g. `source="APIMO"`), `source-id` (the ID of the property in the CRM), and `source-agency-id` (the ID of the agency in the CRM).
+
+  ```html
+  <div
+    id="auction-widget"
+    api-key="YOUR API KEY"
+    source="APIMO"
+    source-id="APIMO PROPERTY ID"
+    source-agency-id="APIMO AGENCY ID"
+  ></div>
+  ```
+
+### Patch Changes
+
+- 199980b: Fix a bug which prevented us from using other domains than localhost.
+- a3d4f0c: Differentiate the display when there is no amount versus a zero amount.
+- 199980b: Fix a bug where using a hash in the URL didn't work (we always returned to the root of the domain).
+- Updated dependencies [435e9a1]
+  - @encheres-immo/widget-client@0.3.0
+
 ## 0.2.1
 
 ### Patch Changes

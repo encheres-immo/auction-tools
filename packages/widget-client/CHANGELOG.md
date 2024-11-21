@@ -1,5 +1,21 @@
 # @encheres-immo/widget-client
 
+## 0.3.0
+
+### Minor Changes
+
+- 435e9a1: You can now retrieve properties from a CRM by replacing `property-id` by `source` (e.g. `source="APIMO"`), `source-id` (the ID of the property in the CRM), and `source-agency-id` (the ID of the agency in the CRM).
+
+  ```html
+  <div
+    id="auction-widget"
+    api-key="YOUR API KEY"
+    source="APIMO"
+    source-id="APIMO PROPERTY ID"
+    source-agency-id="APIMO AGENCY ID"
+  ></div>
+  ```
+
 ## 0.2.0
 
 ### Minor Changes
