@@ -28,13 +28,17 @@ This widget is also available as a standalone script. To use it, add the followi
 
 ## Usage
 
-To use the widget, add the following HTML tag to your website:
+To use the widget, add the following HTML tag to your website, and replace `YOUR API KEY` with your Enchères Immo API key and `PROPERTY ID` with the Enchères Immo's ID of the property you want to display.
 
 ```html
 <div id="auction-widget" api-key="YOUR API KEY" property-id="PROPERTY ID"></div>
 ```
 
-Replace `YOUR API KEY` with your Enchères Immo API key and `PROPERTY ID` with the ID of the property you want to display.
+Alternatively, you can retrieve your property from a CRM by replacing `property-id` by `source` (e.g. `source="APIMO"`), `source-id` (the ID of the property in the CRM), and `source-agency-id` (the ID of the agency in the CRM).
+
+```html
+<div id="auction-widget" api-key="YOUR API KEY" source="APIMO" source-id="APIMO PROPERTY ID" source-agency-id="APIMO AGENCY ID"></div>
+```
 
 ## Customization
 
