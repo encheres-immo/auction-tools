@@ -105,9 +105,9 @@ function updateUser(user: UserType, propertyInfo: PropertyInfoType) {
 const App: Component<{
   apiKey: string;
   propertyInfo: PropertyInfoType;
-  environment: string;
+  environment: "local" | "staging" | "production";
 }> = (props) => {
-  const { apiKey, propertyInfo, environment } = props;
+  const { apiKey, propertyInfo, environment = "production" } = props;
   // Initialize client and auction
   client.initEIClient(apiKey, environment);
   refreshAuction(propertyInfo);
