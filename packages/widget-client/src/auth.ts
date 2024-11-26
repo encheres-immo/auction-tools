@@ -1,5 +1,6 @@
 import { config } from "../index.js";
 import type { UserType } from "../types.js";
+import { createHash, randomBytes } from "crypto";
 
 /**
  * Handles the OAuth2 authentication process by either fetching an access token using an
@@ -95,7 +96,15 @@ export async function me(): Promise<UserType | undefined> {
 function sha256(plain: string) {
   const encoder = new TextEncoder();
   const data = encoder.encode(plain);
-  return window.crypto.subtle.digest("SHA-256", data);
+  
+  if (typeof window !== "undefined" && window.crypto && window.crypto.subtle) {
+    return window.crypto.subtle.digest("SHA-256", data);
+  } else {
+    // When using Node.js (e.g., Github Actions) use crypto.createHash
+    const hash = createHash("sha256");
+    hash.update(new Uint8Array(data));
+    return Promise.resolve(hash.digest());
+  }
 }
 
 /**
@@ -121,8 +130,16 @@ async function pkceChallengeFromVerifier(v: string) {
  */
 function generateRandomString() {
   const array = new Uint32Array(28);
-  window.crypto.getRandomValues(array);
-  return Array.from(array, (dec) => ("0" + dec.toString(16)).substr(-2)).join(
-    ""
-  );
+
+  if (typeof window !== "undefined" && window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(array);
+  } else {
+    // When using Node.js (e.g., Github Actions) use crypto.randomBytes
+    const randomValues = randomBytes(array.length * 4);
+    for (let i = 0; i < array.length; i++) {
+      array[i] = randomValues.readUInt32BE(i * 4);
+    }
+  }
+
+  return Array.from(array, (dec) => ("0" + dec.toString(16)).substr(-2)).join("");
 }
