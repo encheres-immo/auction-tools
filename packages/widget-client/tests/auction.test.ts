@@ -189,7 +189,9 @@ describe("getNextAuctionById", () => {
       json: () => Promise.resolve({ error: "Unauthorized" }),
     });
 
-    const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const consoleLogSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     await expect(getNextAuctionById(propertyInfo)).rejects.toThrow(
       "Unauthorized"

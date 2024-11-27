@@ -73,13 +73,19 @@ describe("Authentication", () => {
   });
 
   it("should redirect to authorization server when no code in URL", async () => {
-    const assignSpy = vi.spyOn(window.location, 'assign');
-  
+    const assignSpy = vi.spyOn(window.location, "assign");
+
     await authenticate();
-  
-    expect(assignSpy).toHaveBeenCalledWith(expect.stringContaining('/oauth/authorize'));
-    expect(assignSpy).toHaveBeenCalledWith(expect.stringContaining('response_type=code'));
-    expect(assignSpy).toHaveBeenCalledWith(expect.stringContaining('client_id=test-client-id'));
+
+    expect(assignSpy).toHaveBeenCalledWith(
+      expect.stringContaining("/oauth/authorize")
+    );
+    expect(assignSpy).toHaveBeenCalledWith(
+      expect.stringContaining("response_type=code")
+    );
+    expect(assignSpy).toHaveBeenCalledWith(
+      expect.stringContaining("client_id=test-client-id")
+    );
   });
 });
 
@@ -99,9 +105,9 @@ describe("User Information", () => {
       status: 200,
       json: () => Promise.resolve({ id: "user-id" }),
     });
-  
+
     const user = await me();
-  
+
     // Check that fetch was called with correct parameters
     expect(fetch).toHaveBeenCalledWith(
       "http://localhost:4000/api/v1/me",
@@ -111,10 +117,10 @@ describe("User Information", () => {
         },
       })
     );
-  
+
     // Check that user data is returned correctly
     expect(user).toEqual({ id: "user-id" });
-  });  
+  });
 
   it("should handle unauthorized response", async () => {
     // Mock fetch to return 401 Unauthorized
@@ -123,7 +129,9 @@ describe("User Information", () => {
       json: () => Promise.resolve({ error: "Unauthorized" }),
     });
 
-    const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const consoleLogSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     const user = await me();
 
