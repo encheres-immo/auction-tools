@@ -114,7 +114,9 @@ describe("placeBidOnAuction", () => {
       json: () => Promise.resolve({ error: "Unauthorized" }),
     });
 
-    const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const consoleLogSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     await expect(placeBidOnAuction(auction, 100000)).rejects.toThrow(
       "Unauthorized"

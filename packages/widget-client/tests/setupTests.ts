@@ -1,16 +1,15 @@
 import { vi, Mock } from "vitest";
 import { config } from "../index.js";
 
-  // Reset configuration before each test
-  export function reset_config(accessToken: string | null = null) {
-    config.BASE_URL = "http://localhost:4000";
-    config.WS_URL = "ws://localhost:4000/api/socket";
-    config.clientId = "test-client-id";
-    config.accessToken = accessToken;
-  
-    (fetch as Mock).mockReset();
-    vi.spyOn(console, "log").mockImplementation(() => {});
-  }
+// Reset configuration before each test
+export function reset_config(accessToken: string | null = null) {
+  config.BASE_URL = "http://localhost:4000";
+  config.WS_URL = "ws://localhost:4000/api/socket";
+  config.clientId = "test-client-id";
+  config.accessToken = accessToken;
+
+  (fetch as Mock).mockReset();
+}
 
 // Mock global fetch function
 vi.stubGlobal("fetch", vi.fn());
