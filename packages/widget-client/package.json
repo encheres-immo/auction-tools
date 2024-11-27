@@ -19,8 +19,6 @@
   },
   "devDependencies": {
     "@types/phoenix": "^1.6.6",
-    "@vitest/runner": "^2.1.6",
-    "@vitest/ui": "^2.1.6",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.2",
     "vite": "^6.0.0",
