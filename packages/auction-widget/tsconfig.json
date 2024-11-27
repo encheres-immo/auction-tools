@@ -4,6 +4,7 @@
     "outDir": "dist",
     "noEmit": false,
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "types": ["@testing-library/jest-dom"]
   }
 }

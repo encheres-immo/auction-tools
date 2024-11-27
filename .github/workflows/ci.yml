@@ -33,3 +33,7 @@ jobs:
       - name: Run Widget Client Tests
         run: pnpm run test
         working-directory: packages/widget-client
+
+      - name: Run Auction Widget Tests
+        run: pnpm run test
+        working-directory: packages/auction-widget

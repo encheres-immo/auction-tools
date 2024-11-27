@@ -1,12 +1,4 @@
-import {
-  Switch,
-  Match,
-  createSignal,
-  createEffect,
-  on,
-  type Component,
-  Show,
-} from "solid-js";
+import { createSignal, type Component, Show } from "solid-js";
 import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
 import {
   isAuctionNotStarted,
@@ -17,6 +9,9 @@ import {
   parseDate,
 } from "./utils.js";
 
+/**
+ * Display auction details and countdown.
+ */
 const Auction: Component<{ auction: AuctionType; user: UserType }> = (
   props
 ) => {
@@ -90,68 +85,66 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
         </Show>
       </div>
       <div>
-        <div>
-          <div id="auction-widget-description">
-            <div>
-              <p class="auction-widget-detail auction-widget-label">Début</p>
-              <p class="auction-widget-detail">
-                {formatDate(props.auction.startDate)}{" "}
-              </p>
-            </div>
-            <div>
-              <p class="auction-widget-detail auction-widget-label">Fin</p>
-              <p class="auction-widget-detail">
-                {formatDate(props.auction.endDate)}
-              </p>
-            </div>
-            <div>
-              <p class="auction-widget-detail auction-widget-label">
-                Prix de départ
-              </p>
-              <p class="auction-widget-detail auction-widget-accent">
-                {displayAmountWithCurrency(props.auction.startingPrice)}{" "}
-              </p>
-            </div>
-            <div>
-              <p class="auction-widget-detail auction-widget-label">Palier</p>
-              <p class="auction-widget-detail auction-widget-accent">
-                {displayAmountWithCurrency(props.auction.step)}
-              </p>
-            </div>
+        <div id="auction-widget-description">
+          <div>
+            <p class="auction-widget-detail auction-widget-label">Début</p>
+            <p class="auction-widget-detail">
+              {formatDate(props.auction.startDate)}{" "}
+            </p>
           </div>
-          <div class="auction-widget-section auction-widget-border-t">
-            <div>
-              <Show
-                when={
-                  !props.auction.isPrivate ||
-                  (props.auction.isPrivate &&
-                    props.auction.registration &&
-                    props.auction.registration.isUserAllowed)
-                }
-                fallback={
-                  <div>
-                    <p class="auction-widget-detail auction-widget-label">
-                      Vente privée
-                    </p>
-                    <p class="auction-widget-detail">
-                      Inscrivez-vous pour voir les participations
-                    </p>
-                  </div>
-                }
-              >
-                <p class="auction-widget-detail auction-widget-label">
-                  Meilleure offre
-                </p>
-                <p class="auction-widget-detail auction-widget-accent">
-                  {props.auction.highestBid.participantId
-                    ? displayAmountWithCurrency(
-                        props.auction.highestBid.amount,
-                        props.auction.currency
-                      )
-                    : displayAmountWithCurrency(null, props.auction.currency)}
-                </p>
-              </Show>
-            </div>
+          <div>
+            <p class="auction-widget-detail auction-widget-label">Fin</p>
+            <p class="auction-widget-detail">
+              {formatDate(props.auction.endDate)}
+            </p>
+          </div>
+          <div>
+            <p class="auction-widget-detail auction-widget-label">
+              Prix de départ
+            </p>
+            <p class="auction-widget-detail auction-widget-accent">
+              {displayAmountWithCurrency(props.auction.startingPrice)}{" "}
+            </p>
+          </div>
+          <div>
+            <p class="auction-widget-detail auction-widget-label">Palier</p>
+            <p class="auction-widget-detail auction-widget-accent">
+              {displayAmountWithCurrency(props.auction.step)}
+            </p>
+          </div>
+        </div>
+        <div class="auction-widget-section auction-widget-border-t">
+          <div>
+            <Show
+              when={
+                !props.auction.isPrivate ||
+                (props.auction.isPrivate &&
+                  props.auction.registration &&
+                  props.auction.registration.isUserAllowed)
+              }
+              fallback={
+                <div>
+                  <p class="auction-widget-detail auction-widget-label">
+                    Vente privée
+                  </p>
+                  <p class="auction-widget-detail">
+                    Inscrivez-vous pour voir les participations
+                  </p>
+                </div>
+              }
+            >
+              <p class="auction-widget-detail auction-widget-label">
+                Meilleure offre
+              </p>
+              <p class="auction-widget-detail auction-widget-accent">
+                {props.auction.highestBid.participantId
+                  ? displayAmountWithCurrency(
+                      props.auction.highestBid.amount,
+                      props.auction.currency
+                    )
+                  : displayAmountWithCurrency(null, props.auction.currency)}
+              </p>
+            </Show>
           </div>
         </div>
       </div>

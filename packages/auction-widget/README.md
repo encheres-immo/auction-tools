@@ -77,3 +77,13 @@ Finally—as required by OAuth2—authentication pages are hosted on the Enchèr
 ## How to contribute
 
 ***WORK IN PROGRESS.*** We will soon open-source this widget and provide guidelines on how to contribute. Stay tuned!
+
+### Useful commands
+
+All commands are run from the root of the package.
+
+| Command          | Description          |
+| ---------------- | -------------------- |
+| `pnpm install`   | Install dependencies |
+| `pnpm run build` | Build the widget     |
+| `pnpm run test`  | Run tests            |
