@@ -19,7 +19,7 @@ export async function getNextAuctionById(
   })
     .then((response) => {
       if (response.status === 401) {
-        console.log("Unauthorized");
+        console.error("Unauthorized");
         // Throw an error or return null to stop further processing
         throw new Error("Unauthorized");
       }
@@ -81,11 +81,10 @@ export async function getNextAuctionById(
       } as AuctionType;
     })
     .catch((err) => {
-      console.log("err", err);
+      console.error("err", err);
       throw err; // Rethrow the error to be handled by the caller
     });
 }
-
 
 /**
  * Connects to the Phoenix WebSocket channel for a specific Enchère Immo auction.
@@ -119,11 +118,10 @@ export function subscribeToAuction(
     channel
       .join()
       .receive("ok", (resp: any) => {
-        console.log("Joined successfully", resp);
         resolve(channel); // Resolve with the channel on successful join
       })
       .receive("error", (resp: any) => {
-        console.log("Unable to join", resp);
+        console.error("Unable to join", resp);
         if (config.socket != null) {
           config.socket.disconnect();
         }

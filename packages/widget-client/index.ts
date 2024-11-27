@@ -22,7 +22,7 @@ export const config = {
 /**
  * Initializes the Enchère Immo client by setting the client ID and configuring the
  * appropriate URLs for the specified environment.
- * 
+ *
  * Note: environment can be changed to "local" and "staging" for internal use.
  * If you are an external user, please only use "production".
  */

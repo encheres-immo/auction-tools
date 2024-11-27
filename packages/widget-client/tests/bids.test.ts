@@ -26,17 +26,17 @@ describe("placeBidOnAuction", () => {
         createdAt: 0,
         newEndDate: 0,
         userAnonymousId: "",
-        participantId: ""
+        participantId: "",
       },
       agentEmail: "",
       agentPhone: "",
       currency: {
         isBefore: false,
         symbol: "",
-        code: ""
+        code: "",
       },
       registration: null,
-      isPrivate: false
+      isPrivate: false,
     };
 
     const mockResponse = {
@@ -96,32 +96,33 @@ describe("placeBidOnAuction", () => {
         createdAt: 0,
         newEndDate: 0,
         userAnonymousId: "",
-        participantId: ""
+        participantId: "",
       },
       agentEmail: "",
       agentPhone: "",
       currency: {
         isBefore: false,
         symbol: "",
-        code: ""
+        code: "",
       },
       registration: null,
-      isPrivate: false
+      isPrivate: false,
     };
-    
+
     (fetch as Mock).mockResolvedValue({
       status: 401,
       json: () => Promise.resolve({ error: "Unauthorized" }),
     });
-  
+
     const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-  
-    await expect(placeBidOnAuction(auction, 100000)).rejects.toThrow("Unauthorized");
-  
+
+    await expect(placeBidOnAuction(auction, 100000)).rejects.toThrow(
+      "Unauthorized"
+    );
+
     // Verify 'Unauthorized' is logged
     expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
   });
-    
 
   it("should handle validation errors with status 422", async () => {
     const auction: AuctionType = {
@@ -137,17 +138,17 @@ describe("placeBidOnAuction", () => {
         createdAt: 0,
         newEndDate: 0,
         userAnonymousId: "",
-        participantId: ""
+        participantId: "",
       },
       agentEmail: "",
       agentPhone: "",
       currency: {
         isBefore: false,
         symbol: "",
-        code: ""
+        code: "",
       },
       registration: null,
-      isPrivate: false
+      isPrivate: false,
     };
 
     const errorData = { errors: { amount: ["must be greater than 0"] } };
@@ -174,26 +175,28 @@ describe("placeBidOnAuction", () => {
         createdAt: 0,
         newEndDate: 0,
         userAnonymousId: "",
-        participantId: ""
+        participantId: "",
       },
       agentEmail: "",
       agentPhone: "",
       currency: {
         isBefore: false,
         symbol: "",
-        code: ""
+        code: "",
       },
       registration: null,
-      isPrivate: false
+      isPrivate: false,
     };
 
     const mockError = new Error("Network Error");
 
     (fetch as Mock).mockRejectedValue(mockError);
 
-    await expect(placeBidOnAuction(auction, 100000)).rejects.toThrow("Network Error");
+    await expect(placeBidOnAuction(auction, 100000)).rejects.toThrow(
+      "Network Error"
+    );
 
     // Verify error is logged
-    expect(console.log).toHaveBeenCalledWith("err", mockError);
+    expect(console.error).toHaveBeenCalledWith("err", mockError);
   });
 });

@@ -183,20 +183,22 @@ describe("getNextAuctionById", () => {
     const propertyInfo: PropertyInfoType = {
       propertyId: "property-123",
     };
-  
+
     (fetch as Mock).mockResolvedValue({
       status: 401,
       json: () => Promise.resolve({ error: "Unauthorized" }),
     });
-  
+
     const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-  
-    await expect(getNextAuctionById(propertyInfo)).rejects.toThrow("Unauthorized");
-  
+
+    await expect(getNextAuctionById(propertyInfo)).rejects.toThrow(
+      "Unauthorized"
+    );
+
     // Verify 'Unauthorized' is logged
     expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
   });
-  
+
   it("should throw an error when fetch fails", async () => {
     const propertyInfo: PropertyInfoType = {
       propertyId: "property-123",
@@ -206,10 +208,12 @@ describe("getNextAuctionById", () => {
 
     (fetch as Mock).mockRejectedValue(mockError);
 
-    await expect(getNextAuctionById(propertyInfo)).rejects.toThrow("Network Error");
+    await expect(getNextAuctionById(propertyInfo)).rejects.toThrow(
+      "Network Error"
+    );
 
     // Verify error is logged
-    expect(console.log).toHaveBeenCalledWith("err", mockError);
+    expect(console.error).toHaveBeenCalledWith("err", mockError);
   });
 });
 
@@ -251,7 +255,11 @@ describe("subscribeToAuction", () => {
     const messageCallback = vi.fn();
 
     // Simulate successful channel join
-    channelInstance.receive.mockImplementation(function (this: typeof channelInstance, status: string, callback: Function) {
+    channelInstance.receive.mockImplementation(function (
+      this: typeof channelInstance,
+      status: string,
+      callback: Function
+    ) {
       if (status === "ok") {
         callback({});
       }
@@ -272,10 +280,16 @@ describe("subscribeToAuction", () => {
     expect(socketInstance.connect).toHaveBeenCalled();
 
     // Verify channel is joined
-    expect(socketInstance.channel).toHaveBeenCalledWith("auction:auction-123", {});
+    expect(socketInstance.channel).toHaveBeenCalledWith(
+      "auction:auction-123",
+      {}
+    );
 
     // Verify event listener is set up
-    expect(channelInstance.on).toHaveBeenCalledWith("outbid", expect.any(Function));
+    expect(channelInstance.on).toHaveBeenCalledWith(
+      "outbid",
+      expect.any(Function)
+    );
 
     // Simulate 'outbid' event
     const bidPayload = { bid: { id: "bid-1", amount: 105000 } };
@@ -297,7 +311,11 @@ describe("subscribeToAuction", () => {
     config.socket = existingSocket as any;
 
     // Simulate successful channel join
-    channelInstance.receive.mockImplementation(function (this: typeof channelInstance, status: string, callback: Function) {
+    channelInstance.receive.mockImplementation(function (
+      this: typeof channelInstance,
+      status: string,
+      callback: Function
+    ) {
       if (status === "ok") {
         callback({});
       }
@@ -318,14 +336,20 @@ describe("subscribeToAuction", () => {
     const messageCallback = vi.fn();
 
     // Simulate failed channel join
-    channelInstance.receive.mockImplementation(function (this: typeof channelInstance, status: string, callback: Function) {
-          if (status === "error") {
-            callback({ reason: "Join failed" });
-          }
-          return this;
-        });
+    channelInstance.receive.mockImplementation(function (
+      this: typeof channelInstance,
+      status: string,
+      callback: Function
+    ) {
+      if (status === "error") {
+        callback({ reason: "Join failed" });
+      }
+      return this;
+    });
 
-    await expect(subscribeToAuction(auctionId, messageCallback)).rejects.toEqual({
+    await expect(
+      subscribeToAuction(auctionId, messageCallback)
+    ).rejects.toEqual({
       reason: "Join failed",
     });
 

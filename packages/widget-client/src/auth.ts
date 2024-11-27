@@ -44,7 +44,7 @@ export async function authenticate() {
         return null;
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   } else {
     // If there is no code in the query, then redirect to the authorization server
@@ -71,13 +71,13 @@ export async function me(): Promise<UserType | undefined> {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(errorData.error || 'Error fetching user details');
+      console.error(errorData.error || "Error fetching user details");
       return undefined;
     }
 
     const data = await response.json();
     if (!data || !data.id) {
-      console.log('Invalid user data');
+      console.error("Invalid user data");
       return undefined;
     }
 
@@ -85,7 +85,7 @@ export async function me(): Promise<UserType | undefined> {
       id: data.id,
     };
   } catch (error) {
-    console.log('Error fetching user details:', error);
+    console.error("Error fetching user details:", error);
     return undefined;
   }
 }
@@ -96,7 +96,7 @@ export async function me(): Promise<UserType | undefined> {
 function sha256(plain: string) {
   const encoder = new TextEncoder();
   const data = encoder.encode(plain);
-  
+
   if (typeof window !== "undefined" && window.crypto && window.crypto.subtle) {
     return window.crypto.subtle.digest("SHA-256", data);
   } else {
@@ -131,7 +131,11 @@ async function pkceChallengeFromVerifier(v: string) {
 function generateRandomString() {
   const array = new Uint32Array(28);
 
-  if (typeof window !== "undefined" && window.crypto && window.crypto.getRandomValues) {
+  if (
+    typeof window !== "undefined" &&
+    window.crypto &&
+    window.crypto.getRandomValues
+  ) {
     window.crypto.getRandomValues(array);
   } else {
     // When using Node.js (e.g., Github Actions) use crypto.randomBytes
@@ -141,5 +145,7 @@ function generateRandomString() {
     }
   }
 
-  return Array.from(array, (dec) => ("0" + dec.toString(16)).substr(-2)).join("");
+  return Array.from(array, (dec) => ("0" + dec.toString(16)).substr(-2)).join(
+    ""
+  );
 }
