@@ -15,6 +15,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
   let [amount, setAmount] = createSignal(defaultAmount);
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
   const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
+  const [isAmountTooHigh, setIsAmountTooHigh] = createSignal(false);
   const [fastBidMsg1, setFastBidMsg1] = createSignal(
     displayAmountOfStep(1, false, props.auction)
   );
@@ -26,24 +27,39 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
   );
   const [minValue, setMinValue] = createSignal(0);
 
+  function checkIfAmountTooHigh(auction: AuctionType, bidAmount: number) {
+    const highestBidAmount = auction.highestBid
+      ? auction.highestBid.amount
+      : auction.startingPrice - auction.step;
+    if (bidAmount > highestBidAmount + auction.step * 3) {
+      setIsAmountTooHigh(true);
+    } else {
+      setIsAmountTooHigh(false);
+    }
+  }
+
   function placeStepBid(stepMultiplier: number, auction: AuctionType) {
     return () => {
       let highestBid = auction.highestBid ? auction.highestBid.amount : null;
       let newAmount;
 
-      if (highestBid) {
+      if (highestBid !== null) {
         newAmount = highestBid + stepMultiplier * auction.step;
       } else {
         newAmount = auction.startingPrice + auction.step * (stepMultiplier - 1);
       }
 
       setAmount(newAmount);
+      checkIfAmountTooHigh(auction, newAmount);
       setIsConfirmBidOpen(true);
     };
   }
 
   function openConfirmBid() {
-    return () => setIsConfirmBidOpen(true);
+    return () => {
+      checkIfAmountTooHigh(props.auction, amount());
+      setIsConfirmBidOpen(true);
+    };
   }
 
   function closeConfirmBid() {
@@ -168,6 +184,12 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
               </tr>
             </tbody>
           </table>
+          <Show when={isAmountTooHigh()}>
+            <p class="auction-widget-modal-note">
+              Votre offre est sensiblement supérieure à l'offre précédente.
+              Êtes-vous sûr de vouloir continuer ?
+            </p>
+          </Show>
           <Show when={isShowMinMessage()}>
             <p id="email-error" class="auction-widget-modal-note">
               Vous devez au moins enchérir{" "}

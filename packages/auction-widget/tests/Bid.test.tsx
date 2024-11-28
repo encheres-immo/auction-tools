@@ -176,4 +176,25 @@ describe("Modal confirm bid", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/1500 €/)).toBeInTheDocument();
   });
+
+  test("displays a warning when bid amount is too high", async () => {
+    // Trigger when the bid amount is more than 3 steps above the highest bid
+    // Warning message should be "Votre offre est sensiblement supérieure à l'offre précédente. Êtes-vous sûr de vouloir continuer ?"
+    render(() => <Bid auction={auction} />);
+    const amountInput = screen.getByRole("spinbutton");
+    const bidButton = screen.getByText(/Enchérir/i);
+    fireEvent.input(amountInput, {
+      target: { value: auction.highestBid!.amount + auction.step * 4 },
+    });
+    fireEvent.click(bidButton);
+    // Confirm modal should be visible
+    expect(
+      screen.getByText(/Vous êtes sur le point d'enchérir/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Votre offre est sensiblement supérieure à l'offre précédente/i
+      )
+    ).toBeInTheDocument();
+  });
 });
