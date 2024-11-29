@@ -60,15 +60,12 @@ const [auction, setAuction] = createStore<AuctionType>({
  */
 function refreshAuction(propertyInfo: PropertyInfoType) {
   client.getNextAuctionById(propertyInfo).then((auction: AuctionType) => {
-    console.log("Auction:", auction);
     setAuction(auction);
     setBids(auction.bids);
 
     client
       .subscribeToAuction(auction.id, (bid) => {
-        console.log("Auction data:", bid);
         setBids([...bids, bid]);
-        console.log("Bids:", bids);
         // replace highest bid in auction
         const newEndDate = bid.newEndDate || auction.endDate;
         setAuction({
@@ -76,10 +73,6 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
           highestBid: bid,
           endDate: newEndDate,
         });
-      })
-      .then((channel) => {
-        console.log("Subscribed to auction");
-        console.log("Channel:", channel);
       })
       .catch((err) => {
         console.error("Error subscribing to auction:", err);
