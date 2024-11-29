@@ -5,7 +5,7 @@ import App from "./App.jsx";
 const root = document.getElementById("auction-widget");
 
 const apiKey = root?.getAttribute("api-key") || "";
-const environment = root?.getAttribute("api-env") || "production";
+const environment = (root?.getAttribute("api-env") || "production") as "local" | "staging" | "production";
 
 const propertyId = root?.getAttribute("property-id") || "";
 const source = root?.getAttribute("source") || "";

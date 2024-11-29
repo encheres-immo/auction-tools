@@ -9,6 +9,8 @@
     "noEmit": true,
     "declaration": true,
     "skipLibCheck": true,
+    "types": ["vitest/globals", "vitest"],
+    "jsx": "react",
     "isolatedModules": true
   }
 }
