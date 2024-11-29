@@ -1,10 +1,13 @@
 import type { Component } from "solid-js";
 import { Show, createSignal } from "solid-js";
-import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
+import { AuctionType } from "@encheres-immo/widget-client/types";
 import client from "@encheres-immo/widget-client";
 import { displayCurrencySymbol, displayAmountWithCurrency } from "./utils.js";
 import CenteredModal from "./CenteredModal.js";
 
+/**
+ * Display both the bid form (with fast bid buttons and bid input) and the confirm bid modal.
+ */
 const Bid: Component<{ auction: AuctionType }> = (props) => {
   const defaultAmount = props.auction.highestBid
     ? props.auction.highestBid.amount + props.auction.step
@@ -25,7 +28,6 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
 
   function placeStepBid(stepMultiplier: number, auction: AuctionType) {
     return () => {
-      console.log(auction.step);
       let highestBid = auction.highestBid ? auction.highestBid.amount : null;
       let newAmount;
 
@@ -36,9 +38,6 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
       }
 
       setAmount(newAmount);
-
-      console.log("Placing bid", amount());
-      console.log("Auction", auction);
       setIsConfirmBidOpen(true);
     };
   }

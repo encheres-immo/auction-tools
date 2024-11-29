@@ -7,6 +7,9 @@ import {
 } from "@encheres-immo/widget-client/types";
 import { displayAmountWithCurrency, formatDate } from "./utils.js";
 
+/**
+ * Display every bid made on an auction.
+ */
 const BidHistory: Component<{
   bids: BidType[];
   auction: AuctionType;

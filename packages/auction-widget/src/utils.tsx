@@ -23,8 +23,6 @@ function isAuctionEnded(auction: AuctionType): boolean {
  * Display amount with currency symbol or code.
  * if currency is not provided, default to €
  * if amount not provided or 0, display --.
- * @param amount - a number to display
- * @param currency - all currency informations
  */
 function displayAmountWithCurrency(
   amount: number | null,

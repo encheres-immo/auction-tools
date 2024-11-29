@@ -4,6 +4,9 @@ import client from "@encheres-immo/widget-client";
 import { AuctionType } from "@encheres-immo/widget-client/types";
 import CenteredModal from "./CenteredModal.js";
 
+/**
+ * Shows buttons to participate in an auction or login.
+ */
 const ParticipateBox: Component<{
   setterIsLogged: any;
   updateUser: any;
@@ -20,7 +23,6 @@ const ParticipateBox: Component<{
       // const url = new URL(currentUrl);
       // url.searchParams.set('logging', 'true');
       // history.pushState({}, '', url.href);
-      console.log("connect");
       tryToConnect();
     };
   }
@@ -68,9 +70,7 @@ const ParticipateBox: Component<{
               </button>
             </div>
             <div id="auction-widget-agent-link">
-              <p class="auction-widget-modal-note">
-                Pas encore de compte ?
-              </p>
+              <p class="auction-widget-modal-note">Pas encore de compte ?</p>
               <button
                 id="auction-widget-link"
                 onClick={() => {
@@ -91,11 +91,17 @@ const ParticipateBox: Component<{
           success={false}
         >
           <div class="auction-widget-contact">
-            <a href={"mailto:" + props.auction.agentEmail} class="auction-widget-btn auction-widget-custom">
+            <a
+              href={"mailto:" + props.auction.agentEmail}
+              class="auction-widget-btn auction-widget-custom"
+            >
               <i class="fas fa-envelope"></i>
               {props.auction.agentEmail}
             </a>
-            <a href={"tel:" + props.auction.agentPhone} class="auction-widget-btn auction-widget-custom">
+            <a
+              href={"tel:" + props.auction.agentPhone}
+              class="auction-widget-btn auction-widget-custom"
+            >
               <i class="fas fa-phone"></i>
               {props.auction.agentPhone}
             </a>
