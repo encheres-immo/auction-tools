@@ -23,7 +23,7 @@ This package is built with [TypeScript](https://www.typescriptlang.org/), and no
 
 Enchères Immo's protect your API access by restricting it to specific domains. But you should be careful with user authentication tokens, and ensure that they are securely managed and stored.
 
-Finnaly, this client uses the [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) to communicate with the server. Be mindful of managing the connection lifecycle (e.g., disconnecting when no longer needed).
+Finally, this client uses the [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) to communicate with the server. Be mindful of managing the connection lifecycle (e.g., disconnecting when no longer needed).
 
 ## Usage
 
