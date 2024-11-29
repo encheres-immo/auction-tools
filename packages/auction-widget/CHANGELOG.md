@@ -1,5 +1,15 @@
 # @encheres-immo/auction-widget
 
+## 0.3.1
+
+### Patch Changes
+
+- 26bfc84: Improving logging and error handling. Behind the scenes, we also deeply refactored the codebase to improve reliability and maintainability.
+- 2cae24d: Display a warning message when a bid seems too high.
+- 08adb49: Modified the environment prop to accept specific values ("local", "staging", "production") and set a default value of "production". If you are an external user, please only use "production".
+- Updated dependencies [08adb49]
+  - @encheres-immo/widget-client@0.3.1
+
 ## 0.3.0
 
 ### Minor Changes

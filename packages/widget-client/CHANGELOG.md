@@ -1,5 +1,11 @@
 # @encheres-immo/widget-client
 
+## 0.3.1
+
+### Patch Changes
+
+- 08adb49: Expanded the documentation to include prerequisites, usage examples, useful commands, and important notes about the package. Behind the scenes, we also deeply refactored the codebase to improve reliability and maintainability.
+
 ## 0.3.0
 
 ### Minor Changes
