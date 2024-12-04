@@ -1,6 +1,6 @@
 import { Socket } from "phoenix";
 import { authenticate, me } from "./src/auth.js";
-import { getNextAuctionById, subscribeToAuction } from "./src/auctions.js";
+import { getNextAuctionById, subscribeToAuction, registerUserToAuction } from "./src/auctions.js";
 import { placeBidOnAuction } from "./src/bids.js";
 
 /**
@@ -63,6 +63,7 @@ export default {
   getNextAuctionById,
   authenticate,
   subscribeToAuction,
+  registerUserToAuction,
   me,
   placeBidOnAuction,
 };

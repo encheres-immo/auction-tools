@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, expect, it, vi, Mock } from "vitest";
-import { getNextAuctionById, subscribeToAuction } from "../src/auctions.js";
+import { getNextAuctionById, subscribeToAuction, registerUserToAuction } from "../src/auctions.js";
 import { config } from "../index.js";
 import type { PropertyInfoType } from "../types.js";
 import { Socket } from "phoenix";
@@ -357,5 +357,127 @@ describe("subscribeToAuction", () => {
 
     // Verify socket is disconnected on error
     expect(socketInstance.disconnect).toHaveBeenCalled();
+  });
+});
+
+describe("registerUserToAuction", () => {
+  beforeEach(() => {
+    reset_config("test-access-token");
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("should register a user to an auction successfully", async () => {
+    const auctionId = "auction-123";
+
+    // Mock fetch response
+    const mockData = {
+      id: "auction-123",
+      startDate: 1620000000,
+      endDate: 1620003600,
+      startingPrice: 100000,
+      step: 1000,
+      bids: [],
+      agentEmail: "agent@example.com",
+      agentPhone: "123456789",
+      registration: {
+        isUserAllowed: true,
+        isRegistrationAccepted: true,
+        isParticipant: true,
+      },
+      isPrivate: false,
+      currency: {
+        symbol: "$",
+        code: "USD",
+        isBefore: true,
+      },
+    };
+
+    (fetch as Mock).mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve(mockData),
+    });
+
+    const auction = await registerUserToAuction(auctionId);
+
+    // Verify fetch was called with correct URL, method, and headers
+    expect(fetch).toHaveBeenCalledWith(
+      "http://localhost:4000/api/v1/auction_registration",
+      expect.objectContaining({
+        method: "POST",
+        headers: {
+          Authorization: "Bearer test-access-token",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ auctionId }),
+      })
+    );
+
+    // Verify auction data is parsed correctly
+    expect(auction).toEqual({
+      id: "auction-123",
+      startDate: 1620000000,
+      endDate: 1620003600,
+      startingPrice: 100000,
+      step: 1000,
+      bids: [],
+      highestBid: {
+        id: "",
+        amount: 0,
+        createdAt: 0,
+        newEndDate: 0,
+        userAnonymousId: "",
+      },
+      agentEmail: "agent@example.com",
+      agentPhone: "123456789",
+      registration: {
+        isUserAllowed: true,
+        isRegistrationAccepted: true,
+        isParticipant: true,
+      },
+      isPrivate: false,
+      currency: {
+        symbol: "$",
+        code: "USD",
+        isBefore: true,
+      },
+    });
+  });
+
+  it("should log 'Unauthorized' and throw an error when response status is 401", async () => {
+    const auctionId = "auction-123";
+
+    (fetch as Mock).mockResolvedValue({
+      status: 401,
+      json: () => Promise.resolve({ error: "Unauthorized" }),
+    });
+
+    const consoleLogSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    await expect(registerUserToAuction(auctionId)).rejects.toThrow(
+      "Unauthorized"
+    );
+
+    // Verify 'Unauthorized' is logged
+    expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
+  });
+
+  it("should throw an error when fetch fails", async () => {
+    const auctionId = "auction-123";
+
+    const mockError = new Error("Network Error");
+
+    (fetch as Mock).mockRejectedValue(mockError);
+
+    await expect(registerUserToAuction(auctionId)).rejects.toThrow(
+      "Network Error"
+    );
+
+    // Verify error is logged
+    expect(console.error).toHaveBeenCalledWith("err", mockError);
   });
 });

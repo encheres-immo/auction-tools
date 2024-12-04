@@ -12,6 +12,15 @@ const source = root?.getAttribute("source") || "";
 const sourceAgencyId = root?.getAttribute("source-agency-id") || "";
 const sourceId = root?.getAttribute("source-id") || "";
 
+const allowUserRegistration = root?.getAttribute("allow-user-registration") === "true";
+const tosUrl = root?.getAttribute("tos-url") || "";
+
+if (allowUserRegistration && tosUrl === "") {
+  throw new Error(
+    "Auction widget: 'tos-url' attribute must be provided when 'allow-user-registration' is set to true. Did you forget to add it? Or maybe the attribute got misspelled?"
+  );
+}
+
 if (!(root instanceof HTMLElement)) {
   throw new Error(
     "Auction widget: No root element found with id 'auction-widget'. Did you forget to add it? Or maybe the id attribute got misspelled?"
@@ -36,7 +45,7 @@ const propertyInfo = propertyId ? { propertyId } : {
 
 render(
   () => (
-    <App apiKey={apiKey} propertyInfo={propertyInfo} environment={environment} />
+    <App apiKey={apiKey} propertyInfo={propertyInfo} environment={environment} allowUserRegistration={allowUserRegistration} tosUrl={tosUrl}/>
   ),
   root!
 );
