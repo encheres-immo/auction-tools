@@ -1,7 +1,7 @@
 import type { Component } from "solid-js";
 import { createSignal } from "solid-js";
 import client from "@encheres-immo/widget-client";
-import { AuctionType } from "@encheres-immo/widget-client/types";
+import { AuctionType, PropertyInfoType } from "@encheres-immo/widget-client/types";
 import CenteredModal from "./CenteredModal.js";
 
 /**
@@ -12,6 +12,7 @@ const ParticipateBox: Component<{
   updateUser: any;
   isLogging: boolean;
   auction: AuctionType;
+  propertyInfo: PropertyInfoType;
 }> = (props) => {
   if (props.isLogging) {
     tryToConnect();
@@ -31,7 +32,7 @@ const ParticipateBox: Component<{
     client.authenticate().then(() => {
       props.setterIsLogged(true);
       client.me().then((user) => {
-        props.updateUser(user);
+        props.updateUser(user, props.propertyInfo);
       });
     });
   }

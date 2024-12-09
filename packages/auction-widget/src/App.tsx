@@ -14,7 +14,7 @@ import {
   UserType,
   PropertyInfoType,
 } from "@encheres-immo/widget-client/types";
-import { isAuctionNotStarted, isAuctionInProgress } from "./utils.js";
+import { isAuctionNotStarted, isAuctionInProgress, isAuctionEnded } from "./utils.js";
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
@@ -118,14 +118,15 @@ const App: Component<{
             <Show
               when={
                 (!isLogged() || isLogging()) &&
-                (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
+                (isAuctionInProgress(auction) || isAuctionNotStarted(auction) || (isAuctionEnded(auction) && auction.isPrivate))
               }
             >
               <ParticipateBox
                 setterIsLogged={setIsLogged}
                 isLogging={isLogging()}
                 auction={auction}
-                updateUser={updateUser(user(), propertyInfo)}
+                updateUser={updateUser}
+                propertyInfo={propertyInfo}
               />
             </Show>
             <Switch>
