@@ -1,6 +1,7 @@
 import {
   AuctionType,
   BidType,
+  RegistrationType,
   UserType,
 } from "@encheres-immo/widget-client/types";
 
@@ -62,4 +63,17 @@ export function factoryUser(userParams: Partial<UserType> = {}): UserType {
     id: "123",
   };
   return { ...baseUser, ...userParams };
+}
+
+/**
+ * Factory function to create a registration, pass only the properties you want to override.
+ */
+export function factoryRegistration(
+  registrationParams: Partial<RegistrationType> = {}
+): RegistrationType {
+  return {
+    isUserAllowed: true,
+    isRegistrationAccepted: true,
+    isParticipant: true,
+  };
 }
