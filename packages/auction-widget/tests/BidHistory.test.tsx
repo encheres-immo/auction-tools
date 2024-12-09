@@ -2,7 +2,13 @@ import { test, expect, describe, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@solidjs/testing-library";
 import BidHistory from "../src/BidHistory.jsx";
 import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
-import { factoryAuction, factoryBid, factoryUser } from "./test-utils.js";
+import {
+  factoryAuction,
+  factoryBid,
+  factoryRegistration,
+  factoryUser,
+} from "./test-utils.js";
+import { isAuctionEnded, isAuctionInProgress } from "../src/utils.js";
 
 describe("Bids history", () => {
   let auction: AuctionType;
@@ -10,14 +16,14 @@ describe("Bids history", () => {
 
   beforeEach(() => {
     user = factoryUser();
-    auction = factoryAuction();
+    auction = factoryAuction({ startDate: Date.now() - 1000 });
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  test("renders bid history with bids in order", () => {
+  test("displays bid history for public auction", () => {
     const bid1 = factoryBid({
       amount: 1000,
       createdAt: Date.now() - 10000,
@@ -47,13 +53,40 @@ describe("Bids history", () => {
     expect(displayedAmounts).toEqual(expectedAmounts);
   });
 
-  test("renders message when there are no bids", () => {
-    render(() => <BidHistory bids={[]} auction={auction} user={user} />);
+  test("does not display bid history for non-participants in private auction", () => {
+    const privateAuction = factoryAuction({
+      isPrivate: true,
+      startDate: Date.now() - 1000,
+    });
+    const bids = [factoryBid(), factoryBid()];
+    render(() => (
+      <BidHistory bids={bids} auction={privateAuction} user={user} />
+    ));
 
-    // Check that the bid history section is rendered but empty
+    expect(screen.queryByText(/Historique des offres/i)).toBeNull();
+
+    const bidAmountElements = screen.queryAllByText(/[\d\s]+ €/i);
+    expect(bidAmountElements.length).toBe(0);
+  });
+
+  test("displays bid history for participants in private auction", () => {
+    const privateAuction = factoryAuction({
+      isPrivate: true,
+      startDate: Date.now() - 1000,
+      registration: factoryRegistration(),
+    });
+    const participantUser = factoryUser();
+    const bids = [factoryBid(), factoryBid()];
+    render(() => (
+      <BidHistory bids={bids} auction={privateAuction} user={participantUser} />
+    ));
+
+    // Expect bid history header to be displayed
     expect(screen.getByText(/Historique des offres/i)).toBeInTheDocument();
-    const bidItems = screen.queryAllByRole("listitem");
-    expect(bidItems.length).toBe(0);
+
+    // Expect bids to be displayed
+    const bidAmountElements = screen.getAllByText(/[\d\s]+ €/i);
+    expect(bidAmountElements.length).toBeGreaterThan(0);
   });
 });
 
@@ -63,7 +96,7 @@ describe("Bid component in bids history", () => {
 
   beforeEach(() => {
     user = factoryUser();
-    auction = factoryAuction();
+    auction = factoryAuction({ startDate: Date.now() - 1000 });
   });
 
   afterEach(() => {
@@ -76,7 +109,6 @@ describe("Bid component in bids history", () => {
       participantId: user.id,
       userAnonymousId: "AnonUser",
     });
-
     const bids = [userBid];
 
     render(() => <BidHistory bids={bids} auction={auction} user={user} />);
@@ -92,7 +124,6 @@ describe("Bid component in bids history", () => {
       participantId: "otherUser",
       userAnonymousId: "AnonOther",
     });
-
     const bids = [otherBid];
 
     render(() => <BidHistory bids={bids} auction={auction} user={user} />);
@@ -105,7 +136,6 @@ describe("Bid component in bids history", () => {
   test("displays bid date in the correct format", () => {
     const bidDate = new Date("2023-01-01T12:00:00Z");
     const bid = factoryBid({ createdAt: bidDate.getTime() });
-
     const bids = [bid];
 
     render(() => <BidHistory bids={bids} auction={auction} user={user} />);

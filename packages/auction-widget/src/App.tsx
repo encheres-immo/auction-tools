@@ -15,11 +15,7 @@ import {
   UserType,
   PropertyInfoType,
 } from "@encheres-immo/widget-client/types";
-import {
-  isAuctionNotStarted,
-  isAuctionInProgress,
-  isAuctionEnded,
-} from "./utils.js";
+import { isAuctionNotStarted, isAuctionInProgress } from "./utils.js";
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
@@ -218,14 +214,7 @@ const App: Component<{
                 <UserRegistration allowUserRegistration={allowUserRegistration} setAuction={setAuction} auction={auction} setIsShowRegisterUser={setIsShowRegisterUser} isShowRegisterUser={isShowRegisterUser} tosUrl={tosUrl}/>
               </Match>
             </Switch>
-            <Show
-              when={
-                isAuctionEnded(auction) ||
-                (isAuctionInProgress(auction) && bids.length > 0)
-              }
-            >
-              <BidHistory bids={bids} auction={auction} user={user()} />
-            </Show>
+            <BidHistory bids={bids} auction={auction} user={user()} />
           </Show>
         </div>
       </div>
