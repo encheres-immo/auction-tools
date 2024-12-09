@@ -10,7 +10,7 @@ import {
 import { render, screen, fireEvent, cleanup } from "@solidjs/testing-library";
 import ParticipateBox from "../src/ParticipateBox.jsx";
 import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
-import { factoryAuction, factoryUser } from "./test-utils.js";
+import { factoryAuction, factoryPropertyInfo, factoryUser } from "./test-utils.js";
 
 // Mock the client module
 vi.mock("@encheres-immo/widget-client", () => {
@@ -50,6 +50,7 @@ describe("Participate buttons", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={factoryPropertyInfo()}
       />
     ));
     // Check that the participate button is rendered
@@ -63,6 +64,7 @@ describe("Participate buttons", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={factoryPropertyInfo()}
       />
     ));
     const participateButton = screen.getByText("Je veux participer");
@@ -94,6 +96,7 @@ describe("Login button", () => {
     const user: UserType = factoryUser();
     (client.authenticate as Mock).mockResolvedValue(undefined);
     (client.me as Mock).mockResolvedValue(user);
+    const propertyInfo = factoryPropertyInfo();
 
     render(() => (
       <ParticipateBox
@@ -101,6 +104,7 @@ describe("Login button", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={propertyInfo}
       />
     ));
 
@@ -120,7 +124,7 @@ describe("Login button", () => {
 
     // Check that setterIsLogged and updateUser have been called with correct arguments
     expect(setterIsLogged).toHaveBeenCalledWith(true);
-    expect(updateUser).toHaveBeenCalledWith(user);
+    expect(updateUser).toHaveBeenCalledWith(user, propertyInfo);
   });
 
   test("can be cancelled", () => {
@@ -130,6 +134,7 @@ describe("Login button", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={factoryPropertyInfo()}
       />
     ));
     const participateButton = screen.getByText("Je veux participer");
@@ -170,6 +175,7 @@ describe("Contact modal", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={factoryPropertyInfo()}
       />
     ));
     const participateButton = screen.getByText("Je veux participer");
@@ -194,6 +200,7 @@ describe("Contact modal", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={factoryPropertyInfo()}
       />
     ));
     const participateButton = screen.getByText("Je veux participer");
@@ -217,6 +224,7 @@ describe("Contact modal", () => {
         updateUser={updateUser}
         isLogging={false}
         auction={auction}
+        propertyInfo={factoryPropertyInfo()}
       />
     ));
     const participateButton = screen.getByText("Je veux participer");

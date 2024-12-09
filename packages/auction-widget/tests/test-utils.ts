@@ -1,6 +1,7 @@
 import {
   AuctionType,
   BidType,
+  PropertyInfoType,
   RegistrationType,
   UserType,
 } from "@encheres-immo/widget-client/types";
@@ -76,4 +77,14 @@ export function factoryRegistration(
     isRegistrationAccepted: true,
     isParticipant: true,
   };
+}
+
+export function factoryPropertyInfo(propertyInfoParams: PropertyInfoType = {}) {
+  const basePropertyInfo: PropertyInfoType = {
+    propertyId: "property1",
+    source: "source",
+    sourceAgencyId: "sourceAgencyId",
+    sourceId: "sourceId",
+  };
+  return { ...basePropertyInfo, ...propertyInfoParams };
 }
