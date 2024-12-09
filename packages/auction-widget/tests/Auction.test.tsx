@@ -2,7 +2,12 @@ import { test, expect, describe, afterEach } from "vitest";
 import { render, screen, cleanup } from "@solidjs/testing-library";
 import Auction from "../src/Auction.jsx";
 import { UserType } from "@encheres-immo/widget-client/types";
-import { factoryAuction, factoryBid, factoryUser } from "./test-utils.js";
+import {
+  factoryAuction,
+  factoryBid,
+  factoryRegistration,
+  factoryUser,
+} from "./test-utils.js";
 
 const user: UserType = factoryUser();
 
@@ -69,10 +74,35 @@ describe("Auction details display", () => {
     expect(screen.getByText(`${step} €`)).toBeInTheDocument();
   });
 
-  test("displays highest bid when available", () => {
+  test("displays highest bid when available and the auction is public", () => {
     const highestBid = factoryBid();
     const auction = factoryAuction({ highestBid: highestBid });
     render(() => <Auction auction={auction} user={user} />);
+    expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
+    expect(screen.getByText(`${highestBid.amount} €`)).toBeInTheDocument();
+  });
+
+  test("does not display highest bid for non-participants in private auction", () => {
+    const highestBid = factoryBid();
+    const privateAuction = factoryAuction({
+      highestBid: highestBid,
+      isPrivate: true,
+    });
+    render(() => <Auction auction={privateAuction} user={user} />);
+    expect(screen.queryByText(/Meilleure offre/i)).toBeNull();
+    expect(screen.queryByText(`${highestBid.amount} €`)).toBeNull();
+  });
+
+  test("displays highest bid for participants in private auction", () => {
+    const highestBid = factoryBid();
+    const userRegistration = factoryRegistration();
+    const privateAuction = factoryAuction({
+      highestBid: highestBid,
+      isPrivate: true,
+      registration: userRegistration,
+    });
+    const participantUser = factoryUser();
+    render(() => <Auction auction={privateAuction} user={participantUser} />);
     expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
     expect(screen.getByText(`${highestBid.amount} €`)).toBeInTheDocument();
   });
