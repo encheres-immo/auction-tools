@@ -76,6 +76,10 @@ export function subscribeToAuction(
   });
 }
 
+/**
+ * Allows the connected user to register for a specific auction.
+ * This registration must be accepted by the agent later, or the user will not be able to place bids.
+ */
 export function registerUserToAuction(auctionId: string): Promise<AuctionType> {
   return fetch(`${config.BASE_URL}/api/v1/auction_registration`, {
     method: "POST",

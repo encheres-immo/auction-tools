@@ -1,6 +1,13 @@
 ---
-"@encheres-immo/auction-widget": minor
 "@encheres-immo/widget-client": minor
 ---
 
-add support of user registration on an auction
+Add a method to allows the connected user to register for a specific auction.
+
+```ts
+const registration = await client.registerOnAuction(auction);
+console.log('Registration:', registration);
+```
+
+This registration must be accepted by the agent later, or the user will not be able to place bids.
+

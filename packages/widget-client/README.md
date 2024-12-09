@@ -94,6 +94,17 @@ function onNewBid(bid) {
 await client.subscribeToAuction(auction.id, onNewBid);
 ```
 
+### Registering on an Auction
+
+To allows the connected user to register for a specific auction., use the `registerOnAuction` method:
+
+```ts
+const registration = await client.registerOnAuction(auction);
+console.log('Registration:', registration);
+```
+
+This registration must be accepted by the agent later, or the user will not be able to place bids.
+
 ### Placing a Bid
 
 To place a bid on an auction, use the `placeBidOnAuction` method:
