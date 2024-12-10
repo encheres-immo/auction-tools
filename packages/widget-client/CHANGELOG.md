@@ -1,5 +1,18 @@
 # @encheres-immo/widget-client
 
+## 0.4.0
+
+### Minor Changes
+
+- 65b24d5: Add a method to allows the connected user to register for a specific auction.
+
+  ```ts
+  const registration = await client.registerOnAuction(auction);
+  console.log("Registration:", registration);
+  ```
+
+  This registration must be accepted by the agent later, or the user will not be able to place bids.
+
 ## 0.3.1
 
 ### Patch Changes
