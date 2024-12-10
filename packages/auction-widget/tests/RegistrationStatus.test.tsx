@@ -16,22 +16,6 @@ describe("RegistrationStatus displays", () => {
     cleanup();
   });
 
-  test("renders Bid component when user is logged in, registration accepted, participant, and auction is in progress", () => {
-    const registration = factoryRegistration({
-      isRegistrationAccepted: true,
-      isParticipant: true,
-    });
-    auction = factoryAuction({
-      registration: registration,
-      startDate: Date.now() - 1000,
-      endDate: Date.now() + 10000,
-    });
-
-    render(() => <RegistrationStatus isLogged={isLogged} auction={auction} />);
-
-    expect(screen.getByTestId("auction-widget-bid")).toBeInTheDocument();
-  });
-
   test("when user is observer and auction is in progress", () => {
     const registration = factoryRegistration({
       isRegistrationAccepted: true,

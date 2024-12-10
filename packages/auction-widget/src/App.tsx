@@ -1,11 +1,12 @@
 import type { Component } from "solid-js";
 import { createStore } from "solid-js/store";
 import client from "@encheres-immo/widget-client";
-import { Show, Switch, Match, createSignal } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import "../assets/app.css";
 
 import Auction from "./Auction.js";
 import BidHistory from "./BidHistory.js";
+import BidForm from "./BidForm.js";
 import ParticipateBox from "./ParticipateBox.js";
 import RegistrationStatus from "./RegistrationStatus.js";
 import {
@@ -14,7 +15,6 @@ import {
   UserType,
   PropertyInfoType,
 } from "@encheres-immo/widget-client/types";
-import { isAuctionNotStarted, isAuctionInProgress } from "./utils.js";
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
@@ -129,6 +129,7 @@ const App: Component<{
           auction={auction}
           updateUser={updateUser(user(), propertyInfo)}
         />
+        <BidForm auction={auction} isLogged={isLogged} />
         <RegistrationStatus isLogged={isLogged} auction={auction} />
         <BidHistory bids={bids} auction={auction} user={user()} />
       </Show>

@@ -1,6 +1,5 @@
 import { Component, Switch, Match } from "solid-js";
 import { isAuctionInProgress, isAuctionNotStarted } from "./utils.js";
-import Bid from "./Bid.js";
 import { AuctionType } from "@encheres-immo/widget-client/types";
 
 const RegistrationStatus: Component<{
@@ -11,17 +10,6 @@ const RegistrationStatus: Component<{
 
   return (
     <Switch>
-      <Match
-        when={
-          isLogged() &&
-          auction.registration &&
-          auction.registration.isRegistrationAccepted &&
-          auction.registration.isParticipant &&
-          isAuctionInProgress(auction)
-        }
-      >
-        <Bid auction={auction} />
-      </Match>
       <Match
         when={
           isLogged() &&

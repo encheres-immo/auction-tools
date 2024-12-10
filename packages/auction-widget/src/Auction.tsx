@@ -120,7 +120,8 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
                 !props.auction.isPrivate ||
                 (props.auction.isPrivate &&
                   props.auction.registration &&
-                  props.auction.registration.isUserAllowed)
+                  props.auction.registration.isUserAllowed &&
+                  props.auction.registration.isRegistrationAccepted)
               }
               fallback={
                 <div>
