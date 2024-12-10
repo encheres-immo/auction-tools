@@ -7,12 +7,12 @@ import {
   displayAmountWithCurrency,
   formatDate,
   parseDate,
-} from "./utils.js";
+} from "./utils.jsx";
 
 /**
  * Display auction details and countdown.
  */
-const Auction: Component<{ auction: AuctionType; user: UserType }> = (
+const AuctionInfos: Component<{ auction: AuctionType; user: UserType }> = (
   props
 ) => {
   const [remainingTime, setRemainingTime] = createSignal("");
@@ -153,4 +153,4 @@ const Auction: Component<{ auction: AuctionType; user: UserType }> = (
   );
 };
 
-export default Auction;
+export default AuctionInfos;

@@ -4,11 +4,11 @@ import client from "@encheres-immo/widget-client";
 import { Show, createSignal } from "solid-js";
 import "../assets/app.css";
 
-import Auction from "./Auction.js";
-import BidHistory from "./BidHistory.js";
-import BidForm from "./BidForm.js";
-import ParticipateBox from "./ParticipateBox.js";
-import RegistrationStatus from "./RegistrationStatus.js";
+import AuctionInfos from "./AuctionInfos.jsx";
+import BidHistory from "./BidHistory.jsx";
+import BidForm from "./BidForm.jsx";
+import ParticipateBox from "./ParticipateBox.jsx";
+import RegistrationStatus from "./RegistrationStatus.jsx";
 import {
   AuctionType,
   BidType,
@@ -122,15 +122,15 @@ const App: Component<{
   return (
     <div id="auction-widget-box">
       <Show when={auction.id != ""}>
-        <Auction auction={auction} user={user()} />
+        <AuctionInfos auction={auction} user={user()} />
         <ParticipateBox
           setterIsLogged={setIsLogged}
           isLogging={isLogging()}
           auction={auction}
           updateUser={updateUser(user(), propertyInfo)}
         />
-        <BidForm auction={auction} isLogged={isLogged} />
         <RegistrationStatus isLogged={isLogged} auction={auction} />
+        <BidForm auction={auction} isLogged={isLogged} />
         <BidHistory bids={bids} auction={auction} user={user()} />
       </Show>
     </div>
