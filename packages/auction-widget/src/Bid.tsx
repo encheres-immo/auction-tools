@@ -106,7 +106,7 @@ const Bid: Component<{ auction: AuctionType }> = (props) => {
 
   return (
     <div class="auction-widget-section auction-widget-border-t">
-      <div id="auction-widget-bid">
+      <div id="auction-widget-bid" data-testid="auction-widget-bid">
         <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
           Enchère rapide
         </p>

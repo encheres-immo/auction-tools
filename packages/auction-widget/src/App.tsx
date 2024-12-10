@@ -5,10 +5,9 @@ import { Show, Switch, Match, createSignal } from "solid-js";
 import "../assets/app.css";
 
 import Auction from "./Auction.js";
-import Bid from "./Bid.js";
 import BidHistory from "./BidHistory.js";
 import ParticipateBox from "./ParticipateBox.js";
-import UserRegistration from "./UserRegistration.jsx";
+import RegistrationStatus from "./RegistrationStatus.js";
 import {
   AuctionType,
   BidType,
@@ -96,11 +95,17 @@ function updateUser(user: UserType, propertyInfo: PropertyInfoType) {
 const App: Component<{
   apiKey: string;
   propertyInfo: PropertyInfoType;
-  allowUserRegistration: boolean
+  allowUserRegistration: boolean;
   tosUrl: string;
   environment: "local" | "staging" | "production";
 }> = (props) => {
-  const { apiKey, propertyInfo, environment = "production", allowUserRegistration, tosUrl } = props;
+  const {
+    apiKey,
+    propertyInfo,
+    environment = "production",
+    allowUserRegistration,
+    tosUrl,
+  } = props;
   // Initialize client and auction
   client.initEIClient(apiKey, environment);
   refreshAuction(propertyInfo);
@@ -111,113 +116,22 @@ const App: Component<{
   const code = params.get("code");
   if (code != "" && code != null) {
     setIsLogging(true);
-    setIsShowRegisterUser(true)
+    setIsShowRegisterUser(true);
   }
 
   return (
     <div id="auction-widget-box">
-      <div>
-        <div>
-          <Show when={auction.id != ""}>
-            <Auction auction={auction} user={user()} />
-            <Show
-              when={
-                (!isLogged() || isLogging()) &&
-                (isAuctionInProgress(auction) || isAuctionNotStarted(auction))
-              }
-            >
-              <ParticipateBox
-                setterIsLogged={setIsLogged}
-                isLogging={isLogging()}
-                auction={auction}
-                updateUser={updateUser(user(), propertyInfo)}
-              />
-            </Show>
-            <Switch>
-              <Match
-                when={
-                  isLogged() &&
-                  auction.registration &&
-                  auction.registration.isRegistrationAccepted &&
-                  auction.registration.isParticipant &&
-                  isAuctionInProgress(auction)
-                }
-              >
-                <Bid auction={auction} />
-              </Match>
-              <Match
-                when={
-                  isLogged() &&
-                  auction.registration &&
-                  auction.registration.isRegistrationAccepted &&
-                  !auction.registration.isParticipant &&
-                  isAuctionInProgress(auction)
-                }
-              >
-                <p class="auction-widget-note">
-                  Vous êtes observateur pour cette vente. Vous ne pouvez pas
-                  enchérir.
-                </p>
-              </Match>
-              <Match
-                when={
-                  isLogged() &&
-                  auction.registration &&
-                  auction.registration.isRegistrationAccepted &&
-                  !auction.registration.isParticipant &&
-                  isAuctionNotStarted(auction)
-                }
-              >
-                <p class="auction-widget-note">
-                  Votre demande d'observation pour cette vente a été acceptée.
-                  Attendez le début de l'enchère pour voir les participations.
-                </p>
-              </Match>
-              <Match
-                when={
-                  isLogged() &&
-                  auction.registration &&
-                  auction.registration.isRegistrationAccepted === true &&
-                  isAuctionNotStarted(auction)
-                }
-              >
-                <p class="auction-widget-note">
-                  Votre demande de participation pour cette vente a été
-                  acceptée. Attendez le début de l'enchère pour enchérir.
-                </p>
-              </Match>
-              <Match
-                when={
-                  isLogged() &&
-                  auction.registration &&
-                  auction.registration.isRegistrationAccepted === false
-                }
-              >
-                <p class="auction-widget-note">
-                  Votre demande de participation pour cette vente a été refusée.
-                </p>
-              </Match>
-              <Match
-                when={
-                  isLogged() &&
-                  auction.registration &&
-                  auction.registration.isRegistrationAccepted == null
-                }
-              >
-                <p class="auction-widget-note">
-                  Votre demande de participation a été transmise à l'agent
-                  responsable du bien. Vous serez informé par email lorsqu'elle
-                  sera validée.
-                </p>
-              </Match>
-              <Match when={isLogged() && !auction.registration}>
-                <UserRegistration allowUserRegistration={allowUserRegistration} setAuction={setAuction} auction={auction} setIsShowRegisterUser={setIsShowRegisterUser} isShowRegisterUser={isShowRegisterUser} tosUrl={tosUrl}/>
-              </Match>
-            </Switch>
-            <BidHistory bids={bids} auction={auction} user={user()} />
-          </Show>
-        </div>
-      </div>
+      <Show when={auction.id != ""}>
+        <Auction auction={auction} user={user()} />
+        <ParticipateBox
+          setterIsLogged={setIsLogged}
+          isLogging={isLogging()}
+          auction={auction}
+          updateUser={updateUser(user(), propertyInfo)}
+        />
+        <RegistrationStatus isLogged={isLogged} auction={auction} />
+        <BidHistory bids={bids} auction={auction} user={user()} />
+      </Show>
     </div>
   );
 };

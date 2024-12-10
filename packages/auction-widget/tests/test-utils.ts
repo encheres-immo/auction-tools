@@ -71,9 +71,10 @@ export function factoryUser(userParams: Partial<UserType> = {}): UserType {
 export function factoryRegistration(
   registrationParams: Partial<RegistrationType> = {}
 ): RegistrationType {
-  return {
+  const baseRegistration: RegistrationType = {
     isUserAllowed: true,
     isRegistrationAccepted: true,
     isParticipant: true,
   };
+  return { ...baseRegistration, ...registrationParams };
 }
