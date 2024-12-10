@@ -9,9 +9,17 @@ import {
 } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@solidjs/testing-library";
 import client from "@encheres-immo/widget-client";
-import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
-import { factoryAuction, factoryBid } from "./test-utils.js";
-import Bid from "../src/Bid.jsx";
+import {
+  AuctionType,
+  BidType,
+  RegistrationType,
+} from "@encheres-immo/widget-client/types";
+import {
+  factoryAuction,
+  factoryBid,
+  factoryRegistration,
+} from "./test-utils.js";
+import BidForm from "../src/BidForm.jsx";
 
 // Mock the widget-client module
 vi.mock("@encheres-immo/widget-client", () => {
@@ -22,11 +30,50 @@ vi.mock("@encheres-immo/widget-client", () => {
   };
 });
 
+describe("Not displaying bid form when", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  test("auction has not started", () => {
+    const auction = factoryAuction({ startDate: Date.now() + 1000 });
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+  });
+
+  test("auction has ended", () => {
+    const auction = factoryAuction({ endDate: Date.now() - 1000 });
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+  });
+
+  test("user is not logged in", () => {
+    const auction = factoryAuction({ startDate: Date.now() - 1000 });
+    render(() => <BidForm auction={auction} isLogged={() => false} />);
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+  });
+
+  test("user is not accepted", () => {
+    const registration = factoryRegistration({ isRegistrationAccepted: false });
+    const auction = factoryAuction({
+      startDate: Date.now() - 1000,
+      registration: registration,
+    });
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+  });
+});
+
 describe("Fast bid buttons", () => {
   let auction: AuctionType;
+  let registration: RegistrationType;
 
   beforeEach(() => {
-    auction = factoryAuction();
+    registration = factoryRegistration();
+    auction = factoryAuction({
+      registration: registration,
+      startDate: Date.now() - 1000,
+    });
   });
 
   afterEach(() => {
@@ -38,9 +85,13 @@ describe("Fast bid buttons", () => {
     const auctionWithoutBids = factoryAuction({
       bids: [],
       highestBid: undefined,
+      registration: registration,
+      startDate: Date.now() - 1000,
     });
 
-    render(() => <Bid auction={auctionWithoutBids} />);
+    render(() => (
+      <BidForm auction={auctionWithoutBids} isLogged={() => true} />
+    ));
 
     // Check that the fast bid buttons are displayed with correct amounts
     const fastBidButtons = screen.getAllByRole("button", {
@@ -68,9 +119,11 @@ describe("Fast bid buttons", () => {
     const auctionWithBids = factoryAuction({
       bids: [highestBid],
       highestBid: highestBid,
+      registration: registration,
+      startDate: Date.now() - 1000,
     });
 
-    render(() => <Bid auction={auctionWithBids} />);
+    render(() => <BidForm auction={auctionWithBids} isLogged={() => true} />);
 
     // Check that the fast bid buttons are displayed with correct amounts
     const fastBidButtons = screen.getAllByRole("button", {
@@ -93,7 +146,7 @@ describe("Fast bid buttons", () => {
   });
 
   test("clicking opens confirm bid modal", async () => {
-    render(() => <Bid auction={auction} />);
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
     const fastBidButton = screen.getAllByRole("button", {
       name: /\+ [\d\s]+ €/i,
     })[0];
@@ -107,9 +160,14 @@ describe("Fast bid buttons", () => {
 
 describe("Custom bid input", () => {
   let auction: AuctionType;
+  let registration: RegistrationType;
 
   beforeEach(() => {
-    auction = factoryAuction();
+    registration = factoryRegistration();
+    auction = factoryAuction({
+      registration: registration,
+      startDate: Date.now() - 1000,
+    });
   });
 
   afterEach(() => {
@@ -117,7 +175,7 @@ describe("Custom bid input", () => {
   });
 
   test("filling and clicking opens confirm bid modal", async () => {
-    render(() => <Bid auction={auction} />);
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
     const amountInput = screen.getByRole("spinbutton");
     const bidButton = screen.getByText(/Enchérir/i);
     fireEvent.input(amountInput, { target: { value: "2000" } });
@@ -131,9 +189,14 @@ describe("Custom bid input", () => {
 
 describe("Modal confirm bid", () => {
   let auction: AuctionType;
+  let registration: RegistrationType;
 
   beforeEach(() => {
-    auction = factoryAuction();
+    registration = factoryRegistration();
+    auction = factoryAuction({
+      registration: registration,
+      startDate: Date.now() - 1000,
+    });
     (client.placeBidOnAuction as Mock).mockReset();
   });
 
@@ -145,7 +208,7 @@ describe("Modal confirm bid", () => {
   test("places bid when confirm button is clicked", async () => {
     // Set up the mock to resolve to a bid
     (client.placeBidOnAuction as Mock).mockResolvedValue(factoryBid());
-    render(() => <Bid auction={auction} />);
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
     const fastBidButton = screen.getAllByRole("button", {
       name: /\+ [\d\s]+ €/i,
     })[0];
@@ -161,7 +224,7 @@ describe("Modal confirm bid", () => {
   test("displays an error when bid amount is too low", async () => {
     const error = { code: "bid_amount_too_low", min: 1500 };
     (client.placeBidOnAuction as Mock).mockRejectedValue(error);
-    render(() => <Bid auction={auction} />);
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
     const fastBidButton = screen.getAllByRole("button", {
       name: /\+ [\d\s]+ €/i,
     })[0];
@@ -180,7 +243,7 @@ describe("Modal confirm bid", () => {
   test("displays a warning when bid amount is too high", async () => {
     // Trigger when the bid amount is more than 3 steps above the highest bid
     // Warning message should be "Votre offre est sensiblement supérieure à l'offre précédente. Êtes-vous sûr de vouloir continuer ?"
-    render(() => <Bid auction={auction} />);
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
     const amountInput = screen.getByRole("spinbutton");
     const bidButton = screen.getByText(/Enchérir/i);
     fireEvent.input(amountInput, {

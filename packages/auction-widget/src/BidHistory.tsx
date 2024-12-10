@@ -30,7 +30,8 @@ const BidHistory: Component<{
         (!props.auction.isPrivate ||
           (props.auction.isPrivate &&
             props.auction.registration &&
-            props.auction.registration.isUserAllowed))
+            props.auction.registration.isUserAllowed &&
+            props.auction.registration.isRegistrationAccepted))
       }
     >
       <div class="auction-widget-section auction-widget-border-t">

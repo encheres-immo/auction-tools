@@ -1,93 +1,147 @@
-import type { Component } from "solid-js";
-import { createSignal } from "solid-js";
+import type { Component, Setter } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import client from "@encheres-immo/widget-client";
 import { AuctionType } from "@encheres-immo/widget-client/types";
 import CenteredModal from "./CenteredModal.js";
 
 /**
- * Shows buttons to participate in an auction or login.
+ * Render the participate button, and different modals allowing the user to connect, register to the auction,
+ * or contact the agent (depending on the user's status and the auction's registration status).
  */
 const ParticipateBox: Component<{
-  setterIsLogged: any;
   updateUser: any;
-  isLogging: boolean;
   auction: AuctionType;
+  setAuction: (auction: AuctionType) => void;
+  isLogged: () => boolean;
+  setIsLogged: Setter<boolean>;
+  isLogging: () => boolean;
+  allowUserRegistration: Boolean;
+  tosUrl: string;
 }> = (props) => {
-  if (props.isLogging) {
+  if (props.isLogging()) {
     tryToConnect();
   }
+
   function connect() {
     return () => {
-      // console.log("try to connect in return ")
-      // const currentUrl = window.location.href;
-      // const url = new URL(currentUrl);
-      // url.searchParams.set('logging', 'true');
-      // history.pushState({}, '', url.href);
       tryToConnect();
     };
   }
 
   function tryToConnect() {
     client.authenticate().then(() => {
-      props.setterIsLogged(true);
+      props.setIsLogged(true);
       client.me().then((user) => {
         props.updateUser(user);
       });
     });
   }
 
-  const [isOpenBox, setIsOpenBox] = createSignal(false);
-  const [isOpenAgentBox, setIsOpenAgentBox] = createSignal(false);
+  function registerUserToAuction() {
+    client.registerUserToAuction(props.auction.id).then((auction) => {
+      props.setAuction(auction);
+    });
+  }
+
+  const [isModalOpen, setOpenModal] = createSignal(false);
+  const [isContactModalOpen, setIsContactModalOpen] = createSignal(false);
+
   return (
-    <div>
+    <Show when={!props.isLogged() || !props.auction.registration}>
       <div class="auction-widget-section">
         <button
           class="auction-widget-btn auction-widget-custom"
-          onClick={() => setIsOpenBox(!isOpenBox())}
+          onClick={() => setOpenModal(true)}
         >
           Je veux participer
         </button>
       </div>
-      {isOpenBox() && (
-        <div>
-          <CenteredModal
-            title="Vous devez être connecté"
-            icon_class="fas fa-user-lock"
-            success={false}
-          >
-            <div class="auction-widget-action">
-              <button
-                class="auction-widget-btn auction-widget-custom"
-                onClick={connect()}
-              >
-                Se connecter
-              </button>
-              <button
-                class="auction-widget-btn"
-                onClick={() => setIsOpenBox(false)}
-              >
-                Annuler
-              </button>
-            </div>
-            <div id="auction-widget-agent-link">
-              <p class="auction-widget-modal-note">Pas encore de compte ?</p>
-              <button
-                id="auction-widget-link"
-                onClick={() => {
-                  setIsOpenAgentBox(true);
-                  setIsOpenBox(false);
-                }}
-              >
-                Contacter l'agent
-              </button>
-            </div>
-          </CenteredModal>
-        </div>
-      )}
-      {isOpenAgentBox() && (
+
+      <Show when={isModalOpen() && !props.isLogged()}>
+        <CenteredModal
+          title="Vous devez être connecté"
+          icon_class="fas fa-user-lock"
+          success={false}
+        >
+          <div class="auction-widget-action">
+            <button
+              class="auction-widget-btn auction-widget-custom"
+              onClick={connect()}
+            >
+              Se connecter
+            </button>
+            <button
+              class="auction-widget-btn"
+              onClick={() => setOpenModal(false)}
+            >
+              Annuler
+            </button>
+          </div>
+          <div id="auction-widget-agent-link">
+            <p class="auction-widget-modal-note">Pas encore de compte ?</p>
+            <button
+              id="auction-widget-link"
+              onClick={() => {
+                setIsContactModalOpen(true);
+                setOpenModal(false);
+              }}
+            >
+              Contacter l'agent
+            </button>
+          </div>
+        </CenteredModal>
+      </Show>
+
+      <Show
+        when={
+          isModalOpen() &&
+          props.isLogged() &&
+          !props.auction.registration &&
+          props.allowUserRegistration
+        }
+      >
         <CenteredModal
           title="Demande de participation"
-          icon_class={"fas fa-gavel"}
+          success={false}
+          icon_class="fas fa-gavel"
+        >
+          En cliquant sur Valider, je reconnais avoir lu et accepté{" "}
+          <a href={props.tosUrl} target="_blank">
+            les conditions générales d'utilisation
+          </a>
+          .
+          <div class="auction-widget-action">
+            <button
+              class="auction-widget-btn auction-widget-custom"
+              onClick={() => {
+                registerUserToAuction();
+                setOpenModal(false);
+              }}
+            >
+              Valider
+            </button>
+            <button
+              class="auction-widget-btn"
+              onClick={() => setOpenModal(false)}
+            >
+              Annuler
+            </button>
+          </div>
+        </CenteredModal>
+      </Show>
+
+      <Show
+        when={
+          (isModalOpen() &&
+            props.isLogged() &&
+            !props.auction.registration &&
+            !props.allowUserRegistration) ||
+          isContactModalOpen()
+        }
+      >
+        <CenteredModal
+          title="Demande de participation"
+          icon_class="fas fa-gavel"
           success={false}
         >
           <div class="auction-widget-contact">
@@ -109,14 +163,16 @@ const ParticipateBox: Component<{
           <div class="auction-widget-action">
             <button
               class="auction-widget-btn"
-              onClick={() => setIsOpenAgentBox(false)}
+              onClick={() =>
+                setIsContactModalOpen(false) && setOpenModal(false)
+              }
             >
               Fermer
             </button>
           </div>
         </CenteredModal>
-      )}
-    </div>
+      </Show>
+    </Show>
   );
 };
 
