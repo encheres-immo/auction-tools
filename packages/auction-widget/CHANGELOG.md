@@ -1,5 +1,30 @@
 # @encheres-immo/auction-widget
 
+## 0.4.0
+
+### Minor Changes
+
+- 65b24d5: Add an optional attribute to allow users to register for the auction—This registration must be accepted by the agent later, or the user will not be able to place bids. If set to false, agent's contact information will be displayed instead.
+
+  ```html
+  <div
+    id="auction-widget"
+    [...
+    other
+    attributes]
+    allow-user-registration="false"
+  ></div>
+  ```
+
+  Default value is `true`.
+
+### Patch Changes
+
+- ec8113d: Fixed an issue where bid history was visible to non-participants in private auctions.
+- 582816d: Fixes several edge cases where the information displayed did not match the user's permissions/state.
+- Updated dependencies [65b24d5]
+  - @encheres-immo/widget-client@0.4.0
+
 ## 0.3.1
 
 ### Patch Changes
