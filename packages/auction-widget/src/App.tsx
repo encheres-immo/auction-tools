@@ -8,6 +8,7 @@ import Auction from "./Auction.js";
 import Bid from "./Bid.js";
 import BidHistory from "./BidHistory.js";
 import ParticipateBox from "./ParticipateBox.js";
+import UserRegistration from "./UserRegistration.jsx";
 import {
   AuctionType,
   BidType,
@@ -18,6 +19,7 @@ import { isAuctionNotStarted, isAuctionInProgress } from "./utils.js";
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
+const [isShowRegisterUser, setIsShowRegisterUser] = createSignal(false);
 const [user, setUser] = createSignal<UserType>({ id: "" });
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>({
@@ -94,9 +96,11 @@ function updateUser(user: UserType, propertyInfo: PropertyInfoType) {
 const App: Component<{
   apiKey: string;
   propertyInfo: PropertyInfoType;
+  allowUserRegistration: boolean
+  tosUrl: string;
   environment: "local" | "staging" | "production";
 }> = (props) => {
-  const { apiKey, propertyInfo, environment = "production" } = props;
+  const { apiKey, propertyInfo, environment = "production", allowUserRegistration, tosUrl } = props;
   // Initialize client and auction
   client.initEIClient(apiKey, environment);
   refreshAuction(propertyInfo);
@@ -107,6 +111,7 @@ const App: Component<{
   const code = params.get("code");
   if (code != "" && code != null) {
     setIsLogging(true);
+    setIsShowRegisterUser(true)
   }
 
   return (
@@ -206,10 +211,7 @@ const App: Component<{
                 </p>
               </Match>
               <Match when={isLogged() && !auction.registration}>
-                <p class="auction-widget-note">
-                  Vous n'êtes pas inscrit à cette vente, veuillez contacter
-                  l'agent responsable.
-                </p>
+                <UserRegistration allowUserRegistration={allowUserRegistration} setAuction={setAuction} auction={auction} setIsShowRegisterUser={setIsShowRegisterUser} isShowRegisterUser={isShowRegisterUser} tosUrl={tosUrl}/>
               </Match>
             </Switch>
             <BidHistory bids={bids} auction={auction} user={user()} />
