@@ -2,6 +2,9 @@ import { Component, Switch, Match } from "solid-js";
 import { isAuctionInProgress, isAuctionNotStarted } from "./utils.js";
 import { AuctionType } from "@encheres-immo/widget-client/types";
 
+/**
+ * Display a message depending on the user's registration status for the auction.
+ */
 const RegistrationStatus: Component<{
   isLogged: () => boolean;
   auction: AuctionType;

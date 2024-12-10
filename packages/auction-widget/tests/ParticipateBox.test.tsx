@@ -1,16 +1,24 @@
+import { render, screen, fireEvent, cleanup } from "@solidjs/testing-library";
 import {
+  describe,
   test,
   expect,
-  describe,
   beforeEach,
   afterEach,
   vi,
   Mock,
 } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@solidjs/testing-library";
 import ParticipateBox from "../src/ParticipateBox.jsx";
-import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
-import { factoryAuction, factoryUser } from "./test-utils.js";
+import {
+  factoryAuction,
+  factoryRegistration,
+  factoryUser,
+} from "./test-utils.js";
+import {
+  AuctionType,
+  RegistrationType,
+  UserType,
+} from "@encheres-immo/widget-client/types";
 
 // Mock the client module
 vi.mock("@encheres-immo/widget-client", () => {
@@ -18,24 +26,27 @@ vi.mock("@encheres-immo/widget-client", () => {
     default: {
       authenticate: vi.fn(),
       me: vi.fn(),
+      registerUserToAuction: vi.fn(),
     },
   };
 });
 
-// Import the mocked client
 import client from "@encheres-immo/widget-client";
 
-describe("Participate buttons", () => {
+describe("Participate Button", () => {
   let auction: AuctionType;
-  let setterIsLogged: Mock;
+  let setIsLogged: Mock;
   let updateUser: Mock;
+  let setAuction: Mock;
 
   beforeEach(() => {
     auction = factoryAuction();
-    setterIsLogged = vi.fn();
+    setIsLogged = vi.fn();
     updateUser = vi.fn();
+    setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
     (client.me as Mock).mockReset();
+    (client.registerUserToAuction as Mock).mockReset();
   });
 
   afterEach(() => {
@@ -43,119 +54,160 @@ describe("Participate buttons", () => {
     vi.restoreAllMocks();
   });
 
-  test("renders", () => {
+  test("is rendered correctly", () => {
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
       />
     ));
-    // Check that the participate button is rendered
     expect(screen.getByText("Je veux participer")).toBeInTheDocument();
   });
 
-  test("opens the login modal", () => {
+  test("opens login modal when clicked and user is not logged in", () => {
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
       />
     ));
-    const participateButton = screen.getByText("Je veux participer");
-    fireEvent.click(participateButton);
-    // Check that the login modal is displayed
+    fireEvent.click(screen.getByText("Je veux participer"));
     expect(screen.getByText("Vous devez être connecté")).toBeInTheDocument();
+  });
+
+  test("opens registration modal when user is logged in but not registered", () => {
+    render(() => (
+      <ParticipateBox
+        setIsLogged={setIsLogged}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={true}
+        tosUrl="https://example.com/tos"
+      />
+    ));
+    fireEvent.click(screen.getByText("Je veux participer"));
+    expect(screen.getByText("Demande de participation")).toBeInTheDocument();
+  });
+
+  test("is not rendered when user is logged in and registered", () => {
+    const registration = factoryRegistration();
+    auction = factoryAuction({ registration: registration });
+    render(() => (
+      <ParticipateBox
+        setIsLogged={setIsLogged}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={true}
+        tosUrl="https://example.com/tos"
+      />
+    ));
+    expect(screen.queryByText("Je veux participer")).not.toBeInTheDocument();
   });
 });
 
-describe("Login button", () => {
+describe("Login Modal", () => {
   let auction: AuctionType;
-  let setterIsLogged: Mock;
+  let setIsLogged: Mock;
   let updateUser: Mock;
+  let setAuction: Mock;
 
   beforeEach(() => {
     auction = factoryAuction();
-    setterIsLogged = vi.fn();
+    setIsLogged = vi.fn();
     updateUser = vi.fn();
+    setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
     (client.me as Mock).mockReset();
+    (client.registerUserToAuction as Mock).mockReset();
   });
 
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
   });
-  test("calls client.authenticate and client.me", async () => {
-    // Mock client.authenticate and client.me
+
+  test("calls client.authenticate and client.me on connect", async () => {
     const user: UserType = factoryUser();
     (client.authenticate as Mock).mockResolvedValue(undefined);
     (client.me as Mock).mockResolvedValue(user);
 
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
       />
     ));
 
-    const participateButton = screen.getByText("Je veux participer");
-    fireEvent.click(participateButton);
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Se connecter"));
 
-    const connectButton = screen.getByText("Se connecter");
-    fireEvent.click(connectButton);
-
-    // Wait for promises to resolve
-    await client.authenticate();
-    await client.me();
-
-    // Check that client.authenticate and client.me have been called
-    expect(client.authenticate).toHaveBeenCalled();
-    expect(client.me).toHaveBeenCalled();
-
-    // Check that setterIsLogged and updateUser have been called with correct arguments
-    expect(setterIsLogged).toHaveBeenCalledWith(true);
+    await expect(client.authenticate).toHaveBeenCalled();
+    await expect(client.me).toHaveBeenCalled();
+    expect(setIsLogged).toHaveBeenCalledWith(true);
     expect(updateUser).toHaveBeenCalledWith(user);
   });
 
   test("can be cancelled", () => {
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
       />
     ));
-    const participateButton = screen.getByText("Je veux participer");
-    fireEvent.click(participateButton);
 
-    const cancelButton = screen.getByText("Annuler");
-    fireEvent.click(cancelButton);
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Annuler"));
 
-    // Check that the login modal is no longer displayed
     expect(
       screen.queryByText("Vous devez être connecté")
     ).not.toBeInTheDocument();
   });
 });
 
-describe("Contact modal", () => {
+describe("Registration Modal", () => {
   let auction: AuctionType;
-  let setterIsLogged: Mock;
+  let setIsLogged: Mock;
   let updateUser: Mock;
+  let setAuction: Mock;
 
   beforeEach(() => {
     auction = factoryAuction();
-    setterIsLogged = vi.fn();
+    setIsLogged = vi.fn();
     updateUser = vi.fn();
+    setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
     (client.me as Mock).mockReset();
+    (client.registerUserToAuction as Mock).mockReset();
   });
 
   afterEach(() => {
@@ -163,72 +215,142 @@ describe("Contact modal", () => {
     vi.restoreAllMocks();
   });
 
-  test("can be opened", () => {
+  test("registers user to auction when validated", async () => {
+    const updatedAuction = factoryAuction({ id: "auction1" });
+    (client.registerUserToAuction as Mock).mockResolvedValue(updatedAuction);
+
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={true}
+        tosUrl="https://example.com/tos"
       />
     ));
-    const participateButton = screen.getByText("Je veux participer");
-    fireEvent.click(participateButton);
 
-    const contactAgentButton = screen.getByText("Contacter l'agent");
-    fireEvent.click(contactAgentButton);
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Valider"));
 
-    // Check that the agent contact modal is displayed
+    await expect(client.registerUserToAuction).toHaveBeenCalledWith(auction.id);
+    expect(setAuction).toHaveBeenCalledWith(updatedAuction);
+  });
+
+  test("can be cancelled", () => {
+    render(() => (
+      <ParticipateBox
+        setIsLogged={setIsLogged}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={true}
+        tosUrl="https://example.com/tos"
+      />
+    ));
+
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Annuler"));
+
+    expect(
+      screen.queryByText("Demande de participation")
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe("Contact Modal", () => {
+  let auction: AuctionType;
+  let setIsLogged: Mock;
+  let updateUser: Mock;
+  let setAuction: Mock;
+
+  beforeEach(() => {
+    auction = factoryAuction();
+    setIsLogged = vi.fn();
+    updateUser = vi.fn();
+    setAuction = vi.fn();
+    (client.authenticate as Mock).mockReset();
+    (client.me as Mock).mockReset();
+    (client.registerUserToAuction as Mock).mockReset();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+
+  test("can be opened from login modal", () => {
+    render(() => (
+      <ParticipateBox
+        setIsLogged={setIsLogged}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
+      />
+    ));
+
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Contacter l'agent"));
+
     expect(screen.getByText("Demande de participation")).toBeInTheDocument();
-
-    // Check that the login modal is closed
     expect(
       screen.queryByText("Vous devez être connecté")
     ).not.toBeInTheDocument();
   });
 
-  test("displays agent email and phone", () => {
+  test("displays agent contact information", () => {
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
       />
     ));
-    const participateButton = screen.getByText("Je veux participer");
-    fireEvent.click(participateButton);
 
-    const contactAgentButton = screen.getByText("Contacter l'agent");
-    fireEvent.click(contactAgentButton);
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Contacter l'agent"));
 
-    // Check that agent email and phone are displayed correctly
-    const emailLink = screen.getByText(auction.agentEmail);
-    expect(emailLink).toHaveAttribute("href", `mailto:${auction.agentEmail}`);
-
-    const phoneLink = screen.getByText(auction.agentPhone);
-    expect(phoneLink).toHaveAttribute("href", `tel:${auction.agentPhone}`);
+    expect(screen.getByText(auction.agentEmail)).toHaveAttribute(
+      "href",
+      `mailto:${auction.agentEmail}`
+    );
+    expect(screen.getByText(auction.agentPhone)).toHaveAttribute(
+      "href",
+      `tel:${auction.agentPhone}`
+    );
   });
 
   test("can be closed", () => {
     render(() => (
       <ParticipateBox
-        setterIsLogged={setterIsLogged}
+        setIsLogged={setIsLogged}
         updateUser={updateUser}
-        isLogging={false}
+        setAuction={setAuction}
+        isLogged={() => false}
+        isLogging={() => false}
         auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
       />
     ));
-    const participateButton = screen.getByText("Je veux participer");
-    fireEvent.click(participateButton);
 
-    const contactAgentButton = screen.getByText("Contacter l'agent");
-    fireEvent.click(contactAgentButton);
+    fireEvent.click(screen.getByText("Je veux participer"));
+    fireEvent.click(screen.getByText("Contacter l'agent"));
+    fireEvent.click(screen.getByText("Fermer"));
 
-    const closeButton = screen.getByText("Fermer");
-    fireEvent.click(closeButton);
-
-    // Check that the agent contact modal is closed
     expect(
       screen.queryByText("Demande de participation")
     ).not.toBeInTheDocument();

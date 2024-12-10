@@ -124,10 +124,14 @@ const App: Component<{
       <Show when={auction.id != ""}>
         <AuctionInfos auction={auction} user={user()} />
         <ParticipateBox
-          setterIsLogged={setIsLogged}
-          isLogging={isLogging()}
           auction={auction}
+          setAuction={setAuction}
+          isLogged={isLogged}
+          setIsLogged={setIsLogged}
+          isLogging={isLogging}
           updateUser={updateUser(user(), propertyInfo)}
+          allowUserRegistration={allowUserRegistration}
+          tosUrl={tosUrl}
         />
         <RegistrationStatus isLogged={isLogged} auction={auction} />
         <BidForm auction={auction} isLogged={isLogged} />
