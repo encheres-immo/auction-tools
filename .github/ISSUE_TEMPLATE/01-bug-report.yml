@@ -1,0 +1,40 @@
+name: "Bug Report"
+description: Report an issue or possible bug
+labels: ["bug", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for taking the time to file a bug report! Please fill out this form as completely as possible. If you're not sure how to fill out a section, do your best and we'll help you along the way.
+  - type: checkboxes
+    id: packages
+    attributes:
+      label: My issue is related to
+      options:
+        - label: packages/auction-widget via CDN
+          required: false
+        - label: packages/auction-widget via NPM
+          required: false
+        - label: packages/auction-widget
+          required: false
+        - label: Enchères Immo API
+          required: false
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: Please provide the version of the package you are using. If you are using the auction-widget via CDN, please provide the URL you are using.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: bug-expectation
+    attributes:
+      label: What's the expected result?
+      description: Describe what you expect to happen.
+    validations:
+      required: true
