@@ -106,7 +106,8 @@ const ParticipateBox: Component<{
           icon_class="fas fa-gavel"
         >
           En cliquant sur Valider, je reconnais avoir lu et accepté{" "}
-          <a href={props.tosUrl} target="_blank">
+          <a href={props.tosUrl == "" ? "https://encheres-immo.com/cgu" : props.tosUrl}
+            target="_blank">
             les conditions générales d'utilisation
           </a>
           .

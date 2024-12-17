@@ -46,9 +46,10 @@ Alternatively, you can retrieve your property from a CRM by replacing `property-
 
 You can enable or disable features of the widget by setting the corresponding attributes on the HTML tag. Here are the available features:
 
-| Attribute                 | Default | Description                                                                                                                                                                                                                              |
-| ------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allow-user-registration` | `true`  | Display a button to allow users to register for the auction—This registration must be accepted by the agent later, or the user will not be able to place bids. If set to `false`, agent's contact information will be displayed instead. |
+| Attribute                 | Default                         | Description                                                                                                                                                                                                                              |
+| ------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allow-user-registration` | `true`                          | Display a button to allow users to register for the auction—This registration must be accepted by the agent later, or the user will not be able to place bids. If set to `false`, agent's contact information will be displayed instead. |
+| `tos-url`                 | `https://encheres-immo.com/cgu` | URL to your custom terms of service page for auctions, must be a valid URL and confirmed by Enchères Immo.                                                                                                                               |
 
 ### Styling
 
