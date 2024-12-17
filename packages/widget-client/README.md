@@ -2,11 +2,24 @@
 
 Quickly integrate Enchères Immo's API in your own auction JavaScript/TypeScript widget. Provides a simple interface to fetch auctions, authenticate users and place bids 🚀 
 
-## Prerequisites
+## Quick Links
+
+📖 [Main repository](https://github.com/encheres-immo/auction-widget), with all our public packages.
+
+🐛 [Report a bug](https://github.com/encheres-immo/auction-widget/issues), please read our [contributing guidelines](https://github.com/encheres-immo/auction-widget/blob/main/CONTRIBUTING.md) and [code of conduct](https://github.com/encheres-immo/auction-widget/blob/main/CODE_OF_CONDUCT.md) first.
+
+🚨 [Report a security vulnerability](https://github.com/encheres-immo/auction-widget/security/advisories/new), and be sure to review our [security policy](https://github.com/encheres-immo/auction-widget/blob/main/SECURITY.md).
+
+💬 [Join the discussion](https://github.com/encheres-immo/auction-widget/discussions), if you have any questions, ideas, or suggestions.
+
+## Installation
+
+### Prerequisites
 
 To use this widget, you need an API key from Enchères Immo. If you are a real estate professional and not yet a partner of Enchères Immo, please [book a demo](https://1awi3zs5bi0.typeform.com/to/N63LlgvM) to get started. If you are already a partner, contact us to get your API key.
 
-## Useful commands
+
+### Useful commands
 
 All commands are run from the root of the package.
 
@@ -17,7 +30,7 @@ All commands are run from the root of the package.
 | `pnpm run watch` | Build the package and watch for changes |
 | `pnpm run test`  | Run the tests                           |
 
-## Important notes
+### Important notes
 
 This package is built with [TypeScript](https://www.typescriptlang.org/), and not bundled or minified. It is intended to be used as a module in your own auction widget, which should be bundled and minified for production.
 

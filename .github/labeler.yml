@@ -1,0 +1,32 @@
+# See https://github.com/actions/labeler
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: docs/**
+
+example:
+  - changed-files:
+      - any-glob-to-any-file: example/**
+
+"pkg:auction-widget":
+  - changed-files:
+      - any-glob-to-any-file: packages/auction-widget/**
+
+"pkg:widget-client":
+  - changed-files:
+      - any-glob-to-any-file: packages/widget-client/**
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/**/package.json
+          - example/package.json
+          - docs/package.json
+
+devops:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - .editorconfig
+          - .prettierrc.cjs
+          - .gitignore
+          - pnpm-workspace.yaml
