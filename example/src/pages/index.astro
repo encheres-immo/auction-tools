@@ -1,6 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro"
 import "@encheres-immo/auction-widget/dist/auction-widget.css"
+import {
+  API_KEY,
+  API_ENV,
+  PROPERTY_ID,
+  ALLOW_USER_REGISTRATION,
+  TOS_URL,
+} from "astro:env/client"
 ---
 
 <Layout title="Welcome to Astro.">
@@ -9,12 +16,11 @@ import "@encheres-immo/auction-widget/dist/auction-widget.css"
     <!-- get key & id from env variables -->
     <div
       id="auction-widget"
-      api-key={import.meta.env.API_KEY}
-      api-env={import.meta.env.API_ENV}
-      property-id={import.meta.env.PROPERTY_ID}
-      allow-user-registration={import.meta.env.ALLOW_USER_REGISTRATION ||
-        "true"}
-      tos-url={import.meta.env.TOS_URL || ""}
+      api-key={API_KEY}
+      api-env={API_ENV}
+      property-id={PROPERTY_ID}
+      allow-user-registration={ALLOW_USER_REGISTRATION}
+      tos-url={TOS_URL}
     >
     </div>
     <link
