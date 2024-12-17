@@ -12,8 +12,9 @@ import "@encheres-immo/auction-widget/dist/auction-widget.css"
       api-key={import.meta.env.API_KEY}
       api-env={import.meta.env.API_ENV}
       property-id={import.meta.env.PROPERTY_ID}
-      allow-user-registration={import.meta.env.ALLOW_USER_REGISTRATION}
-      tos-url={import.meta.env.TOS_URL}
+      allow-user-registration={import.meta.env.ALLOW_USER_REGISTRATION ||
+        "true"}
+      tos-url={import.meta.env.TOS_URL || ""}
     >
     </div>
     <link

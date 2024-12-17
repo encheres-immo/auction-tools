@@ -51,6 +51,14 @@ function formatDate(date: number): string {
   return parseDate(date).toLocaleString();
 }
 
+/**
+ * Parse a string to check if it is a valid URL
+ */
+function is_valid_url(url: string): boolean {
+    try { return Boolean(new URL(url)); }
+    catch(e){ return false; }
+}
+
 export {
   isAuctionNotStarted,
   isAuctionInProgress,
@@ -59,4 +67,5 @@ export {
   displayCurrencySymbol,
   parseDate,
   formatDate,
+  is_valid_url,
 };

@@ -239,6 +239,48 @@ describe("Registration Modal", () => {
     expect(setAuction).toHaveBeenCalledWith(updatedAuction);
   });
 
+  test("displays default terms of service if no custom link is provided", () => {
+    render(() => (
+      <ParticipateBox
+        setIsLogged={setIsLogged}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={true}
+        tosUrl=""
+      />
+    ));
+
+    fireEvent.click(screen.getByText("Je veux participer"));
+    expect(screen.getByText("les conditions générales d'utilisation")).toHaveAttribute(
+      "href",
+      "https://encheres-immo.com/cgu"
+    );
+  });
+
+  test("displays terms of service custom link if provided", () => {
+    render(() => (
+      <ParticipateBox
+        setIsLogged={setIsLogged}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={true}
+        tosUrl="https://example.com/tos"
+      />
+    ));
+
+    fireEvent.click(screen.getByText("Je veux participer"));
+    expect(screen.getByText("les conditions générales d'utilisation")).toHaveAttribute(
+      "href",
+      "https://example.com/tos"
+    );
+  });
+
   test("can be cancelled", () => {
     render(() => (
       <ParticipateBox
