@@ -1,5 +1,14 @@
 # @encheres-immo/auction-widget
 
+## 0.4.1
+
+### Patch Changes
+
+- 6b3ccbd: Updated README to reflect the package's open-source status, including links for contributions and issue reporting.
+- 2336f90: Fixed a bug where the `tos-url` attribute was incorrectly required, added validation for invalid URLs, and added documentation in the package README.
+- Updated dependencies [6b3ccbd]
+  - @encheres-immo/widget-client@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes

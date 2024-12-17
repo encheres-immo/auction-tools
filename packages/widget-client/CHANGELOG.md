@@ -1,5 +1,11 @@
 # @encheres-immo/widget-client
 
+## 0.4.1
+
+### Patch Changes
+
+- 6b3ccbd: Updated README to reflect the package's open-source status, including links for contributions and issue reporting.
+
 ## 0.4.0
 
 ### Minor Changes
