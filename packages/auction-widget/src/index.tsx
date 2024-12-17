@@ -1,6 +1,6 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import { is_valid_url } from "./utils.js";
+import { isValidUrl } from "./utils.js";
 import App from "./App.jsx";
 
 const root = document.getElementById("auction-widget");
@@ -31,7 +31,7 @@ if (propertyId == "" && (source == "" || sourceAgencyId == "" || sourceId == "")
     "Auction widget: Either 'property-id' or 'source', 'source-agency-id', and 'source-id' must be provided. Did you forget to add them? Or maybe the attributes got misspelled?"
   );
 }
-if (tosUrl != "" && !is_valid_url(tosUrl)) {
+if (tosUrl != "" && !isValidUrl(tosUrl)) {
   throw new Error(
     "Auction widget: 'tos-url' is not a valid URL."
   );

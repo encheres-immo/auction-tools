@@ -54,9 +54,13 @@ function formatDate(date: number): string {
 /**
  * Parse a string to check if it is a valid URL
  */
-function is_valid_url(url: string): boolean {
-    try { return Boolean(new URL(url)); }
-    catch(e){ return false; }
+function isValidUrl(url: string): boolean {
+    try { 
+      return Boolean(new URL(url)); 
+    }
+    catch(e){ 
+      return false;
+    }
 }
 
 export {
@@ -67,5 +71,5 @@ export {
   displayCurrencySymbol,
   parseDate,
   formatDate,
-  is_valid_url,
+  isValidUrl,
 };
