@@ -1,5 +1,11 @@
 # @encheres-immo/auction-widget
 
+## 0.4.2
+
+### Patch Changes
+
+- 088915c: Added documentation on upgrading the widget via NPM or standalone CDN links, along with guidelines for understanding version numbers.
+
 ## 0.4.1
 
 ### Patch Changes
