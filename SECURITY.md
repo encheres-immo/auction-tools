@@ -6,10 +6,8 @@ The following versions of our projects are currently supported with security upd
 
 | Package        | Version | Supported          |
 | -------------- | ------- | ------------------ |
-| auction-widget | 0.4.x   | :white_check_mark: |
-| auction-widget | < 0.4   | :x:                |
-| widget-client  | 0.4.x   | :white_check_mark: |
-| widget-client  | < 0.4   | :x:                |
+| auction-widget | 0.x.x   | :white_check_mark: |
+| widget-client  | 0.x.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
