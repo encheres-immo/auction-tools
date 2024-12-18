@@ -26,6 +26,29 @@ This widget is also available as a standalone script. To use it, add the followi
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@encheres-immo/auction-widget@0/dist/auction-widget.css">
 ```
 
+## Upgrade
+
+To upgrade this widget to the latest version using npm, run:
+
+```bash
+# Using npm
+npm update @encheresimmo/auction-widget
+# Using pnpm
+pnpm update @encheresimmo/auction-widget
+# Using yarn (not recommended)
+yarn upgrade @encheresimmo/auction-widget
+```
+
+To upgrade the standalone script to the latest version, update the version number after `@` in the script and style tags in your HTML file. You should only write one number, e.g. `@0`, to get automatically the latest version of the major version you are using (see below).
+
+We follow [semantic versioning](https://semver.org/), version numbers can therefore be interpreted as follows:
+
+| Number change | Meaning                                                                     | Safe to upgrade? |
+| ------------- | --------------------------------------------------------------------------- | ---------------- |
+| `x.x.0`       | Bug fixes, performance improvements, and security patches...                | Yes              |
+| `x.0.x`       | New features, or backward-compatible changes...                             | Yes              |
+| `0.x.x`       | Big breaking changes, you should consult the [changelog](./CHANGELOG.md)... | No               |
+
 ## Usage
 
 To use the widget, add the following HTML tag to your website, and replace `YOUR API KEY` with your Enchères Immo API key and `PROPERTY ID` with the Enchères Immo's ID of the property you want to display.

@@ -31,9 +31,19 @@ This repository contains all open-source packages developed by [Enchères Immo](
 
 We use [pnpm](https://pnpm.io/) as our package manager, since it's not only faster and safer than npm and yarn, but also because it has better support for monorepos. Global commands are :
 
-| Command          | Action                |
-| :--------------- | :-------------------- |
-| `pnpm install`   | Installs dependencies |
-| `pnpm changeset` | Generate a changelog  |
+| Command          | Action                                  |
+| :--------------- | :-------------------------------------- |
+| `pnpm install`   | Installs dependencies for all packages  |
+| `pnpm changeset` | Generate a changeset for a pull request |
 
 For package-specific commands and instructions, please refer to the README of the package, listed above.
+
+### CI / CD
+
+We use GitHub Actions to automate our CI/CD pipeline. When a pull request is opened, the following checks are performed for all packages: ~~linting~~ (WIP), testing, and building. Learn more [here](https://github.com/encheres-immo/auction-widget/blob/main/.github/workflows/ci.yml). 
+
+Labels are also automatically added to indicate where the changes are located. Learn more [here](https://github.com/encheres-immo/auction-widget/blob/main/.github/labeler.yml).
+
+If your changes concern a published package (labels starting with `pkg:`), you will need to generate a changeset using the `pnpm changeset` command. This will create a new file in the `.changeset` directory. Once the pull request is merged, a release pull request will be created, consuming all changesets into changelogs and version bumps. Learn more [here](https://github.com/changesets/changesets).
+
+Merging the release pull request will automatically publish the new versions to npm and the CDN. Learn more [here](https://github.com/encheres-immo/auction-widget/blob/main/.github/workflows/release.yml) and [here](https://www.jsdelivr.com/).
