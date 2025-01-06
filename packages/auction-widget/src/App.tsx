@@ -129,7 +129,7 @@ const App: Component<{
           isLogged={isLogged}
           setIsLogged={setIsLogged}
           isLogging={isLogging}
-          updateUser={updateUser(user(), propertyInfo)}
+          updateUser={updateUser}
           allowUserRegistration={allowUserRegistration}
           tosUrl={tosUrl}
         />
