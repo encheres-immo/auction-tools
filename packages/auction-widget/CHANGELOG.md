@@ -1,5 +1,11 @@
 # @encheres-immo/auction-widget
 
+## 0.4.3
+
+### Patch Changes
+
+- 94f6fd6: Fixed an issue where the connected user's bids showed their anonymous ID instead of 'You'.
+
 ## 0.4.2
 
 ### Patch Changes
