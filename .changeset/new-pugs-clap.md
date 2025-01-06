@@ -2,4 +2,4 @@
 "@encheres-immo/auction-widget": patch
 ---
 
-fix the connected user name when he has already bid
+Fixed an issue where the connected user's bids showed their anonymous ID instead of 'You'.
