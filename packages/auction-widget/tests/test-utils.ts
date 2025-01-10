@@ -1,9 +1,22 @@
 import {
   AuctionType,
   BidType,
+  PropertyInfoType,
   RegistrationType,
   UserType,
 } from "@encheres-immo/widget-client/types";
+
+/**
+ * Factory function to create an property, pass only the properties you want to override.
+ */
+export function factoryPropertyInfo(
+  propertyInfoParams: Partial<PropertyInfoType> = {}
+): PropertyInfoType {
+  const basePropertyInfo: PropertyInfoType = {
+    propertyId: "property1",
+  };
+  return { ...basePropertyInfo, ...propertyInfoParams };
+}
 
 /**
  * Factory function to create an auction, pass only the properties you want to override.
@@ -61,6 +74,7 @@ export function factoryBid(bidParams: Partial<BidType> = {}): BidType {
 export function factoryUser(userParams: Partial<UserType> = {}): UserType {
   const baseUser: UserType = {
     id: "123",
+    email: "user@example.com",
   };
   return { ...baseUser, ...userParams };
 }

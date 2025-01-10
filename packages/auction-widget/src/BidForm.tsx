@@ -1,6 +1,6 @@
 import type { Accessor, Component } from "solid-js";
 import { Show, createSignal } from "solid-js";
-import { AuctionType } from "@encheres-immo/widget-client/types";
+import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
 import client from "@encheres-immo/widget-client";
 import {
   displayCurrencySymbol,
@@ -83,7 +83,7 @@ const BidForm: Component<{
         .then((newBid) => {
           setIsConfirmBidOpen(false);
           setIsShowMinMessage(false);
-
+          emitBidEvent(newBid);
           setFastBidMsg1(displayAmountOfStep(1, true, auction));
           setFastBidMsg2(displayAmountOfStep(2, true, auction));
           setFastBidMsg3(displayAmountOfStep(3, true, auction));
@@ -109,6 +109,20 @@ const BidForm: Component<{
       amount = (stepMultiplier - 1) * auction.step;
     }
     return displayAmountWithCurrency(amount, auction.currency);
+  }
+
+  /**
+   * Emit a custom event to notify the parent component that a bid has been placed.
+   * Can be used for tracking purposes or to display a bid notification.
+   */
+  function emitBidEvent(bid: BidType) {
+    const event = new CustomEvent("auction-widget:bid_placed", {
+      detail: {
+        amount: bid.amount,
+        date: bid.createdAt,
+      },
+    });
+    document.getElementById("auction-widget")?.dispatchEvent(event);
   }
 
   return (

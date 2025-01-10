@@ -19,7 +19,7 @@ import {
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
 const [isShowRegisterUser, setIsShowRegisterUser] = createSignal(false);
-const [user, setUser] = createSignal<UserType>({ id: "" });
+const [user, setUser] = createSignal<UserType | undefined>(undefined);
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>({
   id: "",
@@ -63,6 +63,15 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
     client
       .subscribeToAuction(auction.id, (bid) => {
         setBids([...bids, bid]);
+        // dispatch event for external integrations
+        const event = new CustomEvent("auction-widget:new_bid", {
+          detail: {
+            amount: bid.amount,
+            bidder: bid.userAnonymousId,
+            date: bid.createdAt,
+          },
+        });
+        document.getElementById("auction-widget")?.dispatchEvent(event);
         // replace highest bid in auction
         const newEndDate = bid.newEndDate || auction.endDate;
         setAuction({
@@ -86,6 +95,7 @@ function updateUser(user: UserType, propertyInfo: PropertyInfoType) {
   setUser(user);
   refreshAuction(propertyInfo);
   setIsLogging(false);
+  setIsLogged(true);
 }
 
 /**
@@ -110,7 +120,8 @@ const App: Component<{
   client.initEIClient(apiKey, environment);
   refreshAuction(propertyInfo);
 
-  // Check URL if user is logged
+  // Check if we are in the OAuth registration process.
+  // If so, grab the OAuth code from the URL and set the logging state to true.
   const url = window.location.href;
   const params = new URLSearchParams(url.split("?")[1]);
   const code = params.get("code");
@@ -125,9 +136,9 @@ const App: Component<{
         <AuctionInfos auction={auction} user={user()} />
         <ParticipateBox
           auction={auction}
+          propertyInfo={propertyInfo}
           setAuction={setAuction}
           isLogged={isLogged}
-          setIsLogged={setIsLogged}
           isLogging={isLogging}
           updateUser={updateUser}
           allowUserRegistration={allowUserRegistration}

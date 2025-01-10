@@ -18,7 +18,7 @@ import {
 const BidHistory: Component<{
   bids: BidType[];
   auction: AuctionType;
-  user: UserType;
+  user: UserType | undefined;
 }> = (props: any) => {
   return (
     <Show

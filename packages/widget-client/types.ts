@@ -53,6 +53,7 @@ export type CurrencyType = {
  */
 export type UserType = {
   id: string;
+  email: string;
 };
 
 /**

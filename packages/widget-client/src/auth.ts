@@ -82,6 +82,7 @@ export async function me(): Promise<UserType | undefined> {
 
     return {
       id: data.id,
+      email: data.email,
     };
   } catch (error) {
     console.error("Error fetching user details:", error);

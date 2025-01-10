@@ -260,4 +260,46 @@ describe("Modal confirm bid", () => {
       )
     ).toBeInTheDocument();
   });
+
+  test("emits event when bid is placed successfully", async () => {
+    // Setup listener for custom event
+    const eventHandler = vi.fn();
+
+    // Mock successful bid
+    const newBid = factoryBid();
+    (client.placeBidOnAuction as Mock).mockResolvedValue(newBid);
+
+    // Render component
+    render(() => (
+      <div id="auction-widget">
+        <BidForm auction={auction} isLogged={() => true} />
+      </div>
+    ));
+
+    document
+      .getElementById("auction-widget")!
+      .addEventListener("auction-widget:bid_placed", eventHandler);
+
+    // Trigger bid flow
+    const fastBidButton = screen.getAllByRole("button", {
+      name: /\+ [\d\s]+ €/i,
+    })[0];
+    fireEvent.click(fastBidButton);
+
+    const confirmButton = screen.getByText(/Confirmer/i);
+    fireEvent.click(confirmButton);
+
+    // Wait for async operations
+    await vi.waitFor(() => {
+      expect(eventHandler).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify the event was emitted with correct payload
+    const emittedEvent = eventHandler.mock.calls[0][0];
+    expect(emittedEvent.type).toBe("auction-widget:bid_placed");
+    expect(emittedEvent.detail).toEqual({
+      amount: newBid.amount,
+      date: newBid.createdAt,
+    });
+  });
 });

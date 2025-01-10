@@ -8,7 +8,6 @@ import {
   factoryRegistration,
   factoryUser,
 } from "./test-utils.js";
-import { isAuctionEnded, isAuctionInProgress } from "../src/utils.js";
 
 describe("Bids history", () => {
   let auction: AuctionType;
