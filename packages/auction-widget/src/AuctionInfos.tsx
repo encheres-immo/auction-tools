@@ -12,9 +12,10 @@ import {
 /**
  * Display auction details and countdown.
  */
-const AuctionInfos: Component<{ auction: AuctionType; user: UserType }> = (
-  props
-) => {
+const AuctionInfos: Component<{
+  auction: AuctionType;
+  user: UserType | undefined;
+}> = (props) => {
   const [remainingTime, setRemainingTime] = createSignal("");
   const [isAuctionNotStartedVal, setIsAuctionNotStartedVal] = createSignal(
     isAuctionNotStarted(props.auction)

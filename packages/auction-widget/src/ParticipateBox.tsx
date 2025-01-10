@@ -1,7 +1,11 @@
-import type { Component, Setter } from "solid-js";
+import type { Accessor, Component, Setter } from "solid-js";
 import { createSignal, Show } from "solid-js";
 import client from "@encheres-immo/widget-client";
-import { AuctionType } from "@encheres-immo/widget-client/types";
+import {
+  AuctionType,
+  PropertyInfoType,
+  UserType,
+} from "@encheres-immo/widget-client/types";
 import CenteredModal from "./CenteredModal.js";
 
 /**
@@ -9,38 +13,51 @@ import CenteredModal from "./CenteredModal.js";
  * or contact the agent (depending on the user's status and the auction's registration status).
  */
 const ParticipateBox: Component<{
-  updateUser: any;
   auction: AuctionType;
+  propertyInfo: PropertyInfoType;
+  isLogged: Accessor<boolean>;
+  isLogging: Accessor<boolean>;
   setAuction: (auction: AuctionType) => void;
-  isLogged: () => boolean;
-  setIsLogged: Setter<boolean>;
-  isLogging: () => boolean;
+  updateUser: (user: UserType, propertyInfo: PropertyInfoType) => void;
   allowUserRegistration: Boolean;
   tosUrl: string;
 }> = (props) => {
+  // If we are in the OAuth registration process, try to connect the user.
   if (props.isLogging()) {
     tryToConnect();
   }
 
-  function connect() {
-    return () => {
-      tryToConnect();
-    };
-  }
-
+  /**
+   * Try to connect the user to the API and retrieve its informations.
+   */
   function tryToConnect() {
     client.authenticate().then(() => {
-      props.setIsLogged(true);
       client.me().then((user) => {
-        props.updateUser(user);
+        if (user) {
+          props.updateUser(user, props.propertyInfo);
+        }
       });
     });
   }
 
+  /**
+   * Try to register the user to the auction and refresh the auction informations.
+   * If the registration is successful, emit a custom event to notify the parent component.
+   */
   function registerUserToAuction() {
     client.registerUserToAuction(props.auction.id).then((auction) => {
+      emitRegisterEvent();
       props.setAuction(auction);
     });
+  }
+
+  /**
+   * Emit a custom event to notify the parent component that the user has registered to the auction.
+   * Can be used for tracking purposes or to display a success notification.
+   */
+  function emitRegisterEvent() {
+    const event = new CustomEvent("auction-widget:register", {});
+    document.getElementById("auction-widget")?.dispatchEvent(event);
   }
 
   const [isModalOpen, setOpenModal] = createSignal(false);
@@ -66,7 +83,10 @@ const ParticipateBox: Component<{
           <div class="auction-widget-action">
             <button
               class="auction-widget-btn auction-widget-custom"
-              onClick={connect()}
+              onClick={() => {
+                tryToConnect();
+                setOpenModal(false);
+              }}
             >
               Se connecter
             </button>
@@ -106,8 +126,14 @@ const ParticipateBox: Component<{
           icon_class="fas fa-gavel"
         >
           En cliquant sur Valider, je reconnais avoir lu et accepté{" "}
-          <a href={props.tosUrl == "" ? "https://encheres-immo.com/cgu" : props.tosUrl}
-            target="_blank">
+          <a
+            href={
+              props.tosUrl == ""
+                ? "https://encheres-immo.com/cgu"
+                : props.tosUrl
+            }
+            target="_blank"
+          >
             les conditions générales d'utilisation
           </a>
           .
