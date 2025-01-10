@@ -112,10 +112,11 @@ Finally—as required by OAuth2—authentication pages are hosted on the Enchèr
 
 The widget emits events that you can listen to in your website's JavaScript. They are all prefixed with `auction-widget:`. Here are the available events:
 
-| Name       | Payload                                            | Description                                                                                         |
-| ---------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `new_bid`  | `{ amount: number, bidder: string, date: string }` | Emitted when a new bid is placed. Can be used to play a sound, display a notification, etc.         |
-| `register` | `{}`                                               | Emitted when the user registers for the auction. Can be used for analytics, display a message, etc. |
+| Name         | Payload                                            | Description                                                                                          |
+| ------------ | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `bid_placed` | `{ amount: number, date: string }`                 | Emitted when a bid is successfully placed. Can be used to play a sound, display a notification, etc. |
+| `new_bid`    | `{ amount: number, bidder: string, date: string }` | Emitted when a new bid is placed. Can be used to play a sound, display a notification, etc.          |
+| `register`   | `{}`                                               | Emitted when the user registers for the auction. Can be used for analytics, display a message, etc.  |
 
 To listen to an event, add an event listener to the widget element in your website's JavaScript:
 

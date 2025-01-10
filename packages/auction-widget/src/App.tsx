@@ -63,6 +63,15 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
     client
       .subscribeToAuction(auction.id, (bid) => {
         setBids([...bids, bid]);
+        // dispatch event for external integrations
+        const event = new CustomEvent("auction-widget:new_bid", {
+          detail: {
+            amount: bid.amount,
+            bidder: bid.userAnonymousId,
+            date: bid.createdAt,
+          },
+        });
+        document.getElementById("auction-widget")?.dispatchEvent(event);
         // replace highest bid in auction
         const newEndDate = bid.newEndDate || auction.endDate;
         setAuction({
