@@ -301,6 +301,33 @@ describe("Registration Modal", () => {
       screen.queryByText("Demande de participation")
     ).not.toBeInTheDocument();
   });
+
+  test("is replaced by contact modal when allowUserRegistration is false", () => {
+    render(() => (
+      <ParticipateBox
+        propertyInfo={factoryPropertyInfo()}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
+      />
+    ));
+
+    fireEvent.click(screen.getByText("Je veux participer"));
+
+    expect(screen.getByText("Demande de participation")).toBeInTheDocument();
+    expect(screen.queryByTestId("auction-widget-contact")).toBeInTheDocument();
+
+    // Close the modal
+    fireEvent.click(screen.getByText("Fermer"));
+
+    expect(
+      screen.queryByText("Demande de participation")
+    ).not.toBeInTheDocument();
+  });
 });
 
 describe("Contact Modal", () => {
@@ -333,7 +360,7 @@ describe("Contact Modal", () => {
         isLogged={() => false}
         isLogging={() => false}
         auction={auction}
-        allowUserRegistration={false}
+        allowUserRegistration={true}
         tosUrl=""
       />
     ));

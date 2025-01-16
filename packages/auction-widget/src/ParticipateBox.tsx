@@ -160,7 +160,10 @@ const ParticipateBox: Component<{
         }
       >
         <CenteredModal title="Demande de participation" icon="gavel">
-          <div class="auction-widget-contact">
+          <div
+            class="auction-widget-contact"
+            data-testid="auction-widget-contact"
+          >
             <a
               href={"mailto:" + props.auction.agentEmail}
               class="auction-widget-btn auction-widget-custom"
@@ -179,9 +182,10 @@ const ParticipateBox: Component<{
           <div class="auction-widget-action">
             <button
               class="auction-widget-btn"
-              onClick={() =>
-                setIsContactModalOpen(false) && setOpenModal(false)
-              }
+              onClick={() => {
+                setIsContactModalOpen(false);
+                setOpenModal(false);
+              }}
             >
               Fermer
             </button>
