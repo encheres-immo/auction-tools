@@ -441,29 +441,29 @@
   1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
   2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
   */
-  *,
-  ::before,
-  ::after {
+  #auction-widget-box *,
+  #auction-widget-box ::before,
+  #auction-widget-box ::after {
     box-sizing: border-box; /* 1 */
     border-width: 0; /* 2 */
     border-style: solid; /* 2 */
     border-color: theme("borderColor.DEFAULT", currentColor); /* 2 */
   }
 
-  ::before,
-  ::after {
+  #auction-widget-box ::before,
+  #auction-widget-box ::after {
     --tw-content: "";
   }
 
   /*
   Remove the default font size and weight for headings.
   */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  #auction-widget-box h1,
+  #auction-widget-box h2,
+  #auction-widget-box h3,
+  #auction-widget-box h4,
+  #auction-widget-box h5,
+  #auction-widget-box h6 {
     font-size: inherit;
     font-weight: inherit;
   }
@@ -471,7 +471,7 @@
   /*
   Reset links to optimize for opt-in styling instead of opt-out.
   */
-  a {
+  #auction-widget-box a {
     color: inherit;
     text-decoration: inherit;
   }
@@ -479,8 +479,8 @@
   /*
   Add the correct font weight in Edge and Safari.
   */
-  b,
-  strong {
+  #auction-widget-box b,
+  #auction-widget-box strong {
     font-weight: bolder;
   }
 
@@ -489,10 +489,10 @@
   2. Remove the margin in Firefox and Safari.
   3. Remove default padding in all browsers.
   */
-  button,
-  input,
-  select,
-  textarea {
+  #auction-widget-box button,
+  #auction-widget-box input,
+  #auction-widget-box select,
+  #auction-widget-box textarea {
     font-family: inherit; /* 1 */
     font-feature-settings: inherit; /* 1 */
     font-variation-settings: inherit; /* 1 */
@@ -506,8 +506,8 @@
   }
 
   /* Remove the inheritance of text transform in Edge and Firefox. */
-  button,
-  select {
+  #auction-widget-box button,
+  #auction-widget-box select {
     text-transform: none;
   }
 
@@ -515,52 +515,52 @@
   1. Correct the inability to style clickable types in iOS and Safari.
   2. Remove default button styles.
   */
-  button,
-  input:where([type="button"]),
-  input:where([type="reset"]),
-  input:where([type="submit"]) {
+  #auction-widget-box button,
+  #auction-widget-box input:where([type="button"]),
+  #auction-widget-box input:where([type="reset"]),
+  #auction-widget-box input:where([type="submit"]) {
     -webkit-appearance: button; /* 1 */
     background-color: transparent; /* 2 */
     background-image: none; /* 2 */
   }
 
   /* Use the modern Firefox focus style for all focusable elements. */
-  :-moz-focusring {
+  #auction-widget-box :-moz-focusring {
     outline: auto;
   }
 
   /* Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737) */
-  :-moz-ui-invalid {
+  #auction-widget-box :-moz-ui-invalid {
     box-shadow: none;
   }
 
   /* Removes the default spacing and border for appropriate elements. */
-  blockquote,
-  dl,
-  dd,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  hr,
-  figure,
-  p,
-  pre {
+  #auction-widget-box blockquote,
+  #auction-widget-box dl,
+  #auction-widget-box dd,
+  #auction-widget-box h1,
+  #auction-widget-box h2,
+  #auction-widget-box h3,
+  #auction-widget-box h4,
+  #auction-widget-box h5,
+  #auction-widget-box h6,
+  #auction-widget-box hr,
+  #auction-widget-box figure,
+  #auction-widget-box p,
+  #auction-widget-box pre {
     margin: 0;
   }
 
-  ol,
-  ul,
-  menu {
+  #auction-widget-box ol,
+  #auction-widget-box ul,
+  #auction-widget-box menu {
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
   /* Reset default styling for dialogs. */
-  dialog {
+  #auction-widget-box dialog {
     padding: 0;
   }
 
@@ -568,25 +568,25 @@
     1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
     2. Set the default placeholder color to the user's configured gray 400 color.
   */
-  input::placeholder,
-  textarea::placeholder {
+  #auction-widget-box input::placeholder,
+  #auction-widget-box textarea::placeholder {
     opacity: 1; /* 1 */
     color: theme("colors.gray.400", #9ca3af); /* 2 */
   }
 
   /* Set the default cursor for buttons.*/
-  button,
-  [role="button"] {
+  #auction-widget-box button,
+  #auction-widget-box [role="button"] {
     cursor: pointer;
   }
 
   /* Make sure disabled buttons don't get the pointer cursor. */
-  :disabled {
+  #auction-widget-box :disabled {
     cursor: default;
   }
 
   /* Make elements with the HTML hidden attribute stay hidden by default */
-  [hidden]:where(:not([hidden="until-found"])) {
+  #auction-widget-box [hidden]:where(:not([hidden="until-found"])) {
     display: none;
   }
 }
