@@ -1,9 +1,13 @@
-import { Show, type Component, JSXElement } from "solid-js";
+import { type Component, JSXElement } from "solid-js";
+import { Icon, Icons } from "./Spritesheet.jsx";
+
+/**
+ * A centered modal to display a message to the user.
+ */
 const CenteredModal: Component<{
   children: JSXElement;
-  success: boolean | void;
-  icon_class: string | void;
-  title: string | void;
+  title: string;
+  icon: Icons;
 }> = (props: any) => {
   return (
     <div>
@@ -11,23 +15,10 @@ const CenteredModal: Component<{
 
       <div class="auction-widget-modal">
         <div id="auction-widget-modal-content">
+          <Icon name={props.icon} parentClass="auction-widget-icon" />
           <div>
-            <Show when={props.success}>
-              <div class="auction-widget-icon">
-                <i class="fas fa-check" />
-              </div>
-            </Show>
-            <Show when={props.icon_class}>
-              <div class="auction-widget-icon">
-                <i class={props.icon_class} />
-              </div>
-            </Show>
-            <div>
-              <Show when={props.title}>
-                <h3>{props.title}</h3>
-              </Show>
-              <div>{props.children}</div>
-            </div>
+            <h3>{props.title}</h3>
+            <div>{props.children}</div>
           </div>
         </div>
       </div>

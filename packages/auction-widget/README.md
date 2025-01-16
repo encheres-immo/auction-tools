@@ -146,8 +146,9 @@ This widget is maintained by the [Enchères Immo](https://encheres-immo.com/) te
 
 All commands are run from the root of the package.
 
-| Command          | Description          |
-| ---------------- | -------------------- |
-| `pnpm install`   | Install dependencies |
-| `pnpm run build` | Build the widget     |
-| `pnpm run test`  | Run tests            |
+| Command                  | Description                            |
+| ------------------------ | -------------------------------------- |
+| `pnpm install`           | Install dependencies                   |
+| `pnpm run build`         | Build the widget (minified)            |
+| `pnpm run build --watch` | Build the widget and watch for changes |
+| `pnpm run test`          | Run tests                              |

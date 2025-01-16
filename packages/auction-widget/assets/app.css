@@ -1,5 +1,22 @@
-@layer auction-widget, auction-widget-override;
+@layer auction-widget-base, auction-widget, auction-widget-override;
 
+/* 
+  #region Auction Widget
+  Limit CSS interferences with host page with a basic reset.
+  Heritance of certain properties can be desired (e.g. font-family).
+*/
+@layer auction-widget-base {
+  #auction-widget-box svg {
+    display: inline-block;
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+
+  /* TODO: add reset here */
+}
+
+/* #region Auction Widget */
+/* Style for elements and components of the Auction Widget */
 @layer auction-widget {
   :root {
     --auction-widget-highlight-color: #ef673d;
@@ -317,6 +334,11 @@
     background-color: var(--auction-widget-dark-color);
     color: white;
     cursor: default;
+  }
+
+  .auction-widget-user-icon {
+    height: 0.75rem;
+    width: 0.75rem;
   }
 
   #auction-widget-bid-amount {

@@ -15,6 +15,7 @@ import {
   UserType,
   PropertyInfoType,
 } from "@encheres-immo/widget-client/types";
+import { Spritesheet } from "./Spritesheet.jsx";
 
 const [isLogged, setIsLogged] = createSignal(false);
 const [isLogging, setIsLogging] = createSignal(false);
@@ -80,7 +81,7 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
           endDate: newEndDate,
         });
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error("Error subscribing to auction:", err);
       });
   });
@@ -148,6 +149,7 @@ const App: Component<{
         <BidForm auction={auction} isLogged={isLogged} />
         <BidHistory bids={bids} auction={auction} user={user()} />
       </Show>
+      <Spritesheet />
     </div>
   );
 };
