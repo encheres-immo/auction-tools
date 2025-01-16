@@ -11,6 +11,7 @@ import {
   isAuctionInProgress,
   formatDate,
 } from "./utils.js";
+import { Icon } from "./Spritesheet.jsx";
 
 /**
  * Display every bid made on an auction.
@@ -44,14 +45,17 @@ const BidHistory: Component<{
               {(bid, i) => (
                 <li>
                   <Show
-                    when={bid.participantId === props.user.id}
+                    when={props.user && bid.participantId === props.user.id}
                     fallback={
                       <div>
                         <p class="auction-widget-date">
                           Le {formatDate(bid.createdAt)}
                         </p>
                         <span class="auction-widget-user">
-                          <i class="fas fa-user"></i>
+                          <Icon
+                            name="user"
+                            svgClass="auction-widget-user-icon"
+                          />
                           {bid.userAnonymousId}
                         </span>
                         a enchéri
@@ -63,7 +67,8 @@ const BidHistory: Component<{
                         Le {formatDate(bid.createdAt)}
                       </p>
                       <span class="auction-widget-user">
-                        <i class="fas fa-user"></i>Vous
+                        <Icon name="user" svgClass="auction-widget-user-icon" />
+                        Vous
                       </span>
                       avez enchéri
                     </div>

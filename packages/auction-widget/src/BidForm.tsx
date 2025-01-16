@@ -191,11 +191,7 @@ const BidForm: Component<{
           </div>
         </div>
         <Show when={isConfirmBidOpen()}>
-          <CenteredModal
-            title="Vous êtes sur le point d'enchérir"
-            success={false}
-            icon_class="fas fa-gavel"
-          >
+          <CenteredModal title="Vous êtes sur le point d'enchérir" icon="gavel">
             <table id="auction-widget-table">
               <tbody>
                 <Show when={props.auction.highestBid.participantId}>

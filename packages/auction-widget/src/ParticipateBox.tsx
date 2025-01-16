@@ -7,6 +7,7 @@ import {
   UserType,
 } from "@encheres-immo/widget-client/types";
 import CenteredModal from "./CenteredModal.js";
+import { Icon } from "./Spritesheet.jsx";
 
 /**
  * Render the participate button, and different modals allowing the user to connect, register to the auction,
@@ -31,7 +32,7 @@ const ParticipateBox: Component<{
    * Try to connect the user to the API and retrieve its informations.
    */
   function tryToConnect() {
-    client.authenticate().then(() => {
+    (client.authenticate() as Promise<void>).then(() => {
       client.me().then((user) => {
         if (user) {
           props.updateUser(user, props.propertyInfo);
@@ -75,11 +76,7 @@ const ParticipateBox: Component<{
       </div>
 
       <Show when={isModalOpen() && !props.isLogged()}>
-        <CenteredModal
-          title="Vous devez être connecté"
-          icon_class="fas fa-user-lock"
-          success={false}
-        >
+        <CenteredModal title="Vous devez être connecté" icon="user-lock">
           <div class="auction-widget-action">
             <button
               class="auction-widget-btn auction-widget-custom"
@@ -120,11 +117,7 @@ const ParticipateBox: Component<{
           props.allowUserRegistration
         }
       >
-        <CenteredModal
-          title="Demande de participation"
-          success={false}
-          icon_class="fas fa-gavel"
-        >
+        <CenteredModal title="Demande de participation" icon="gavel">
           En cliquant sur Valider, je reconnais avoir lu et accepté{" "}
           <a
             href={
@@ -166,24 +159,20 @@ const ParticipateBox: Component<{
           isContactModalOpen()
         }
       >
-        <CenteredModal
-          title="Demande de participation"
-          icon_class="fas fa-gavel"
-          success={false}
-        >
+        <CenteredModal title="Demande de participation" icon="gavel">
           <div class="auction-widget-contact">
             <a
               href={"mailto:" + props.auction.agentEmail}
               class="auction-widget-btn auction-widget-custom"
             >
-              <i class="fas fa-envelope"></i>
+              <Icon name="envelope" />
               {props.auction.agentEmail}
             </a>
             <a
               href={"tel:" + props.auction.agentPhone}
               class="auction-widget-btn auction-widget-custom"
             >
-              <i class="fas fa-phone"></i>
+              <Icon name="phone" />
               {props.auction.agentPhone}
             </a>
           </div>
