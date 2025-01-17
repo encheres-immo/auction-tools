@@ -57,10 +57,10 @@ To use the widget, add the following HTML tag to your website, and replace `YOUR
 <div id="auction-widget" api-key="YOUR API KEY" property-id="PROPERTY ID"></div>
 ```
 
-Alternatively, you can retrieve your property from a CRM by replacing `property-id` by `source` (e.g. `source="APIMO"`), `source-id` (the ID of the property in the CRM), and `source-agency-id` (the ID of the agency in the CRM).
+Alternatively, you can retrieve your property from a CRM by replacing `property-id` by `source-name` (e.g. `source-name="APIMO"`), `source-id` (the ID of the property in the CRM), and `source-agency-id` (the ID of the agency in the CRM).
 
 ```html
-<div id="auction-widget" api-key="YOUR API KEY" source="APIMO" source-id="APIMO PROPERTY ID" source-agency-id="APIMO AGENCY ID"></div>
+<div id="auction-widget" api-key="YOUR API KEY" source-name="APIMO" source-id="APIMO PROPERTY ID" source-agency-id="APIMO AGENCY ID"></div>
 ```
 
 ## Configuration
