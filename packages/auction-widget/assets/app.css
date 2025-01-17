@@ -13,7 +13,7 @@
     --auction-widget-countdown-font: monospace;
   }
 
-  /* Base elements & reset */
+  /* Base elements */
   #auction-widget-modal-background {
     position: fixed;
     inset: 0;
