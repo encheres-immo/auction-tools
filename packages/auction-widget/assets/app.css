@@ -431,10 +431,14 @@
   and added a #auction-widget-box selector to avoid conflicts with the host page.
 */
 @layer auction-widget-base {
-  #auction-widget-box svg {
-    display: inline-block;
-    height: 1.25rem;
-    width: 1.25rem;
+  #auction-widget-box,
+  #auction-widget-box * {
+    /* Reset all styles to their browser defaults */
+    all: revert;
+    /* Set here the styles that we want to herit from the host page */
+    font-family: inherit;
+    color: inherit;
+    border-color: inherit;
   }
 
   /*
@@ -447,7 +451,6 @@
     box-sizing: border-box; /* 1 */
     border-width: 0; /* 2 */
     border-style: solid; /* 2 */
-    border-color: theme("borderColor.DEFAULT", currentColor); /* 2 */
   }
 
   #auction-widget-box ::before,
@@ -564,14 +567,10 @@
     padding: 0;
   }
 
-  /*
-    1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
-    2. Set the default placeholder color to the user's configured gray 400 color.
-  */
+  /* Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)  */
   #auction-widget-box input::placeholder,
   #auction-widget-box textarea::placeholder {
-    opacity: 1; /* 1 */
-    color: theme("colors.gray.400", #9ca3af); /* 2 */
+    opacity: 1;
   }
 
   /* Set the default cursor for buttons.*/
@@ -588,5 +587,11 @@
   /* Make elements with the HTML hidden attribute stay hidden by default */
   #auction-widget-box [hidden]:where(:not([hidden="until-found"])) {
     display: none;
+  }
+
+  #auction-widget-box svg {
+    display: inline-block;
+    height: 1.25rem;
+    width: 1.25rem;
   }
 }
