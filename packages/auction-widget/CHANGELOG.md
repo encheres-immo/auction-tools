@@ -1,5 +1,56 @@
 # @encheres-immo/auction-widget
 
+## 0.5.0
+
+### Minor Changes
+
+- 3df41c8: Added event emission functionality to the auction widget. The widget now dispatches events prefixed with `auction-widget:`, which can be handled using JavaScript on your website. The available events are:
+
+  | Name         | Payload                                            | Description                                                                                          |
+  | ------------ | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+  | `bid_placed` | `{ amount: number, date: string }`                 | Emitted when a bid is successfully placed. Can be used to play a sound, display a notification, etc. |
+  | `new_bid`    | `{ amount: number, bidder: string, date: string }` | Emitted when a new bid is placed. Can be used to play a sound, display a notification, etc.          |
+  | `register`   | `{}`                                               | Emitted when the user registers for the auction. Can be used for analytics, display a message, etc.  |
+
+  To listen to an event, add an event listener to the widget element in your website's JavaScript:
+
+  ```js
+  document
+    .getElementById("auction-widget")
+    .addEventListener("auction-widget:new_bid", (event) => {
+      console.log("New bid:", event.detail);
+    });
+  ```
+
+  This event list is meant to be extended in the future, so feel free to ask for new events if you need them!
+
+- 3df41c8: Fixed an error where the form would accept non-number values. Also added a new CSS variable to customize errors color.
+
+  | Variable name                  | Default value |
+  | ------------------------------ | ------------- |
+  | `--auction-widget-error-color` | `#dc2626`     |
+
+- 3df41c8: Renamed the `source` attribute to `source-name`, to avoid conflicts with existing HTML attribute. This is technically a **breaking change**, but it should not affect any existing usage of the widget.
+
+  ```html
+  <!-- Before -->
+  <div id="auction-widget" source="APIMO" [... other attributes]></div>
+  <!-- After -->
+  <div id="auction-widget" source-name="APIMO" [... other attributes]></div>
+  ```
+
+- 3df41c8: Added CSS reset to isolate widget styles from host page and ensure consistency across browsers. This change **may cause minor visual changes** as fewer styles are inherited from the host page.
+
+### Patch Changes
+
+- b653663: Fixed a bug where amounts were not correct upon bid confirmation.
+- 4a09e38: Fixed an issue where the contact modal was not closing correctly when `allowUserRegistration` was false.
+- 91b19eb: Fixed SVG icons not being displayed properly in the widget. A Font Awesome kit is no longer required.
+- 6192fa4: Fixed the modal background to prevent elements from appearing above it.
+- Updated dependencies [b653663]
+- Updated dependencies [f7bcf21]
+  - @encheres-immo/widget-client@0.4.2
+
 ## 0.4.3
 
 ### Patch Changes
