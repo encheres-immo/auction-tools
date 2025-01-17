@@ -82,6 +82,7 @@ You can customize the widget by setting CSS variables in your website's styleshe
 | ---------------------------------- | ------------- |
 | `--auction-widget-highlight-color` | `#ef673d`     |
 | `--auction-widget-dark-color`      | `#002d40`     |
+| `--auction-widget-error-color`     | `#dc2626`     |
 | `--auction-widget-border-radius`   | `0.5rem`      |
 | `--auction-widget-btn-radius`      | `0.5rem`      |
 | `--auction-widget-base-font`       | `sans-serif`  |

@@ -6,6 +6,7 @@
   :root {
     --auction-widget-highlight-color: #ef673d;
     --auction-widget-dark-color: #002d40;
+    --auction-widget-error-color: #dc2626;
     --auction-widget-border-radius: 0.5rem;
     --auction-widget-btn-radius: 0.5rem;
     --auction-widget-base-font: sans-serif;
@@ -81,10 +82,18 @@
   }
 
   .auction-widget-modal-note {
+    color: rgb(100 116 139);
     font-size: 0.875rem;
     line-height: 1.25rem;
     text-align: center;
-    color: rgb(100 116 139);
+    margin: 0;
+  }
+
+  .auction-widget-modal-warning {
+    color: var(--auction-widget-error-color);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-align: center;
     margin: 0;
   }
 
@@ -369,6 +378,16 @@
     outline-offset: 1px;
     outline-color: var(--auction-widget-highlight-color);
     color: inherit;
+  }
+
+  #auction-widget-bid-form input:invalid {
+    color: var(--auction-widget-error-color);
+    outline-color: var(--auction-widget-error-color);
+  }
+
+  #auction-widget-bid-form input:valid {
+    color: inherit;
+    outline-color: var(--auction-widget-highlight-color);
   }
 
   #auction-widget-currency {

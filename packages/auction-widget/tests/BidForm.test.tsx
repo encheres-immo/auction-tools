@@ -260,6 +260,26 @@ describe("Modal confirm bid", () => {
     vi.restoreAllMocks();
   });
 
+  test("not displayed when the input is empty", async () => {
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+    const amountInput = screen.getByRole("spinbutton");
+    const bidButton = screen.getByText(/Enchérir/i);
+    fireEvent.input(amountInput, { target: { value: "" } });
+    fireEvent.click(bidButton);
+    // Confirm modal should not be visible
+    expect(screen.queryByText(/Vous êtes sur le point d'enchérir/i)).toBeNull();
+  });
+
+  test("not displayed when the input is invalid", async () => {
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+    const amountInput = screen.getByRole("spinbutton");
+    const bidButton = screen.getByText(/Enchérir/i);
+    fireEvent.input(amountInput, { target: { value: "NaN" } });
+    fireEvent.click(bidButton);
+    // Confirm modal should not be visible
+    expect(screen.queryByText(/Vous êtes sur le point d'enchérir/i)).toBeNull();
+  });
+
   test("places bid when confirm button is clicked", async () => {
     // Set up the mock to resolve to a bid
     (client.placeBidOnAuction as Mock).mockResolvedValue(factoryBid());
