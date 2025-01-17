@@ -1,5 +1,12 @@
 # @encheres-immo/widget-client
 
+## 0.4.2
+
+### Patch Changes
+
+- b653663: Fixed highest bid to be null when no bid has been made yet (previously defaulted to an empty bid object).
+- f7bcf21: Added `email` to `Usertype`.
+
 ## 0.4.1
 
 ### Patch Changes
