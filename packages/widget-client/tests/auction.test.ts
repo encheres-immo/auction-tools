@@ -1,5 +1,9 @@
 import { beforeEach, afterEach, describe, expect, it, vi, Mock } from "vitest";
-import { getNextAuctionById, subscribeToAuction, registerUserToAuction } from "../src/auctions.js";
+import {
+  getNextAuctionById,
+  subscribeToAuction,
+  registerUserToAuction,
+} from "../src/auctions.js";
 import { config } from "../index.js";
 import type { PropertyInfoType } from "../types.js";
 import { Socket } from "phoenix";
@@ -160,13 +164,7 @@ describe("getNextAuctionById", () => {
       startingPrice: 200000,
       step: 5000,
       bids: [],
-      highestBid: {
-        id: "",
-        amount: 0,
-        createdAt: 0,
-        newEndDate: 0,
-        userAnonymousId: "",
-      },
+      highestBid: null,
       agentEmail: "agent@example.com",
       agentPhone: "123456789",
       registration: null,
@@ -423,13 +421,7 @@ describe("registerUserToAuction", () => {
       startingPrice: 100000,
       step: 1000,
       bids: [],
-      highestBid: {
-        id: "",
-        amount: 0,
-        createdAt: 0,
-        newEndDate: 0,
-        userAnonymousId: "",
-      },
+      highestBid: null,
       agentEmail: "agent@example.com",
       agentPhone: "123456789",
       registration: {
