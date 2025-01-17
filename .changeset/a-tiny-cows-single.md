@@ -2,7 +2,7 @@
 "@encheres-immo/auction-widget": minor
 ---
 
-Added event emission functionality to the auction widget. The widget now dispatches events prefixed with auction-widget:, which can be handled using JavaScript on your website. The available events are:
+Added event emission functionality to the auction widget. The widget now dispatches events prefixed with `auction-widget:`, which can be handled using JavaScript on your website. The available events are:
 
 | Name         | Payload                                            | Description                                                                                          |
 | ------------ | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
