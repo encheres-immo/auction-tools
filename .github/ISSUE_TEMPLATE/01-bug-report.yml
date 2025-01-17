@@ -15,7 +15,7 @@ body:
           required: false
         - label: packages/auction-widget via NPM
           required: false
-        - label: packages/auction-widget
+        - label: packages/widget-client
           required: false
         - label: Enchères Immo API
           required: false

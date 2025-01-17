@@ -16,9 +16,7 @@ const BidForm: Component<{
   isLogged: () => boolean;
   auction: AuctionType;
 }> = (props) => {
-  const defaultAmount = props.auction.highestBid
-    ? props.auction.highestBid.amount + props.auction.step
-    : props.auction.startingPrice;
+  const defaultAmount = getBaseAmount(props.auction);
   let [amount, setAmount] = createSignal(defaultAmount);
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
   const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
@@ -34,17 +32,39 @@ const BidForm: Component<{
   );
   const [minValue, setMinValue] = createSignal(0);
 
+  function getBaseAmount(auction: AuctionType) {
+    return auction.highestBid
+      ? auction.highestBid.amount + auction.step
+      : auction.startingPrice;
+  }
+
+  /**
+   * We display a warning message if the bid amount is too high.
+   */
   function checkIfAmountTooHigh(auction: AuctionType, bidAmount: number) {
-    const highestBidAmount = auction.highestBid
-      ? auction.highestBid.amount
-      : auction.startingPrice - auction.step;
-    if (bidAmount > highestBidAmount + auction.step * 3) {
+    if (bidAmount > getBaseAmount(auction) + auction.step * 2) {
       setIsAmountTooHigh(true);
     } else {
       setIsAmountTooHigh(false);
     }
   }
 
+  /**
+   * We display a warning message if the bid amount is too low.
+   * Will be also checked server-side to avoid conflicts.
+   */
+  function checkIfAmountTooLow(auction: AuctionType, bidAmount: number) {
+    if (bidAmount < getBaseAmount(auction)) {
+      setIsShowMinMessage(true);
+      setMinValue(getBaseAmount(auction));
+    } else {
+      setIsShowMinMessage(false);
+    }
+  }
+
+  /**
+   * Place a bid using the fast bid buttons.
+   */
   function placeStepBid(stepMultiplier: number, auction: AuctionType) {
     return () => {
       let highestBid = auction.highestBid ? auction.highestBid.amount : null;
@@ -58,13 +78,23 @@ const BidForm: Component<{
 
       setAmount(newAmount);
       checkIfAmountTooHigh(auction, newAmount);
+      checkIfAmountTooLow(auction, newAmount);
       setIsConfirmBidOpen(true);
     };
   }
 
+  /**
+   * Place a bid using the custom bid input.
+   */
   function openConfirmBid() {
-    return () => {
+    return (e: Event) => {
+      e.preventDefault(); // Prevent the form from being submitted
+      // Check if the amount is valid
+      if (Number.isInteger(amount()) && amount() < 0) {
+        return;
+      }
       checkIfAmountTooHigh(props.auction, amount());
+      checkIfAmountTooLow(props.auction, amount());
       setIsConfirmBidOpen(true);
     };
   }
@@ -89,6 +119,7 @@ const BidForm: Component<{
           setFastBidMsg3(displayAmountOfStep(3, true, auction));
         })
         .catch((err) => {
+          // We checked on the browser side, but a bid could have been placed in the meantime
           if (err.code == "bid_amount_too_low") {
             setIsShowMinMessage(true);
             setMinValue(err.min);
@@ -170,24 +201,27 @@ const BidForm: Component<{
             <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
               Votre montant
             </p>
-            <div id="auction-widget-bid-form">
+            <form id="auction-widget-bid-form" onSubmit={openConfirmBid()}>
               <input
                 type="number"
                 value={defaultAmount}
-                onInput={(e) => setAmount(parseInt(e.currentTarget.value))}
+                onInput={(e) =>
+                  setAmount(Number.parseInt(e.currentTarget.value))
+                }
                 min="0"
                 step="1"
+                required
               />
               <div id="auction-widget-currency">
                 <span>{displayCurrencySymbol(props.auction.currency)}</span>
               </div>
               <button
                 class="auction-widget-btn auction-widget-custom"
-                onClick={openConfirmBid()}
+                type="submit"
               >
                 Enchérir
               </button>
-            </div>
+            </form>
           </div>
         </div>
         <Show when={isConfirmBidOpen()}>
@@ -214,13 +248,13 @@ const BidForm: Component<{
               </tbody>
             </table>
             <Show when={isAmountTooHigh()}>
-              <p class="auction-widget-modal-note">
+              <p class="auction-widget-modal-warning">
                 Votre offre est sensiblement supérieure à l'offre précédente.
                 Êtes-vous sûr de vouloir continuer ?
               </p>
             </Show>
             <Show when={isShowMinMessage()}>
-              <p id="email-error" class="auction-widget-modal-note">
+              <p class="auction-widget-modal-warning">
                 Vous devez au moins enchérir{" "}
                 {displayAmountWithCurrency(minValue())}.
               </p>
