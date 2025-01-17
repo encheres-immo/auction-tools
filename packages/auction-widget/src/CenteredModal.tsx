@@ -17,7 +17,7 @@ const CenteredModal: Component<{
         <div id="auction-widget-modal-content">
           <Icon name={props.icon} parentClass="auction-widget-icon" />
           <div>
-            <h3>{props.title}</h3>
+            <h3 id="auction-widget-modal-title">{props.title}</h3>
             <div>{props.children}</div>
           </div>
         </div>

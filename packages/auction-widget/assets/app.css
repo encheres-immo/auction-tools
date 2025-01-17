@@ -283,10 +283,11 @@
     background-color: var(--auction-widget-dark-color);
   }
 
-  #auction-widget-modal-content h3 {
+  #auction-widget-modal-title {
     font-size: 1.125rem;
     font-weight: 700;
-    line-height: 1.5rem;
+    line-height: 1.75rem;
+    margin-bottom: 1.25rem;
     text-align: center;
   }
 
