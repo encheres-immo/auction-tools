@@ -83,6 +83,8 @@ describe("Fast bid buttons", () => {
   test("displays correct amounts when auction has no bids", () => {
     // Create an auction with no bids and no highest bid
     const auctionWithoutBids = factoryAuction({
+      startingPrice: 1000,
+      step: 100,
       bids: [],
       highestBid: undefined,
       registration: registration,
@@ -101,15 +103,15 @@ describe("Fast bid buttons", () => {
     expect(fastBidButtons.length).toBe(3);
 
     // For the first offer, amounts are calculated as (stepMultiplier - 1) * auction.step
-    const expectedAmounts = [
+    const displayedAmounts = [
       0, // (1 - 1) * 100 = 0€
       100, // (2 - 1) * 100 = 100€
       200, // (3 - 1) * 100 = 200€
     ];
 
     fastBidButtons.forEach((button, index) => {
-      const expectedAmount = expectedAmounts[index];
-      expect(button.textContent).toContain(`+ ${expectedAmount} €`);
+      const expectedDisplayedAmount = displayedAmounts[index];
+      expect(button.textContent).toContain(`+ ${expectedDisplayedAmount} €`);
     });
   });
 
@@ -133,15 +135,15 @@ describe("Fast bid buttons", () => {
     expect(fastBidButtons.length).toBe(3);
 
     // With previous bids, amounts are calculated as stepMultiplier * auction.step
-    const expectedAmounts = [
+    const displayedAmounts = [
       100, // 1 * 100 = 100€
       200, // 2 * 100 = 200€
       300, // 3 * 100 = 300€
     ];
 
     fastBidButtons.forEach((button, index) => {
-      const expectedAmount = expectedAmounts[index];
-      expect(button.textContent).toContain(`+ ${expectedAmount} €`);
+      const expectedDisplayedAmount = displayedAmounts[index];
+      expect(button.textContent).toContain(`+ ${expectedDisplayedAmount} €`);
     });
   });
 
@@ -156,34 +158,87 @@ describe("Fast bid buttons", () => {
       screen.getByText(/Vous êtes sur le point d'enchérir/i)
     ).toBeInTheDocument();
   });
-});
 
-describe("Custom bid input", () => {
-  let auction: AuctionType;
-  let registration: RegistrationType;
-
-  beforeEach(() => {
-    registration = factoryRegistration();
-    auction = factoryAuction({
+  test("the bid modal displays correct amounts when auction has no bids", async () => {
+    // Create an auction with no bids and no highest bid
+    const auctionWithoutBids = factoryAuction({
+      startingPrice: 1000,
+      step: 100,
+      bids: [],
+      highestBid: undefined,
       registration: registration,
       startDate: Date.now() - 1000,
     });
+
+    render(() => (
+      <BidForm auction={auctionWithoutBids} isLogged={() => true} />
+    ));
+
+    // For the first offer, you can bid the starting price
+    const Amounts = [1000, 1100, 1200];
+
+    const fastBidButtons = screen.getAllByRole("button", {
+      name: /\+ [\d\s]+ €/i,
+    });
+
+    fastBidButtons.forEach((button, index) => {
+      fireEvent.click(button);
+      expect(screen.getByText(`${Amounts[index]} €`)).toBeInTheDocument();
+    });
   });
 
-  afterEach(() => {
-    cleanup();
+  test("the bid modal displays correct amounts when auction has existing bids", async () => {
+    const highestBid: BidType = factoryBid();
+
+    const auctionWithBids = factoryAuction({
+      bids: [highestBid],
+      highestBid: highestBid,
+      registration: registration,
+      startDate: Date.now() - 1000,
+    });
+
+    render(() => <BidForm auction={auctionWithBids} isLogged={() => true} />);
+
+    // With previous bids, amounts are calculated as stepMultiplier * auction.step
+    const Amounts = [1100, 1200, 1300];
+
+    const fastBidButtons = screen.getAllByRole("button", {
+      name: /\+ [\d\s]+ €/i,
+    });
+
+    fastBidButtons.forEach((button, index) => {
+      fireEvent.click(button);
+      expect(screen.getByText(`${Amounts[index]} €`)).toBeInTheDocument();
+    });
   });
 
-  test("filling and clicking opens confirm bid modal", async () => {
-    render(() => <BidForm auction={auction} isLogged={() => true} />);
-    const amountInput = screen.getByRole("spinbutton");
-    const bidButton = screen.getByText(/Enchérir/i);
-    fireEvent.input(amountInput, { target: { value: "2000" } });
-    fireEvent.click(bidButton);
-    // Confirm modal should be visible
-    expect(
-      screen.getByText(/Vous êtes sur le point d'enchérir/i)
-    ).toBeInTheDocument();
+  describe("Custom bid input", () => {
+    let auction: AuctionType;
+    let registration: RegistrationType;
+
+    beforeEach(() => {
+      registration = factoryRegistration();
+      auction = factoryAuction({
+        registration: registration,
+        startDate: Date.now() - 1000,
+      });
+    });
+
+    afterEach(() => {
+      cleanup();
+    });
+
+    test("filling and clicking opens confirm bid modal", async () => {
+      render(() => <BidForm auction={auction} isLogged={() => true} />);
+      const amountInput = screen.getByRole("spinbutton");
+      const bidButton = screen.getByText(/Enchérir/i);
+      fireEvent.input(amountInput, { target: { value: "2000" } });
+      fireEvent.click(bidButton);
+      // Confirm modal should be visible
+      expect(
+        screen.getByText(/Vous êtes sur le point d'enchérir/i)
+      ).toBeInTheDocument();
+    });
   });
 });
 

@@ -139,7 +139,7 @@ const AuctionInfos: Component<{
                 Meilleure offre
               </p>
               <p class="auction-widget-detail auction-widget-accent">
-                {props.auction.highestBid.participantId
+                {props.auction.highestBid?.participantId
                   ? displayAmountWithCurrency(
                       props.auction.highestBid.amount,
                       props.auction.currency

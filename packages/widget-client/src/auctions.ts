@@ -121,18 +121,9 @@ function formatAuction(data: any): AuctionType {
     } as BidType;
   });
 
-  const highestBid = bids.reduce(
-    (acc: BidType, bid: BidType) => {
-      return bid.amount > acc.amount ? bid : acc;
-    },
-    {
-      id: "",
-      amount: 0,
-      createdAt: 0,
-      newEndDate: 0,
-      userAnonymousId: "",
-    } as BidType
-  );
+  const highestBid = bids.reduce((acc: BidType, bid: BidType) => {
+    return bid.amount > acc.amount ? bid : acc;
+  }, null);
 
   const registration = data.registration
     ? {

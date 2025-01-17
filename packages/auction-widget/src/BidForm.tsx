@@ -173,7 +173,7 @@ const BidForm: Component<{
             <div id="auction-widget-bid-form">
               <input
                 type="number"
-                value={amount()}
+                value={defaultAmount}
                 onInput={(e) => setAmount(parseInt(e.currentTarget.value))}
                 min="0"
                 step="1"
@@ -194,13 +194,14 @@ const BidForm: Component<{
           <CenteredModal title="Vous êtes sur le point d'enchérir" icon="gavel">
             <table id="auction-widget-table">
               <tbody>
-                <Show when={props.auction.highestBid.participantId}>
+                <Show when={props.auction.highestBid?.participantId}>
                   <tr>
                     <td class="auction-widget-td">Offre précédente</td>
                     <td class="auction-widget-amount">
-                      {displayAmountWithCurrency(
-                        props.auction.highestBid.amount
-                      )}
+                      {props.auction.highestBid &&
+                        displayAmountWithCurrency(
+                          props.auction.highestBid.amount
+                        )}
                     </td>
                   </tr>
                 </Show>
