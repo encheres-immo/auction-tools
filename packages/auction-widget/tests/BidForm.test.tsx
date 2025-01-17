@@ -159,7 +159,7 @@ describe("Fast bid buttons", () => {
     ).toBeInTheDocument();
   });
 
-  test("the bid modal displays correct amounts when auction has no bids", async () => {
+  test("open the bid modal with correct amounts when auction has no bids", async () => {
     // Create an auction with no bids and no highest bid
     const auctionWithoutBids = factoryAuction({
       startingPrice: 1000,
@@ -187,7 +187,7 @@ describe("Fast bid buttons", () => {
     });
   });
 
-  test("the bid modal displays correct amounts when auction has existing bids", async () => {
+  test("open the bid modal with correct amounts when auction has existing bids", async () => {
     const highestBid: BidType = factoryBid();
 
     const auctionWithBids = factoryAuction({
