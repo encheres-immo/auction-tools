@@ -122,6 +122,9 @@ function formatAuction(data: any): AuctionType {
   });
 
   const highestBid = bids.reduce((acc: BidType, bid: BidType) => {
+    if (acc === null) {
+      return bid;
+    }
     return bid.amount > acc.amount ? bid : acc;
   }, null);
 
