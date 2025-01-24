@@ -21,7 +21,7 @@ export async function placeBidOnAuction(
   })
     .then((response) => {
       if (response.status === 401) {
-        console.error("Unauthorized");
+        console.error("Auction Widget: Unauthorized request");
         throw new Error("Unauthorized");
       }
       if (response.status === 422) {
@@ -42,7 +42,7 @@ export async function placeBidOnAuction(
       } as BidType;
     })
     .catch((err) => {
-      console.error("err", err);
+      console.error("Auction Widget: ", err);
       throw err;
     });
 }

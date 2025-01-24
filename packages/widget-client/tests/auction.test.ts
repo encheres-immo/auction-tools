@@ -196,7 +196,9 @@ describe("getNextAuctionById", () => {
     );
 
     // Verify 'Unauthorized' is logged
-    expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "Auction Widget: Unauthorized request"
+    );
   });
 
   it("should throw an error when fetch fails", async () => {
@@ -213,7 +215,7 @@ describe("getNextAuctionById", () => {
     );
 
     // Verify error is logged
-    expect(console.error).toHaveBeenCalledWith("err", mockError);
+    expect(console.error).toHaveBeenCalledWith("Auction Widget: ", mockError);
   });
 });
 
@@ -455,7 +457,9 @@ describe("registerUserToAuction", () => {
     );
 
     // Verify 'Unauthorized' is logged
-    expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "Auction Widget: Unauthorized request"
+    );
   });
 
   it("should throw an error when fetch fails", async () => {
@@ -470,6 +474,6 @@ describe("registerUserToAuction", () => {
     );
 
     // Verify error is logged
-    expect(console.error).toHaveBeenCalledWith("err", mockError);
+    expect(console.error).toHaveBeenCalledWith("Auction Widget: ", mockError);
   });
 });

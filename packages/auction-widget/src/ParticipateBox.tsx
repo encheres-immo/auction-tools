@@ -23,6 +23,12 @@ const ParticipateBox: Component<{
   allowUserRegistration: Boolean;
   tosUrl: string;
 }> = (props) => {
+  // If the presence of an access token is detected, the user was previously connected.
+  // Try to connect the user to the API with the stored access token.
+  if (localStorage.getItem("auction_widget_access_token")) {
+    tryToConnect();
+  }
+
   // If we are in the OAuth registration process, try to connect the user.
   if (props.isLogging()) {
     tryToConnect();
