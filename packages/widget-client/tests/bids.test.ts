@@ -123,7 +123,9 @@ describe("placeBidOnAuction", () => {
     );
 
     // Verify 'Unauthorized' is logged
-    expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "Auction Widget: Unauthorized request"
+    );
   });
 
   it("should handle validation errors with status 422", async () => {
@@ -199,6 +201,6 @@ describe("placeBidOnAuction", () => {
     );
 
     // Verify error is logged
-    expect(console.error).toHaveBeenCalledWith("err", mockError);
+    expect(console.error).toHaveBeenCalledWith("Auction Widget: ", mockError);
   });
 });

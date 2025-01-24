@@ -59,31 +59,34 @@ const [auction, setAuction] = createStore<AuctionType>({
 function refreshAuction(propertyInfo: PropertyInfoType) {
   client.getNextAuctionById(propertyInfo).then((auction: AuctionType) => {
     setAuction(auction);
-    setBids(auction.bids);
-
-    client
-      .subscribeToAuction(auction.id, (bid) => {
-        setBids([...bids, bid]);
-        // dispatch event for external integrations
-        const event = new CustomEvent("auction-widget:new_bid", {
-          detail: {
-            amount: bid.amount,
-            bidder: bid.userAnonymousId,
-            date: bid.createdAt,
-          },
+    // Don't try to subscribe to private auctions before user is logged in
+    // It won't break the app, but it will throw an error in the console
+    if (!auction?.isPrivate) {
+      setBids(auction.bids);
+      client
+        .subscribeToAuction(auction.id, (bid) => {
+          setBids([...bids, bid]);
+          // dispatch event for external integrations
+          const event = new CustomEvent("auction-widget:new_bid", {
+            detail: {
+              amount: bid.amount,
+              bidder: bid.userAnonymousId,
+              date: bid.createdAt,
+            },
+          });
+          document.getElementById("auction-widget")?.dispatchEvent(event);
+          // replace highest bid in auction
+          const newEndDate = bid.newEndDate || auction.endDate;
+          setAuction({
+            ...auction,
+            highestBid: bid,
+            endDate: newEndDate,
+          });
+        })
+        .catch((err: any) => {
+          console.error("Auction Widget: Error subscribing to auction.", err);
         });
-        document.getElementById("auction-widget")?.dispatchEvent(event);
-        // replace highest bid in auction
-        const newEndDate = bid.newEndDate || auction.endDate;
-        setAuction({
-          ...auction,
-          highestBid: bid,
-          endDate: newEndDate,
-        });
-      })
-      .catch((err: any) => {
-        console.error("Error subscribing to auction:", err);
-      });
+    }
   });
 }
 

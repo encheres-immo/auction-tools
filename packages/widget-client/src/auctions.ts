@@ -19,7 +19,7 @@ export async function getNextAuctionById(
   })
     .then((response) => {
       if (response.status === 401) {
-        console.error("Unauthorized");
+        console.error("Auction Widget: Unauthorized request");
         // Throw an error or return null to stop further processing
         throw new Error("Unauthorized");
       }
@@ -27,7 +27,7 @@ export async function getNextAuctionById(
     })
     .then(formatAuction)
     .catch((err) => {
-      console.error("err", err);
+      console.error("Auction Widget: ", err);
       throw err; // Rethrow the error to be handled by the caller
     });
 }
@@ -67,7 +67,7 @@ export function subscribeToAuction(
         resolve(channel); // Resolve with the channel on successful join
       })
       .receive("error", (resp: any) => {
-        console.error("Unable to join", resp);
+        console.error("Auction Widget: Unable to join", resp);
         if (config.socket != null) {
           config.socket.disconnect();
         }
@@ -93,7 +93,7 @@ export function registerUserToAuction(auctionId: string): Promise<AuctionType> {
   })
     .then((response) => {
       if (response.status === 401) {
-        console.error("Unauthorized");
+        console.error("Auction Widget: Unauthorized request");
         // Throw an error or return null to stop further processing
         throw new Error("Unauthorized");
       }
@@ -101,7 +101,7 @@ export function registerUserToAuction(auctionId: string): Promise<AuctionType> {
     })
     .then(formatAuction)
     .catch((err) => {
-      console.error("err", err);
+      console.error("Auction Widget: ", err);
       throw err; // Rethrow the error to be handled by the caller
     });
 }

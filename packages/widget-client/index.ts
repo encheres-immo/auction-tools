@@ -1,6 +1,10 @@
 import { Socket } from "phoenix";
 import { authenticate, me } from "./src/auth.js";
-import { getNextAuctionById, subscribeToAuction, registerUserToAuction } from "./src/auctions.js";
+import {
+  getNextAuctionById,
+  subscribeToAuction,
+  registerUserToAuction,
+} from "./src/auctions.js";
 import { placeBidOnAuction } from "./src/bids.js";
 
 /**
@@ -48,8 +52,8 @@ export function initEIClient(
       config.WS_URL = `wss://${config.DOMAIN}/api/socket`;
       break;
     default:
-      console.log(
-        "Widget client: Unknown environment, defaulting to production."
+      console.warn(
+        "Auction Widget: Unknown environment, defaulting to production."
       );
       config.DOMAIN = "encheres-immo.com";
       config.BASE_URL = `https://${config.DOMAIN}`;

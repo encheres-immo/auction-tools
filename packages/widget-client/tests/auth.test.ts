@@ -42,7 +42,10 @@ describe("Authentication", () => {
     window.location.href = "https://example.com/?code=test-code";
 
     // Set code_verifier in localStorage
-    localStorage.setItem("pkce_code_verifier", "test-code-verifier");
+    localStorage.setItem(
+      "auction_widget_pkce_code_verifier",
+      "test-code-verifier"
+    );
 
     // Mock fetch to return access token
     (fetch as Mock).mockResolvedValue({
@@ -62,7 +65,7 @@ describe("Authentication", () => {
           grant_type: "authorization_code",
           client_id: "test-client-id",
           code: "test-code",
-          redirect_uri: "https://example.com/?code=test-code",
+          redirect_uri: "https://example.com/",
           code_verifier: "test-code-verifier",
         }),
       })
@@ -71,8 +74,10 @@ describe("Authentication", () => {
     // Check that accessToken is set
     expect(config.accessToken).toBe("test-access-token");
 
-    // Check that pkce_code_verifier is removed from localStorage
-    expect(localStorage.getItem("pkce_code_verifier")).toBeNull();
+    // Check that auction_widget_pkce_code_verifier is removed from localStorage
+    expect(
+      localStorage.getItem("auction_widget_pkce_code_verifier")
+    ).toBeNull();
 
     // Check that window.history.replaceState was called to remove code from URL
     expect(window.history.replaceState).toHaveBeenCalled();
@@ -99,10 +104,11 @@ describe("Authentication", () => {
     window.location.href =
       "https://example.com/?code=test-code&state=test-state#anchor";
 
-    console.log("Test: ", window.location.origin + window.location.pathname);
-
     // Set code_verifier in localStorage
-    localStorage.setItem("pkce_code_verifier", "test-code-verifier");
+    localStorage.setItem(
+      "auction_widget_pkce_code_verifier",
+      "test-code-verifier"
+    );
 
     // Mock fetch to return access token
     (fetch as Mock).mockResolvedValue({
@@ -122,7 +128,7 @@ describe("Authentication", () => {
           grant_type: "authorization_code",
           client_id: "test-client-id",
           code: "test-code",
-          redirect_uri: "https://example.com/?code=test-code",
+          redirect_uri: "https://example.com/",
           code_verifier: "test-code-verifier",
         }),
       })
@@ -177,7 +183,9 @@ describe("User Information", () => {
     const user = await me();
 
     // Check that 'Unauthorized' is logged
-    expect(consoleLogSpy).toHaveBeenCalledWith("Unauthorized");
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "Auction Widget: Unauthorized request"
+    );
 
     // Check that user is undefined
     expect(user).toBeUndefined();
