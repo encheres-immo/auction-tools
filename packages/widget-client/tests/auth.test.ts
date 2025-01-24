@@ -93,6 +93,41 @@ describe("Authentication", () => {
       expect.stringContaining("client_id=test-client-id")
     );
   });
+
+  it("should strip query parameters and anchor from redirect URL", async () => {
+    // Set window.location.href with a anchor and a parameter
+    window.location.href =
+      "https://example.com/?code=test-code&state=test-state#anchor";
+
+    console.log("Test: ", window.location.origin + window.location.pathname);
+
+    // Set code_verifier in localStorage
+    localStorage.setItem("pkce_code_verifier", "test-code-verifier");
+
+    // Mock fetch to return access token
+    (fetch as Mock).mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve({ access_token: "test-access-token" }),
+    });
+
+    await authenticate();
+
+    // Check that fetch was called with correct parameters
+    expect(fetch).toHaveBeenCalledWith(
+      "http://localhost:4000/oauth/token",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          grant_type: "authorization_code",
+          client_id: "test-client-id",
+          code: "test-code",
+          redirect_uri: "https://example.com/?code=test-code",
+          code_verifier: "test-code-verifier",
+        }),
+      })
+    );
+  });
 });
 
 describe("User Information", () => {
