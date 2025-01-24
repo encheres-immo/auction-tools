@@ -10,8 +10,11 @@ export async function authenticate() {
   const parsedUrl = new URL(url);
   const params = parsedUrl.searchParams;
   const code = params.get("code");
-
-  const redirect_uri = window.location.href;
+  // WARNING: This is a lazy fix to avoid this type of error ->
+  // https://github.com/encheres-immo/auction-widget/issues/52
+  // If, in the future, we need to conserve params and anchor during the redirection,
+  // we will need to remove this line and find a better solution.
+  const cleanRedirectUrl = window.location.origin + window.location.pathname;
 
   // Try to extract the OAuth code from the query string
   if (code) {
@@ -29,7 +32,7 @@ export async function authenticate() {
         grant_type: "authorization_code",
         client_id: config.clientId,
         code: code,
-        redirect_uri: window.location.href,
+        redirect_uri: cleanRedirectUrl,
         code_verifier: localStorage.getItem("pkce_code_verifier"),
       }),
     })
@@ -52,7 +55,7 @@ export async function authenticate() {
     let CODE_VERIFIER = generateRandomString();
     localStorage.setItem("pkce_code_verifier", CODE_VERIFIER);
     let codeChallenge = await pkceChallengeFromVerifier(CODE_VERIFIER);
-    let redirect_oauth_url = `${config.BASE_URL}/oauth/authorize?response_type=code&client_id=${config.clientId}&redirect_uri=${redirect_uri}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=${codeChallengeMethod}`;
+    let redirect_oauth_url = `${config.BASE_URL}/oauth/authorize?response_type=code&client_id=${config.clientId}&redirect_uri=${cleanRedirectUrl}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=${codeChallengeMethod}`;
     window.location.assign(redirect_oauth_url);
   }
 }
