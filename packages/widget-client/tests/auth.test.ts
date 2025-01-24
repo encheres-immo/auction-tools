@@ -10,15 +10,21 @@ describe("Authentication", () => {
 
     // Set window.location.href
     const originalLocation = window.location;
-    let href = "http://example.com";
+    let localeUrl = new URL("https://example.com");
     delete (window as any).location;
     (window as any).location = {
       ...originalLocation,
       get href() {
-        return href;
+        return localeUrl.href;
+      },
+      get origin() {
+        return localeUrl.origin;
+      },
+      get pathname() {
+        return localeUrl.pathname;
       },
       set href(value) {
-        href = value;
+        localeUrl = new URL(value);
       },
       assign: vi.fn(),
       replace: vi.fn(),
@@ -33,7 +39,7 @@ describe("Authentication", () => {
 
   it("should fetch access token when code is in URL", async () => {
     // Set window.location.href with code parameter
-    window.location.href = "https://example.com?code=test-code";
+    window.location.href = "https://example.com/?code=test-code";
 
     // Set code_verifier in localStorage
     localStorage.setItem("pkce_code_verifier", "test-code-verifier");
@@ -56,7 +62,7 @@ describe("Authentication", () => {
           grant_type: "authorization_code",
           client_id: "test-client-id",
           code: "test-code",
-          redirect_uri: "https://example.com?code=test-code",
+          redirect_uri: "https://example.com/?code=test-code",
           code_verifier: "test-code-verifier",
         }),
       })

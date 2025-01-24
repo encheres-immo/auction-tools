@@ -32,7 +32,7 @@ export async function authenticate() {
         grant_type: "authorization_code",
         client_id: config.clientId,
         code: code,
-        redirect_uri: cleanRedirectUrl,
+        redirect_uri: cleanRedirectUrl + "?code=" + code,
         code_verifier: localStorage.getItem("pkce_code_verifier"),
       }),
     })
