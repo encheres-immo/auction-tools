@@ -1,5 +1,5 @@
 import type { Accessor, Component } from "solid-js";
-import { Show, createSignal } from "solid-js";
+import { Show, createSignal, onCleanup, onMount } from "solid-js";
 import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
 import client from "@encheres-immo/widget-client";
 import {
@@ -17,6 +17,8 @@ const BidForm: Component<{
   auction: AuctionType;
 }> = (props) => {
   const defaultAmount = getBaseAmount(props.auction);
+  const [isAuctionInProgressSignal, setIsAuctionInProgressSignal] =
+    createSignal(isAuctionInProgress(props.auction));
   let [amount, setAmount] = createSignal(defaultAmount);
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
   const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
@@ -156,6 +158,18 @@ const BidForm: Component<{
     document.getElementById("auction-widget")?.dispatchEvent(event);
   }
 
+  /**
+   * Used to dinamically update BidForm visibility based on auction state.
+   */
+  function updateAuctionState() {
+    setIsAuctionInProgressSignal(isAuctionInProgress(props.auction));
+  }
+
+  onMount(() => {
+    const interval = setInterval(updateAuctionState, 1000);
+    onCleanup(() => clearInterval(interval));
+  });
+
   return (
     <Show
       when={
@@ -163,7 +177,7 @@ const BidForm: Component<{
         props.auction.registration &&
         props.auction.registration.isRegistrationAccepted &&
         props.auction.registration.isParticipant &&
-        isAuctionInProgress(props.auction)
+        isAuctionInProgressSignal()
       }
     >
       <div class="auction-widget-section auction-widget-border-t">

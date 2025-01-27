@@ -7,7 +7,13 @@ import {
   afterEach,
   Mock,
 } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@solidjs/testing-library";
+import {
+  render,
+  screen,
+  fireEvent,
+  cleanup,
+  waitFor,
+} from "@solidjs/testing-library";
 import client from "@encheres-immo/widget-client";
 import {
   AuctionType,
@@ -20,6 +26,7 @@ import {
   factoryRegistration,
 } from "./test-utils.js";
 import BidForm from "../src/BidForm.jsx";
+import { createSignal } from "solid-js";
 
 // Mock the widget-client module
 vi.mock("@encheres-immo/widget-client", () => {
@@ -30,30 +37,30 @@ vi.mock("@encheres-immo/widget-client", () => {
   };
 });
 
-describe("Not displaying bid form when", () => {
+describe("Not displaying bid form", () => {
   afterEach(() => {
     cleanup();
   });
 
-  test("auction has not started", () => {
+  test("when auction has not started", () => {
     const auction = factoryAuction({ startDate: Date.now() + 1000 });
     render(() => <BidForm auction={auction} isLogged={() => true} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
   });
 
-  test("auction has ended", () => {
+  test("when auction has ended", () => {
     const auction = factoryAuction({ endDate: Date.now() - 1000 });
     render(() => <BidForm auction={auction} isLogged={() => true} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
   });
 
-  test("user is not logged in", () => {
+  test("when user is not logged in", () => {
     const auction = factoryAuction({ startDate: Date.now() - 1000 });
     render(() => <BidForm auction={auction} isLogged={() => false} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
   });
 
-  test("user is not accepted", () => {
+  test("when user is not accepted", () => {
     const registration = factoryRegistration({ isRegistrationAccepted: false });
     const auction = factoryAuction({
       startDate: Date.now() - 1000,
@@ -61,6 +68,37 @@ describe("Not displaying bid form when", () => {
     });
     render(() => <BidForm auction={auction} isLogged={() => true} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+  });
+
+  test("dynamically based on auction state", async () => {
+    const [auction, setAuction] = createSignal(
+      factoryAuction({
+        startDate: Date.now() + 5000,
+        endDate: Date.now() + 60000,
+        registration: factoryRegistration(),
+      })
+    );
+
+    render(() => <BidForm auction={auction()} isLogged={() => true} />);
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+
+    // Auction starts
+    setAuction((prev) => ({
+      ...prev,
+      startDate: Date.now() - 1,
+    }));
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).not.toBeNull();
+    });
+
+    // Auction ends
+    setAuction((prev) => ({
+      ...prev,
+      endDate: Date.now() - 1,
+    }));
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+    });
   });
 });
 
