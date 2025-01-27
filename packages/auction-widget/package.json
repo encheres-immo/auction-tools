@@ -19,15 +19,15 @@
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/user-event": "^14.5.2",
+    "@testing-library/user-event": "^14.6.1",
     "babel-preset-solid": "^1.9.3",
     "esbuild": "^0.24.2",
     "esbuild-plugin-solid": "^0.6.0",
-    "prettier-plugin-tailwindcss": "^0.6.9",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "solid-devtools": "^0.33.0",
     "tslib": "^2.8.1",
     "typescript": "^5.7.3",
-    "vite": "^6.0.7",
+    "vite": "^6.0.11",
     "vite-plugin-solid": "^2.11.0",
     "vitest": "^2.1.8"
   },
