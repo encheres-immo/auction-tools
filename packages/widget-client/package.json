@@ -1,6 +1,6 @@
 {
   "name": "@encheres-immo/widget-client",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "type": "module",
   "description": "Middleware to use Enchères Immo's API in your JavaScript application",
   "scripts": {
