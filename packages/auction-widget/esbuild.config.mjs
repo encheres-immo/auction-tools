@@ -9,6 +9,7 @@ async function build() {
     bundle: true,
     outfile: "dist/auction-widget.js",
     plugins: [solidPlugin()],
+    sourcemap: true,
   };
 
   if (!isDev) {
