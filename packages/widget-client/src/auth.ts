@@ -2,6 +2,14 @@ import { config } from "../index.js";
 import type { UserType } from "../types.js";
 
 /**
+ * Returns the new registration URL.
+ */
+export function registration(): string {
+  const cleanRedirectUrl = window.location.origin + window.location.pathname;
+  return `${config.BASE_URL}/register?org_id=${config.clientId}&user_return_to=${cleanRedirectUrl}`;
+}
+
+/**
  * Handles the OAuth2 authentication process by either fetching an access token using an
  * authorization code or redirecting the user to the authorization server to obtain it.
  */
