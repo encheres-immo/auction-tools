@@ -16,6 +16,11 @@
     ".": "./dist/auction-widget.js",
     "./dist/auction-widget.css": "./dist/auction-widget.css"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.10",
     "@testing-library/jest-dom": "^6.6.3",
