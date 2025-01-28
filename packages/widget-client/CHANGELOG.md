@@ -1,5 +1,17 @@
 # @encheres-immo/widget-client
 
+## 0.5.0
+
+### Minor Changes
+
+- d258d9a: Implemented auto-login by storing the access token in local storage and reusing it if valid in the next session.
+- 47af2eb: Added a function to get the registration link, allowing users to create an account on the platform before getting redirected to the auction page.
+
+### Patch Changes
+
+- 5d8a8db: Added source map for better debugging, and reduced package size when downloaded from npm. Should not affect behaviour and performance in usage.
+- 087dcf5: Fixed a bug where OAuth redirection failed if the host page URL contained anchors. From now on, anchors and query parameters are stripped from the host page URL before redirection.
+
 ## 0.4.2
 
 ### Patch Changes

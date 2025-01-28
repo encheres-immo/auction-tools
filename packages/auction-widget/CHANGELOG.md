@@ -1,5 +1,22 @@
 # @encheres-immo/auction-widget
 
+## 0.6.0
+
+### Minor Changes
+
+- d258d9a: Added automatic reconnection for recently logged-in users.
+- 47af2eb: Added a link to create an account when `allow-user-registration` is set to `true`. If false, the agent's contact information will be displayed instead.
+
+### Patch Changes
+
+- 5ff5c88: Fixed a bug where the bid form visibility was not dynamically updated when the auction started or ended.
+- 5d8a8db: Added source map for better debugging, and reduced package size when downloaded from npm. Should not affect behaviour and performance in usage.
+- Updated dependencies [d258d9a]
+- Updated dependencies [5d8a8db]
+- Updated dependencies [47af2eb]
+- Updated dependencies [087dcf5]
+  - @encheres-immo/widget-client@0.5.0
+
 ## 0.5.0
 
 ### Minor Changes
