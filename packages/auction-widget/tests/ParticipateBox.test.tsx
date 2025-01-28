@@ -26,6 +26,7 @@ vi.mock("@encheres-immo/widget-client", () => {
   return {
     default: {
       authenticate: vi.fn(),
+      registration: vi.fn(),
       me: vi.fn(),
       registerUserToAuction: vi.fn(),
     },
@@ -46,6 +47,7 @@ describe("Participate Button", () => {
     updateUser = vi.fn();
     setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
+    (client.registration as Mock).mockReset();
     (client.me as Mock).mockReset();
     (client.registerUserToAuction as Mock).mockReset();
   });
@@ -136,6 +138,7 @@ describe("Login Modal", () => {
     updateUser = vi.fn();
     setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
+    (client.registration as Mock).mockReset();
     (client.me as Mock).mockReset();
     (client.registerUserToAuction as Mock).mockReset();
   });
@@ -207,6 +210,7 @@ describe("Registration Modal", () => {
     updateUser = vi.fn();
     setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
+    (client.registration as Mock).mockReset();
     (client.me as Mock).mockReset();
     (client.registerUserToAuction as Mock).mockReset();
   });
@@ -342,6 +346,7 @@ describe("Contact Modal", () => {
     updateUser = vi.fn();
     setAuction = vi.fn();
     (client.authenticate as Mock).mockReset();
+    (client.registration as Mock).mockReset();
     (client.me as Mock).mockReset();
     (client.registerUserToAuction as Mock).mockReset();
   });
@@ -351,7 +356,7 @@ describe("Contact Modal", () => {
     vi.restoreAllMocks();
   });
 
-  test("can be opened from login modal", () => {
+  test("can be opened from login modal when allowUserRegistration is false", () => {
     render(() => (
       <ParticipateBox
         propertyInfo={factoryPropertyInfo()}
@@ -360,7 +365,7 @@ describe("Contact Modal", () => {
         isLogged={() => false}
         isLogging={() => false}
         auction={auction}
-        allowUserRegistration={true}
+        allowUserRegistration={false}
         tosUrl=""
       />
     ));
@@ -372,6 +377,25 @@ describe("Contact Modal", () => {
     expect(
       screen.queryByText("Vous devez être connecté")
     ).not.toBeInTheDocument();
+  });
+
+  test("can't be opened from registration modal when allowUserRegistration is false", () => {
+    render(() => (
+      <ParticipateBox
+        propertyInfo={factoryPropertyInfo()}
+        updateUser={updateUser}
+        setAuction={setAuction}
+        isLogged={() => true}
+        isLogging={() => false}
+        auction={auction}
+        allowUserRegistration={false}
+        tosUrl=""
+      />
+    ));
+
+    fireEvent.click(screen.getByText("Je veux participer"));
+
+    expect(screen.queryByText("Contacter l'agent")).not.toBeInTheDocument();
   });
 
   test("displays agent contact information", () => {

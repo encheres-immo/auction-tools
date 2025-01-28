@@ -102,15 +102,24 @@ const ParticipateBox: Component<{
           </div>
           <div id="auction-widget-agent-link">
             <p class="auction-widget-modal-note">Pas encore de compte ?</p>
-            <button
-              id="auction-widget-link"
-              onClick={() => {
-                setIsContactModalOpen(true);
-                setOpenModal(false);
-              }}
+            <Show
+              when={props.allowUserRegistration}
+              fallback={
+                <button
+                  id="auction-widget-link"
+                  onClick={() => {
+                    setIsContactModalOpen(true);
+                    setOpenModal(false);
+                  }}
+                >
+                  Contacter l'agent
+                </button>
+              }
             >
-              Contacter l'agent
-            </button>
+              <a id="auction-widget-link" href={client.registration()}>
+                Inscrivez-vous
+              </a>
+            </Show>
           </div>
         </CenteredModal>
       </Show>

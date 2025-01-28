@@ -1,5 +1,5 @@
 import { Socket } from "phoenix";
-import { authenticate, me } from "./src/auth.js";
+import { authenticate, me, registration } from "./src/auth.js";
 import {
   getNextAuctionById,
   subscribeToAuction,
@@ -66,6 +66,7 @@ export default {
   initEIClient,
   getNextAuctionById,
   authenticate,
+  registration,
   subscribeToAuction,
   registerUserToAuction,
   me,
