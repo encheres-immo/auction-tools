@@ -6,7 +6,7 @@ import type { UserType } from "../types.js";
  */
 export function registration(): string {
   const cleanRedirectUrl = window.location.origin + window.location.pathname;
-  return `${config.BASE_URL}/registration/new?org_id=${config.clientId}&user_return_to=${cleanRedirectUrl}`;
+  return `${config.BASE_URL}/registration/new?client_id=${config.clientId}&user_return_to=${cleanRedirectUrl}`;
 }
 
 /**
