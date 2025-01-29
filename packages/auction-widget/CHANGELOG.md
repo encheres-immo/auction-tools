@@ -1,5 +1,12 @@
 # @encheres-immo/auction-widget
 
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [94ce534]
+  - @encheres-immo/widget-client@0.5.1
+
 ## 0.6.0
 
 ### Minor Changes

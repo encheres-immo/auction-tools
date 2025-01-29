@@ -1,5 +1,11 @@
 # @encheres-immo/widget-client
 
+## 0.5.1
+
+### Patch Changes
+
+- 94ce534: Fixed a bug where the registration link didn't pass the correct parameters.
+
 ## 0.5.0
 
 ### Minor Changes
