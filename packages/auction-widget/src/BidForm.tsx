@@ -1,5 +1,5 @@
 import type { Accessor, Component } from "solid-js";
-import { Show, createSignal, onCleanup, onMount } from "solid-js";
+import { Show, createSignal, createEffect } from "solid-js";
 import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
 import client from "@encheres-immo/widget-client";
 import {
@@ -15,6 +15,7 @@ import CenteredModal from "./CenteredModal.jsx";
 const BidForm: Component<{
   isLogged: () => boolean;
   auction: AuctionType;
+  clock?: () => number;
 }> = (props) => {
   const defaultAmount = getBaseAmount(props.auction);
   const [isAuctionInProgressSignal, setIsAuctionInProgressSignal] =
@@ -158,16 +159,10 @@ const BidForm: Component<{
     document.getElementById("auction-widget")?.dispatchEvent(event);
   }
 
-  /**
-   * Used to dinamically update BidForm visibility based on auction state.
-   */
-  function updateAuctionState() {
+  // Use a reactive effect to update the auction state based on the global clock.
+  createEffect(() => {
+    props.clock && props.clock(); // Reacts to changes in the global clock
     setIsAuctionInProgressSignal(isAuctionInProgress(props.auction));
-  }
-
-  onMount(() => {
-    const interval = setInterval(updateAuctionState, 1000);
-    onCleanup(() => clearInterval(interval));
   });
 
   return (

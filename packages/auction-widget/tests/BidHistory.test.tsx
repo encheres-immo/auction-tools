@@ -1,7 +1,12 @@
 import { test, expect, describe, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@solidjs/testing-library";
+import { render, screen, cleanup, waitFor } from "@solidjs/testing-library";
+import { createSignal } from "solid-js";
 import BidHistory from "../src/BidHistory.jsx";
-import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
+import {
+  AuctionType,
+  UserType,
+  BidType,
+} from "@encheres-immo/widget-client/types";
 import {
   factoryAuction,
   factoryBid,
@@ -86,6 +91,26 @@ describe("Bids history", () => {
     // Expect bids to be displayed
     const bidAmountElements = screen.getAllByText(/[\d\s]+ €/i);
     expect(bidAmountElements.length).toBeGreaterThan(0);
+  });
+
+  test("dynamic display of bid history", async () => {
+    const [bids, setBids] = createSignal<BidType[]>([]);
+    render(() => <BidHistory bids={bids()} auction={auction} user={user} />);
+
+    // Vérifier que l'en-tête de l'historique n'est pas affiché initialement
+    expect(screen.queryByText(/Historique des offres/i)).toBeNull();
+
+    // Ajouter la première offre
+    const newBid = factoryBid({ amount: 1000, createdAt: Date.now() });
+    setBids([newBid]);
+
+    // Attendre que l'affichage se mette à jour avec la première offre
+    await waitFor(() => {
+      expect(screen.getByText(/Historique des offres/i)).toBeInTheDocument();
+      const bidAmountElements = screen.getAllByText(/[\d\s]+ €/i);
+      expect(bidAmountElements.length).toBe(1);
+      expect(bidAmountElements[0].textContent?.trim()).toEqual("1000 €");
+    });
   });
 });
 

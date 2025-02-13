@@ -1,5 +1,4 @@
-import { createSignal, type Component, Show } from "solid-js";
-import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
+import { createSignal, createEffect, type Component, Show } from "solid-js";
 import {
   isAuctionNotStarted,
   isAuctionInProgress,
@@ -8,14 +7,18 @@ import {
   formatDate,
   parseDate,
 } from "./utils.jsx";
+import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
+
+interface AuctionInfosProps {
+  auction: AuctionType;
+  user: UserType | undefined;
+  clock?: () => number;
+}
 
 /**
  * Display auction details and countdown.
  */
-const AuctionInfos: Component<{
-  auction: AuctionType;
-  user: UserType | undefined;
-}> = (props) => {
+const AuctionInfos: Component<AuctionInfosProps> = (props) => {
   const [remainingTime, setRemainingTime] = createSignal("");
   const [isAuctionNotStartedVal, setIsAuctionNotStartedVal] = createSignal(
     isAuctionNotStarted(props.auction)
@@ -28,43 +31,39 @@ const AuctionInfos: Component<{
   );
 
   function getTimeRemaining(
-    startDate: Date,
+    targetDate: Date,
     currentDate: Date
   ): { days: number; hours: number; minutes: number; seconds: number } {
-    const totalSeconds = (startDate.getTime() - currentDate.getTime()) / 1000;
-
+    const totalSeconds = (targetDate.getTime() - currentDate.getTime()) / 1000;
     const days = Math.floor(totalSeconds / (3600 * 24));
     const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = Math.floor(totalSeconds % 60);
-
     return { days, hours, minutes, seconds };
   }
 
-  function updateCountdown(auction: AuctionType) {
-    setIsAuctionEndedVal(isAuctionEnded(props.auction));
-    setIsAuctionInProgressVal(isAuctionInProgress(props.auction));
-    setIsAuctionNotStartedVal(isAuctionNotStarted(props.auction));
+  function updateCountdown(auction: AuctionType, currentDate: Date) {
+    setIsAuctionEndedVal(isAuctionEnded(auction));
+    setIsAuctionInProgressVal(isAuctionInProgress(auction));
+    setIsAuctionNotStartedVal(isAuctionNotStarted(auction));
 
-    if (isAuctionEnded(auction)) {
-      clearInterval(interval);
-      return;
-    }
+    if (isAuctionEnded(auction)) return;
+
     const targetDate = isAuctionNotStarted(auction)
       ? auction.startDate
       : auction.endDate;
 
-    const currentDate = new Date(); // User's local date and time
-    const remainingTime = getTimeRemaining(parseDate(targetDate), currentDate);
+    const remaining = getTimeRemaining(parseDate(targetDate), currentDate);
     setRemainingTime(
-      `${remainingTime.days}j ${remainingTime.hours}h ${remainingTime.minutes}m ${remainingTime.seconds}s`
+      `${remaining.days}j ${remaining.hours}h ${remaining.minutes}m ${remaining.seconds}s`
     );
-    return;
   }
 
-  const interval = setInterval(() => {
-    updateCountdown(props.auction);
-  }, 1000);
+  // Re-calcule le countdown chaque fois que le clock change.
+  createEffect(() => {
+    const currentTime = props.clock ? new Date(props.clock()) : new Date();
+    updateCountdown(props.auction, currentTime);
+  });
 
   return (
     <div>
