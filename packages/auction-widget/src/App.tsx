@@ -1,7 +1,7 @@
 import type { Component } from "solid-js";
 import { createStore } from "solid-js/store";
 import client from "@encheres-immo/widget-client";
-import { Show, createSignal } from "solid-js";
+import { Show, createSignal, onMount } from "solid-js";
 import "../assets/app.css";
 
 import AuctionInfos from "./AuctionInfos.jsx";
@@ -50,6 +50,17 @@ const [auction, setAuction] = createStore<AuctionType>({
     code: "",
     isBefore: false,
   },
+});
+const [clock, setClock] = createSignal(Date.now());
+
+/**
+ * Used to update our widget every second.
+ */
+onMount(() => {
+  const interval = setInterval(() => {
+    setClock(Date.now());
+  }, 1000);
+  return () => clearInterval(interval);
 });
 
 /**
@@ -137,7 +148,7 @@ const App: Component<{
   return (
     <div id="auction-widget-box">
       <Show when={auction.id != ""}>
-        <AuctionInfos auction={auction} user={user()} />
+        <AuctionInfos auction={auction} user={user()} clock={clock} />
         <ParticipateBox
           auction={auction}
           propertyInfo={propertyInfo}
@@ -149,8 +160,8 @@ const App: Component<{
           tosUrl={tosUrl}
         />
         <RegistrationStatus isLogged={isLogged} auction={auction} />
-        <BidForm auction={auction} isLogged={isLogged} />
-        <BidHistory bids={bids} auction={auction} user={user()} />
+        <BidForm auction={auction} isLogged={isLogged} clock={clock} />
+        <BidHistory bids={bids} auction={auction} user={user()} clock={clock} />
       </Show>
       <Spritesheet />
     </div>

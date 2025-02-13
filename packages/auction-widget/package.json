@@ -5,6 +5,7 @@
   "description": "Bring our real-estate auction widget to your website, powered by SolidJS & Enchères Immo's API",
   "scripts": {
     "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
     "test": "vitest"
   },
   "license": "MIT",

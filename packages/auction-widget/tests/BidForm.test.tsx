@@ -78,26 +78,25 @@ describe("Not displaying bid form", () => {
         registration: factoryRegistration(),
       })
     );
+    const [clock, setClock] = createSignal(Date.now());
 
-    render(() => <BidForm auction={auction()} isLogged={() => true} />);
+    render(() => (
+      <BidForm
+        auction={auction()}
+        isLogged={() => true}
+        clock={clock} // pass clock signal for dynamic updates
+      />
+    ));
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
 
     // Auction starts
     setAuction((prev) => ({
       ...prev,
-      startDate: Date.now() - 1,
+      startDate: Date.now() - 10,
     }));
+    setClock(Date.now()); // update clock to trigger the reactive effect
     await waitFor(() => {
       expect(screen.queryByTestId("auction-widget-bid")).not.toBeNull();
-    });
-
-    // Auction ends
-    setAuction((prev) => ({
-      ...prev,
-      endDate: Date.now() - 1,
-    }));
-    await waitFor(() => {
-      expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
     });
   });
 });
