@@ -1,5 +1,11 @@
 # @encheres-immo/auction-widget
 
+## 0.6.2
+
+### Patch Changes
+
+- 8defdd5: Fixed a bug not dynamically updating the bid history at auction start.
+
 ## 0.6.1
 
 ### Patch Changes
