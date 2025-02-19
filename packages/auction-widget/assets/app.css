@@ -292,6 +292,10 @@
     background-color: var(--auction-widget-dark-color);
   }
 
+  .auction-widget-icon svg {
+    fill: currentColor;
+  }
+
   #auction-widget-modal-title {
     font-size: 1.125rem;
     font-weight: 700;
@@ -452,7 +456,8 @@
 */
 @layer auction-widget-base {
   #auction-widget-box,
-  #auction-widget-box * {
+  #auction-widget-box *,
+  :not(svg|*) {
     /* Reset all styles to their browser defaults */
     all: revert;
     /* Set here the styles that we want to herit from the host page */
