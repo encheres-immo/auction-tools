@@ -249,6 +249,49 @@ describe("Fast bid buttons", () => {
     });
   });
 
+  test("updates default amount input after a successful bid submission", async () => {
+    // Create a reactive auction so we can later update it with a new highest bid.
+    const initialAuction = factoryAuction({
+      startingPrice: 1000,
+      step: 100,
+      registration: factoryRegistration(),
+      startDate: Date.now() - 1000,
+    });
+    const [auction, setAuction] = createSignal(initialAuction);
+
+    // Mock a new bid from the server.
+    const newBid = factoryBid({ amount: 1100 });
+    (client.placeBidOnAuction as Mock).mockResolvedValue(newBid);
+
+    // Render the component with the reactive auction.
+    render(() => <BidForm auction={auction()} isLogged={() => true} />);
+
+    // Click on one of the fast bid buttons.
+    const fastBidButtons = screen.getAllByRole("button", {
+      name: /\+ [\d\s]+ €/i,
+    });
+    fireEvent.click(fastBidButtons[0]);
+
+    // Click confirm in the modal.
+    const confirmButton = screen.getByText(/Confirmer/i);
+    fireEvent.click(confirmButton);
+
+    // Wait for the bid submission to resolve.
+    await waitFor(() => {
+      expect(client.placeBidOnAuction).toHaveBeenCalled();
+    });
+
+    // Simulate that the auction has been updated with the new highest bid.
+    setAuction((prev) => ({ ...prev, highestBid: newBid }));
+
+    // The new default amount should now be newBid.amount plus the auction step.
+    const updatedDefaultValue = newBid.amount + auction().step;
+
+    // Get the bid input field and verify its value.
+    const amountInput = screen.getByRole("spinbutton") as HTMLInputElement;
+    expect(Number(amountInput.value)).toBe(updatedDefaultValue);
+  });
+
   describe("Custom bid input", () => {
     let auction: AuctionType;
     let registration: RegistrationType;

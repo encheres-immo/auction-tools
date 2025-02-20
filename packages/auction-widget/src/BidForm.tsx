@@ -17,10 +17,10 @@ const BidForm: Component<{
   auction: AuctionType;
   clock?: () => number;
 }> = (props) => {
-  const defaultAmount = getBaseAmount(props.auction);
+  // Initialize amount using current auction data.
+  const [amount, setAmount] = createSignal(getBaseAmount(props.auction));
   const [isAuctionInProgressSignal, setIsAuctionInProgressSignal] =
     createSignal(isAuctionInProgress(props.auction));
-  let [amount, setAmount] = createSignal(defaultAmount);
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
   const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
   const [isAmountTooHigh, setIsAmountTooHigh] = createSignal(false);
@@ -40,6 +40,11 @@ const BidForm: Component<{
       ? auction.highestBid.amount + auction.step
       : auction.startingPrice;
   }
+
+  // Update the default bid amount whenever the auction prop changes (e.g. a new highest bid)
+  createEffect(() => {
+    setAmount(getBaseAmount(props.auction));
+  });
 
   /**
    * We display a warning message if the bid amount is too high.
@@ -211,9 +216,10 @@ const BidForm: Component<{
               Votre montant
             </p>
             <form id="auction-widget-bid-form" onSubmit={openConfirmBid()}>
+              {/* Bind the input's value to the reactive signal "amount" */}
               <input
                 type="number"
-                value={defaultAmount}
+                value={amount()}
                 onInput={(e) =>
                   setAmount(Number.parseInt(e.currentTarget.value))
                 }
