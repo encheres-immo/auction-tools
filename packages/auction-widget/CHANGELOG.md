@@ -1,5 +1,12 @@
 # @encheres-immo/auction-widget
 
+## 0.6.3
+
+### Patch Changes
+
+- f3b2472: Fixed a bug where icons were not displayed correctly on Chrome and Safari. Thanks @Princesseuh !
+- 30761e6: Fixed a bug where the bid input's default value was not updated correctly when new bids were placed.
+
 ## 0.6.2
 
 ### Patch Changes
