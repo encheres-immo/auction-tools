@@ -165,7 +165,6 @@ const BidForm: Component<{
 
   // Update auction progress state when relevant auction properties change
   createEffect(() => {
-    const { status, startDate, endDate } = props.auction;
     setIsAuctionInProgressSignal(isAuctionInProgress(props.auction));
   });
 

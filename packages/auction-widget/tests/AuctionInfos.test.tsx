@@ -1,5 +1,5 @@
-import { test, expect, describe, afterEach } from "vitest";
-import { render, screen, cleanup } from "@solidjs/testing-library";
+import { test, expect, describe, afterEach, beforeEach } from "vitest";
+import { render, screen, cleanup, waitFor } from "@solidjs/testing-library";
 import AuctionInfos from "../src/AuctionInfos.jsx";
 import { UserType } from "@encheres-immo/widget-client/types";
 import {
@@ -8,6 +8,8 @@ import {
   factoryRegistration,
   factoryUser,
 } from "./test-utils.js";
+import { createSignal } from "solid-js";
+import { vi } from "vitest";
 
 const user: UserType = factoryUser();
 
@@ -114,5 +116,129 @@ describe("Auction details display", () => {
     ));
     expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
     expect(screen.getByText(`${highestBid.amount} €`)).toBeInTheDocument();
+  });
+});
+
+describe("Dynamic auction status updates", () => {
+  beforeEach(() => {
+    // Mock Date.now to have consistent behavior
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2023, 0, 1, 12, 0, 0));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
+
+  test("updates display when auction changes from scheduled to started", async () => {
+    // Create an auction scheduled to start in 5 seconds
+    const startTime = Date.now() + 5000;
+    const endTime = Date.now() + 60000;
+
+    const auction = factoryAuction({
+      status: "scheduled",
+      startDate: startTime,
+      endDate: endTime,
+    });
+
+    // Render the component
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Démarre dans/i)).toBeInTheDocument();
+
+    // Advance time past the start date
+    vi.advanceTimersByTime(10000); // 10 seconds
+
+    // Component should now show that auction is in progress
+    await waitFor(() => {
+      expect(screen.getByText(/Se termine dans/i)).toBeInTheDocument();
+    });
+  });
+
+  test("updates display when auction changes from started to completed", async () => {
+    // Create an auction that will end in 5 seconds
+    const startTime = Date.now() - 10000; // Started 10 seconds ago
+    const endTime = Date.now() + 5000; // Ends in 5 seconds
+
+    const auction = factoryAuction({
+      status: "started",
+      startDate: startTime,
+      endDate: endTime,
+    });
+
+    // Render with initial state
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Se termine dans/i)).toBeInTheDocument();
+
+    // Advance time past the end date
+    vi.advanceTimersByTime(10000); // 10 seconds
+
+    // Component should now show auction has ended
+    await waitFor(() => {
+      expect(screen.getByText(/Vente terminée/i)).toBeInTheDocument();
+    });
+  });
+
+  test("updates remaining time based on clock changes", async () => {
+    const startDate = Date.now() - 10000;
+    const endDate = Date.now() + 60000; // 1 minute in the future
+
+    const auction = factoryAuction({
+      status: "started",
+      startDate,
+      endDate,
+    });
+
+    render(() => <AuctionInfos auction={auction} user={user} />);
+
+    // Initial countdown should show around 1 minute
+    expect(screen.getByText(/Se termine dans/i)).toBeInTheDocument();
+    expect(screen.getByText(/0j 0h 1m/i)).toBeInTheDocument();
+
+    // Advance time by 30 seconds
+    vi.advanceTimersByTime(30000);
+
+    // Countdown should update to around 30 seconds
+    await waitFor(() => {
+      expect(screen.getByText(/0j 0h 0m 30s/i)).toBeInTheDocument();
+    });
+
+    // Advance time past the end date
+    vi.advanceTimersByTime(31000);
+
+    // Component should now show auction as ended
+    await waitFor(() => {
+      const countdown = screen.queryByText(/0j 0h 0m/i);
+      expect(countdown).toBeNull();
+    });
+  });
+
+  test("updates highest bid display when auction is updated", async () => {
+    // Create a reactive auction
+    const initialBid = factoryBid({ amount: 1000 });
+    const [auction, setAuction] = createSignal(
+      factoryAuction({
+        status: "started",
+        startDate: Date.now() - 10000,
+        highestBid: initialBid,
+      })
+    );
+
+    render(() => <AuctionInfos auction={auction()} user={user} />);
+
+    // Initial highest bid should be shown
+    expect(screen.getByText("1000 €")).toBeInTheDocument();
+
+    // Update the auction with a new highest bid
+    const newBid = factoryBid({ amount: 1500 });
+    setAuction((prev) => ({
+      ...prev,
+      highestBid: newBid,
+    }));
+
+    // Component should update to show the new highest bid
+    await waitFor(() => {
+      expect(screen.getByText("1500 €")).toBeInTheDocument();
+    });
   });
 });

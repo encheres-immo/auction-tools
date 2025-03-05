@@ -1,86 +1,52 @@
-import { createSignal, createEffect, type Component, Show } from "solid-js";
-import {
-  isAuctionNotStarted,
-  isAuctionInProgress,
-  isAuctionEnded,
-  displayAmountWithCurrency,
-  formatDate,
-  parseDate,
-} from "./utils.jsx";
+import { createMemo, type Component, Show } from "solid-js";
+import { displayAmountWithCurrency, formatDate } from "./utils.jsx";
 import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
+import { useAuctionTimer } from "./hooks/useAuctionTimer.js";
 
 interface AuctionInfosProps {
   auction: AuctionType;
   user: UserType | undefined;
-  clock?: () => number;
 }
 
 /**
  * Display auction details and countdown.
  */
 const AuctionInfos: Component<AuctionInfosProps> = (props) => {
-  const [remainingTime, setRemainingTime] = createSignal("");
-  const [isAuctionNotStartedVal, setIsAuctionNotStartedVal] = createSignal(
-    isAuctionNotStarted(props.auction)
-  );
-  const [isAuctionInProgressVal, setIsAuctionInProgressVal] = createSignal(
-    isAuctionInProgress(props.auction)
-  );
-  const [isAuctionEndedVal, setIsAuctionEndedVal] = createSignal(
-    isAuctionEnded(props.auction)
-  );
+  // Create a memo of the auction to track changes
+  const auctionData = createMemo(() => props.auction);
 
-  function getTimeRemaining(
-    targetDate: Date,
-    currentDate: Date
-  ): { days: number; hours: number; minutes: number; seconds: number } {
-    const totalSeconds = (targetDate.getTime() - currentDate.getTime()) / 1000;
-    const days = Math.floor(totalSeconds / (3600 * 24));
-    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    return { days, hours, minutes, seconds };
-  }
+  // Use the timer hook
+  const { timeRemaining, isNotStarted, isInProgress, isEnded } =
+    useAuctionTimer(auctionData);
 
-  function updateCountdown(auction: AuctionType, currentDate: Date) {
-    setIsAuctionEndedVal(isAuctionEnded(auction));
-    setIsAuctionInProgressVal(isAuctionInProgress(auction));
-    setIsAuctionNotStartedVal(isAuctionNotStarted(auction));
-
-    if (isAuctionEnded(auction)) return;
-
-    const targetDate = isAuctionNotStarted(auction)
-      ? auction.startDate
-      : auction.endDate;
-
-    const remaining = getTimeRemaining(parseDate(targetDate), currentDate);
-    setRemainingTime(
-      `${remaining.days}j ${remaining.hours}h ${remaining.minutes}m ${remaining.seconds}s`
+  // Check if the user can see bid information in private auctions
+  const canViewBids = createMemo(() => {
+    const auction = auctionData();
+    return (
+      !auction.isPrivate ||
+      (auction.isPrivate &&
+        auction.registration &&
+        auction.registration.isUserAllowed &&
+        auction.registration.isRegistrationAccepted)
     );
-  }
-
-  // Re-calcule le countdown chaque fois que le clock change.
-  createEffect(() => {
-    const currentTime = props.clock ? new Date(props.clock()) : new Date();
-    updateCountdown(props.auction, currentTime);
   });
 
   return (
     <div>
       <div id="auction-widget-header">
-        <Show when={isAuctionNotStartedVal()}>
+        <Show when={isNotStarted()}>
           <div>
             <p id="auction-widget-status">Démarre dans</p>
-            <p id="auction-widget-countdown">{remainingTime()}</p>
+            <p id="auction-widget-countdown">{timeRemaining().formatted}</p>
           </div>
         </Show>
-        <Show when={isAuctionInProgressVal()}>
+        <Show when={isInProgress()}>
           <div>
             <p id="auction-widget-status">Se termine dans</p>
-            <p id="auction-widget-countdown">{remainingTime()}</p>
+            <p id="auction-widget-countdown">{timeRemaining().formatted}</p>
           </div>
         </Show>
-        <Show when={isAuctionEndedVal()}>
+        <Show when={isEnded()}>
           <p id="auction-widget-status">Vente terminée</p>
         </Show>
       </div>
@@ -89,13 +55,13 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
           <div>
             <p class="auction-widget-detail auction-widget-label">Début</p>
             <p class="auction-widget-detail">
-              {formatDate(props.auction.startDate)}{" "}
+              {formatDate(auctionData().startDate)}
             </p>
           </div>
           <div>
             <p class="auction-widget-detail auction-widget-label">Fin</p>
             <p class="auction-widget-detail">
-              {formatDate(props.auction.endDate)}
+              {formatDate(auctionData().endDate)}
             </p>
           </div>
           <div>
@@ -103,26 +69,26 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
               Prix de départ
             </p>
             <p class="auction-widget-detail auction-widget-accent">
-              {displayAmountWithCurrency(props.auction.startingPrice)}{" "}
+              {displayAmountWithCurrency(
+                auctionData().startingPrice,
+                auctionData().currency
+              )}
             </p>
           </div>
           <div>
             <p class="auction-widget-detail auction-widget-label">Palier</p>
             <p class="auction-widget-detail auction-widget-accent">
-              {displayAmountWithCurrency(props.auction.step)}
+              {displayAmountWithCurrency(
+                auctionData().step,
+                auctionData().currency
+              )}
             </p>
           </div>
         </div>
         <div class="auction-widget-section auction-widget-border-t">
           <div>
             <Show
-              when={
-                !props.auction.isPrivate ||
-                (props.auction.isPrivate &&
-                  props.auction.registration &&
-                  props.auction.registration.isUserAllowed &&
-                  props.auction.registration.isRegistrationAccepted)
-              }
+              when={canViewBids()}
               fallback={
                 <div>
                   <p class="auction-widget-detail auction-widget-label">
@@ -138,12 +104,12 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
                 Meilleure offre
               </p>
               <p class="auction-widget-detail auction-widget-accent">
-                {props.auction.highestBid?.participantId
+                {auctionData().highestBid?.participantId
                   ? displayAmountWithCurrency(
-                      props.auction.highestBid.amount,
-                      props.auction.currency
+                      auctionData().highestBid.amount,
+                      auctionData().currency
                     )
-                  : displayAmountWithCurrency(null, props.auction.currency)}
+                  : displayAmountWithCurrency(null, auctionData().currency)}
               </p>
             </Show>
           </div>

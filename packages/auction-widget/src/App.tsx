@@ -52,17 +52,6 @@ const [auction, setAuction] = createStore<AuctionType>({
     isBefore: false,
   },
 });
-const [clock, setClock] = createSignal(Date.now());
-
-/**
- * Used to update our widget every second.
- */
-onMount(() => {
-  const interval = setInterval(() => {
-    setClock(Date.now());
-  }, 1000);
-  return () => clearInterval(interval);
-});
 
 /**
  * Refresh auction data and subscribe to auction events (new bid, end of auction)
@@ -149,7 +138,7 @@ const App: Component<{
   return (
     <div id="auction-widget-box">
       <Show when={auction.id != ""}>
-        <AuctionInfos auction={auction} user={user()} clock={clock} />
+        <AuctionInfos auction={auction} user={user()} />
         <ParticipateBox
           auction={auction}
           propertyInfo={propertyInfo}
@@ -162,7 +151,7 @@ const App: Component<{
         />
         <RegistrationStatus auction={auction} isLogged={isLogged} />
         <BidForm auction={auction} isLogged={isLogged} />
-        <BidHistory auction={auction} bids={bids} user={user()} clock={clock} />
+        <BidHistory auction={auction} bids={bids} user={user()} />
       </Show>
       <Spritesheet />
     </div>
