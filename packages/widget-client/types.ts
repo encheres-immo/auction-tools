@@ -4,6 +4,7 @@
  */
 export type AuctionType = {
   id: string;
+  status: "draft" | "scheduled" | "started" | "completed" | "cancelled";
   startDate: number;
   endDate: number;
   startingPrice: number;

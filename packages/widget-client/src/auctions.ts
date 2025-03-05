@@ -138,6 +138,7 @@ function formatAuction(data: any): AuctionType {
 
   return {
     id: data.id,
+    status: data.status,
     startDate: data.startDate,
     endDate: data.endDate,
     startingPrice: data.startingPrice,

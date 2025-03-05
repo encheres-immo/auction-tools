@@ -26,6 +26,7 @@ export function factoryAuction(
 ): AuctionType {
   const baseAuction: AuctionType = {
     id: "auction1",
+    status: "scheduled",
     startDate: Date.now() + 10000, // Starts in 10 seconds
     endDate: Date.now() + 20000, // Ends in 20 seconds
     startingPrice: 10000,

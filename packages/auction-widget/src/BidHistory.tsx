@@ -22,7 +22,6 @@ interface BidHistoryProps {
   bids: BidType[];
   auction: AuctionType;
   user: UserType | undefined;
-  clock?: () => number;
 }
 
 /**
@@ -33,10 +32,9 @@ const BidHistory: Component<BidHistoryProps> = (props) => {
     isAuctionInProgress(props.auction)
   );
 
-  // Re-compute auction status based on clock changes.
+  // Re-compute auction status when relevant auction properties change
   createEffect(() => {
-    // We re-run this effect every time clock() changes.
-    props.clock && props.clock();
+    const { status, bids } = props.auction;
     setAuctionInProgress(isAuctionInProgress(props.auction));
   });
 

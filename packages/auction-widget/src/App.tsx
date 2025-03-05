@@ -24,6 +24,7 @@ const [user, setUser] = createSignal<UserType | undefined>(undefined);
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>({
   id: "",
+  status: "draft",
   startDate: 0,
   endDate: 0,
   startingPrice: 0,
@@ -51,17 +52,6 @@ const [auction, setAuction] = createStore<AuctionType>({
     isBefore: false,
   },
 });
-const [clock, setClock] = createSignal(Date.now());
-
-/**
- * Used to update our widget every second.
- */
-onMount(() => {
-  const interval = setInterval(() => {
-    setClock(Date.now());
-  }, 1000);
-  return () => clearInterval(interval);
-});
 
 /**
  * Refresh auction data and subscribe to auction events (new bid, end of auction)
@@ -86,7 +76,7 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
             },
           });
           document.getElementById("auction-widget")?.dispatchEvent(event);
-          // replace highest bid in auction
+          // replace highest bid in auction and update end date if needed
           const newEndDate = bid.newEndDate || auction.endDate;
           setAuction({
             ...auction,
@@ -148,7 +138,7 @@ const App: Component<{
   return (
     <div id="auction-widget-box">
       <Show when={auction.id != ""}>
-        <AuctionInfos auction={auction} user={user()} clock={clock} />
+        <AuctionInfos auction={auction} user={user()} />
         <ParticipateBox
           auction={auction}
           propertyInfo={propertyInfo}
@@ -159,9 +149,9 @@ const App: Component<{
           allowUserRegistration={allowUserRegistration}
           tosUrl={tosUrl}
         />
-        <RegistrationStatus isLogged={isLogged} auction={auction} />
-        <BidForm auction={auction} isLogged={isLogged} clock={clock} />
-        <BidHistory bids={bids} auction={auction} user={user()} clock={clock} />
+        <RegistrationStatus auction={auction} isLogged={isLogged} />
+        <BidForm auction={auction} isLogged={isLogged} />
+        <BidHistory auction={auction} bids={bids} user={user()} />
       </Show>
       <Spritesheet />
     </div>

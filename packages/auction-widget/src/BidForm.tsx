@@ -15,7 +15,6 @@ import CenteredModal from "./CenteredModal.jsx";
 const BidForm: Component<{
   isLogged: () => boolean;
   auction: AuctionType;
-  clock?: () => number;
 }> = (props) => {
   // Initialize amount using current auction data.
   const [amount, setAmount] = createSignal(getBaseAmount(props.auction));
@@ -164,9 +163,8 @@ const BidForm: Component<{
     document.getElementById("auction-widget")?.dispatchEvent(event);
   }
 
-  // Use a reactive effect to update the auction state based on the global clock.
+  // Update auction progress state when relevant auction properties change
   createEffect(() => {
-    props.clock && props.clock(); // Reacts to changes in the global clock
     setIsAuctionInProgressSignal(isAuctionInProgress(props.auction));
   });
 
