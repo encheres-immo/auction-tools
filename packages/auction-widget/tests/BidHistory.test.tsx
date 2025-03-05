@@ -20,7 +20,10 @@ describe("Bids history", () => {
 
   beforeEach(() => {
     user = factoryUser();
-    auction = factoryAuction({ startDate: Date.now() - 1000 });
+    auction = factoryAuction({
+      status: "started",
+      startDate: Date.now() - 1000,
+    });
   });
 
   afterEach(() => {
@@ -60,6 +63,7 @@ describe("Bids history", () => {
   test("does not display bid history for non-participants in private auction", () => {
     const privateAuction = factoryAuction({
       isPrivate: true,
+      status: "started",
       startDate: Date.now() - 1000,
     });
     const bids = [factoryBid(), factoryBid()];
@@ -76,6 +80,7 @@ describe("Bids history", () => {
   test("displays bid history for participants in private auction", () => {
     const privateAuction = factoryAuction({
       isPrivate: true,
+      status: "started",
       startDate: Date.now() - 1000,
       registration: factoryRegistration(),
     });
@@ -120,7 +125,10 @@ describe("Bid component in bids history", () => {
 
   beforeEach(() => {
     user = factoryUser();
-    auction = factoryAuction({ startDate: Date.now() - 1000 });
+    auction = factoryAuction({
+      status: "started",
+      startDate: Date.now() - 1000,
+    });
   });
 
   afterEach(() => {

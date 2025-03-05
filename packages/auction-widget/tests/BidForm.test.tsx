@@ -43,19 +43,28 @@ describe("Not displaying bid form", () => {
   });
 
   test("when auction has not started", () => {
-    const auction = factoryAuction({ startDate: Date.now() + 1000 });
+    const auction = factoryAuction({
+      status: "scheduled",
+      startDate: Date.now() + 1000,
+    });
     render(() => <BidForm auction={auction} isLogged={() => true} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
   });
 
   test("when auction has ended", () => {
-    const auction = factoryAuction({ endDate: Date.now() - 1000 });
+    const auction = factoryAuction({
+      status: "completed",
+      endDate: Date.now() - 1000,
+    });
     render(() => <BidForm auction={auction} isLogged={() => true} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
   });
 
   test("when user is not logged in", () => {
-    const auction = factoryAuction({ startDate: Date.now() - 1000 });
+    const auction = factoryAuction({
+      status: "started",
+      startDate: Date.now() - 1000,
+    });
     render(() => <BidForm auction={auction} isLogged={() => false} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
   });
@@ -63,6 +72,7 @@ describe("Not displaying bid form", () => {
   test("when user is not accepted", () => {
     const registration = factoryRegistration({ isRegistrationAccepted: false });
     const auction = factoryAuction({
+      status: "started",
       startDate: Date.now() - 1000,
       registration: registration,
     });
@@ -71,32 +81,42 @@ describe("Not displaying bid form", () => {
   });
 
   test("dynamically based on auction state", async () => {
+    // Create a reactive auction signal with initial state "scheduled"
     const [auction, setAuction] = createSignal(
       factoryAuction({
-        startDate: Date.now() + 5000,
-        endDate: Date.now() + 60000,
+        status: "scheduled",
+        startDate: Date.now() + 1000,
+        endDate: Date.now() + 2000,
         registration: factoryRegistration(),
       })
     );
-    const [clock, setClock] = createSignal(Date.now());
 
-    render(() => (
-      <BidForm
-        auction={auction()}
-        isLogged={() => true}
-        clock={clock} // pass clock signal for dynamic updates
-      />
-    ));
+    // Render with initial state - auction hasn't started yet
+    render(() => <BidForm auction={auction()} isLogged={() => true} />);
     expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
 
-    // Auction starts
+    // Update auction to make it active using status
     setAuction((prev) => ({
       ...prev,
-      startDate: Date.now() - 10,
+      status: "started",
+      startDate: Date.now() - 1000,
     }));
-    setClock(Date.now()); // update clock to trigger the reactive effect
+
+    // Component should react to the status change
     await waitFor(() => {
       expect(screen.queryByTestId("auction-widget-bid")).not.toBeNull();
+    });
+
+    // Test that the component also reacts when auction ends
+    setAuction((prev) => ({
+      ...prev,
+      status: "completed",
+      endDate: Date.now() - 1000,
+    }));
+
+    // Component should hide the bid form again
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
     });
   });
 });
@@ -109,6 +129,7 @@ describe("Fast bid buttons", () => {
     registration = factoryRegistration();
     auction = factoryAuction({
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
     });
   });
@@ -125,6 +146,7 @@ describe("Fast bid buttons", () => {
       bids: [],
       highestBid: undefined,
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
     });
 
@@ -159,6 +181,7 @@ describe("Fast bid buttons", () => {
       bids: [highestBid],
       highestBid: highestBid,
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
     });
 
@@ -204,6 +227,7 @@ describe("Fast bid buttons", () => {
       bids: [],
       highestBid: undefined,
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
     });
 
@@ -231,6 +255,7 @@ describe("Fast bid buttons", () => {
       bids: [highestBid],
       highestBid: highestBid,
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
     });
 
@@ -255,6 +280,7 @@ describe("Fast bid buttons", () => {
       startingPrice: 1000,
       step: 100,
       registration: factoryRegistration(),
+      status: "started",
       startDate: Date.now() - 1000,
     });
     const [auction, setAuction] = createSignal(initialAuction);
@@ -300,6 +326,7 @@ describe("Fast bid buttons", () => {
       registration = factoryRegistration();
       auction = factoryAuction({
         registration: registration,
+        status: "started",
         startDate: Date.now() - 1000,
       });
     });
@@ -330,6 +357,7 @@ describe("Modal confirm bid", () => {
     registration = factoryRegistration();
     auction = factoryAuction({
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
     });
     (client.placeBidOnAuction as Mock).mockReset();

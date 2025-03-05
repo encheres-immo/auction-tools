@@ -23,6 +23,7 @@ describe("RegistrationStatus displays", () => {
     });
     auction = factoryAuction({
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
       endDate: Date.now() + 10000,
     });
@@ -41,6 +42,7 @@ describe("RegistrationStatus displays", () => {
     });
     auction = factoryAuction({
       registration: registration,
+      status: "scheduled",
       startDate: Date.now() + 10000,
       endDate: Date.now() + 20000,
     });
@@ -61,6 +63,7 @@ describe("RegistrationStatus displays", () => {
     });
     auction = factoryAuction({
       registration: registration,
+      status: "started",
       startDate: Date.now() - 1000,
       endDate: Date.now() + 10000,
     });
@@ -79,6 +82,7 @@ describe("RegistrationStatus displays", () => {
     });
     auction = factoryAuction({
       registration: registration,
+      status: "scheduled",
       startDate: Date.now() + 10000,
       endDate: Date.now() + 20000,
     });

@@ -24,6 +24,7 @@ const [user, setUser] = createSignal<UserType | undefined>(undefined);
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>({
   id: "",
+  status: "draft",
   startDate: 0,
   endDate: 0,
   startingPrice: 0,
@@ -86,7 +87,7 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
             },
           });
           document.getElementById("auction-widget")?.dispatchEvent(event);
-          // replace highest bid in auction
+          // replace highest bid in auction and update end date if needed
           const newEndDate = bid.newEndDate || auction.endDate;
           setAuction({
             ...auction,
@@ -159,9 +160,9 @@ const App: Component<{
           allowUserRegistration={allowUserRegistration}
           tosUrl={tosUrl}
         />
-        <RegistrationStatus isLogged={isLogged} auction={auction} />
-        <BidForm auction={auction} isLogged={isLogged} clock={clock} />
-        <BidHistory bids={bids} auction={auction} user={user()} clock={clock} />
+        <RegistrationStatus auction={auction} isLogged={isLogged} />
+        <BidForm auction={auction} isLogged={isLogged} />
+        <BidHistory auction={auction} bids={bids} user={user()} clock={clock} />
       </Show>
       <Spritesheet />
     </div>

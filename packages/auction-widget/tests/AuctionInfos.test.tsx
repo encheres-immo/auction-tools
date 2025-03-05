@@ -17,13 +17,17 @@ afterEach(() => {
 
 describe("Countdown display", () => {
   test('displays "Démarre dans" when auction has not started', () => {
-    const auction = factoryAuction({ startDate: Date.now() + 10000 });
+    const auction = factoryAuction({
+      status: "scheduled",
+      startDate: Date.now() + 10000,
+    });
     render(() => <AuctionInfos auction={auction} user={user} />);
     expect(screen.getByText(/Démarre dans/i)).toBeInTheDocument();
   });
 
   test('displays "Se termine dans" when auction is in progress', () => {
     const auction = factoryAuction({
+      status: "started",
       startDate: Date.now() - 10000,
       endDate: Date.now() + 10000,
     });
@@ -33,6 +37,7 @@ describe("Countdown display", () => {
 
   test('displays "Vente terminée" when auction has ended', () => {
     const auction = factoryAuction({
+      status: "completed",
       startDate: Date.now() - 20000,
       endDate: Date.now() - 10000,
     });
@@ -44,7 +49,9 @@ describe("Countdown display", () => {
 describe("Auction details display", () => {
   test("displays auction start date correctly", () => {
     const startDate = Date.now() + 100000;
-    const auction = factoryAuction({ startDate });
+    const auction = factoryAuction({
+      startDate,
+    });
     render(() => <AuctionInfos auction={auction} user={user} />);
     const formattedStartDate = new Date(startDate).toLocaleString();
     expect(screen.getByText(formattedStartDate)).toBeInTheDocument();
