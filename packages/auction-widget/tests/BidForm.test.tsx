@@ -318,6 +318,70 @@ describe("Fast bid buttons", () => {
     expect(Number(amountInput.value)).toBe(updatedDefaultValue);
   });
 
+  test("updates labels after a successful bid submission", async () => {
+    // Create a reactive auction so we can later update it with a new highest bid
+    const initialAuction = factoryAuction({
+      startingPrice: 1000,
+      step: 100,
+      registration: factoryRegistration(),
+      status: "started",
+      startDate: Date.now() - 1000,
+    });
+    const [auction, setAuction] = createSignal(initialAuction);
+
+    const newBid = factoryBid({ amount: 1000 });
+    (client.placeBidOnAuction as Mock).mockResolvedValue(newBid);
+
+    render(() => <BidForm auction={auction()} isLogged={() => true} />);
+
+    const fastBidButtons = screen.getAllByRole("button", {
+      name: /\+ [\d\s]+ €/i,
+    });
+
+    const initialDisplayedAmounts = [
+      0, // (1 - 1) * 100 = 0€
+      100, // (2 - 1) * 100 = 100€
+      200, // (3 - 1) * 100 = 200€
+    ];
+
+    fastBidButtons.forEach((button, index) => {
+      expect(button.textContent).toContain(
+        `+ ${initialDisplayedAmounts[index]} €`
+      );
+    });
+
+    fireEvent.click(fastBidButtons[0]);
+
+    const confirmButton = screen.getByText(/Confirmer/i);
+    fireEvent.click(confirmButton);
+
+    await waitFor(() => {
+      expect(client.placeBidOnAuction).toHaveBeenCalled();
+    });
+
+    // Simulate that the auction has been updated with the new highest bid
+    setAuction((prev) => ({ ...prev, bids: [newBid], highestBid: newBid }));
+
+    const updatedDisplayedAmounts = [
+      100, // 1 * 100 = 100€
+      200, // 2 * 100 = 200€
+      300, // 3 * 100 = 300€
+    ];
+
+    const updatedFastBidButtons = screen.getAllByRole("button", {
+      name: /\+ [\d\s]+ €/i,
+    });
+
+    updatedFastBidButtons.forEach((button, index) => {
+      if (index < 3) {
+        // Ensure we only check the fast bid buttons (not confirm/other buttons)
+        expect(button.textContent).toContain(
+          `+ ${updatedDisplayedAmounts[index]} €`
+        );
+      }
+    });
+  });
+
   describe("Custom bid input", () => {
     let auction: AuctionType;
     let registration: RegistrationType;
