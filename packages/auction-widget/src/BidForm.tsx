@@ -1,13 +1,10 @@
 import type { Accessor, Component } from "solid-js";
-import { Show, createSignal, createEffect } from "solid-js";
+import { Show, createSignal, createEffect, createMemo } from "solid-js";
 import { AuctionType, BidType } from "@encheres-immo/widget-client/types";
 import client from "@encheres-immo/widget-client";
-import {
-  displayCurrencySymbol,
-  displayAmountWithCurrency,
-  isAuctionInProgress,
-} from "./utils.jsx";
+import { displayCurrencySymbol, displayAmountWithCurrency } from "./utils.jsx";
 import CenteredModal from "./CenteredModal.jsx";
+import { useAuctionTimer } from "./hooks/useAuctionTimer.js";
 
 /**
  * Display both the bid form (with fast bid buttons and bid input) and the confirm bid modal.
@@ -18,8 +15,6 @@ const BidForm: Component<{
 }> = (props) => {
   // Initialize amount using current auction data.
   const [amount, setAmount] = createSignal(getBaseAmount(props.auction));
-  const [isAuctionInProgressSignal, setIsAuctionInProgressSignal] =
-    createSignal(isAuctionInProgress(props.auction));
   const [isConfirmBidOpen, setIsConfirmBidOpen] = createSignal(false);
   const [isShowMinMessage, setIsShowMinMessage] = createSignal(false);
   const [isAmountTooHigh, setIsAmountTooHigh] = createSignal(false);
@@ -33,6 +28,12 @@ const BidForm: Component<{
     displayAmountOfStep(3, false, props.auction)
   );
   const [minValue, setMinValue] = createSignal(0);
+
+  // Create a memo to track auction changes
+  const auctionData = createMemo(() => props.auction);
+
+  // Use the timer hook to properly handle time-based status changes
+  const { isInProgress } = useAuctionTimer(auctionData);
 
   function getBaseAmount(auction: AuctionType) {
     return auction.highestBid
@@ -163,11 +164,6 @@ const BidForm: Component<{
     document.getElementById("auction-widget")?.dispatchEvent(event);
   }
 
-  // Update auction progress state when relevant auction properties change
-  createEffect(() => {
-    setIsAuctionInProgressSignal(isAuctionInProgress(props.auction));
-  });
-
   return (
     <Show
       when={
@@ -175,7 +171,7 @@ const BidForm: Component<{
         props.auction.registration &&
         props.auction.registration.isRegistrationAccepted &&
         props.auction.registration.isParticipant &&
-        isAuctionInProgressSignal()
+        isInProgress()
       }
     >
       <div class="auction-widget-section auction-widget-border-t">

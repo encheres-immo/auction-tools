@@ -6,4 +6,7 @@ export default defineConfig({
   resolve: {
     conditions: ["development", "browser"],
   },
+  test: {
+    testTimeout: 1000,
+  },
 });

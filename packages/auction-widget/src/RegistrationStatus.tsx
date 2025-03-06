@@ -1,6 +1,6 @@
-import { Component, Switch, Match } from "solid-js";
-import { isAuctionInProgress, isAuctionNotStarted } from "./utils.js";
+import { Component, Switch, Match, createMemo } from "solid-js";
 import { AuctionType } from "@encheres-immo/widget-client/types";
+import { useAuctionTimer } from "./hooks/useAuctionTimer.js";
 
 /**
  * Display a message depending on the user's registration status for the auction.
@@ -11,6 +11,12 @@ const RegistrationStatus: Component<{
 }> = (props) => {
   const { isLogged, auction } = props;
 
+  // Create a memo to track auction changes
+  const auctionData = createMemo(() => auction);
+
+  // Use the timer hook to properly handle time-based status changes
+  const { isNotStarted, isInProgress } = useAuctionTimer(auctionData);
+
   return (
     <Switch>
       <Match
@@ -19,7 +25,7 @@ const RegistrationStatus: Component<{
           auction.registration &&
           auction.registration.isRegistrationAccepted &&
           !auction.registration.isParticipant &&
-          isAuctionInProgress(auction)
+          isInProgress()
         }
       >
         <p class="auction-widget-note">
@@ -32,7 +38,7 @@ const RegistrationStatus: Component<{
           auction.registration &&
           auction.registration.isRegistrationAccepted &&
           !auction.registration.isParticipant &&
-          isAuctionNotStarted(auction)
+          isNotStarted()
         }
       >
         <p class="auction-widget-note">
@@ -45,7 +51,7 @@ const RegistrationStatus: Component<{
           isLogged() &&
           auction.registration &&
           auction.registration.isRegistrationAccepted === true &&
-          isAuctionNotStarted(auction)
+          isNotStarted()
         }
       >
         <p class="auction-widget-note">

@@ -550,3 +550,108 @@ describe("Modal confirm bid", () => {
     });
   });
 });
+
+describe("Dynamic bid form updates", () => {
+  beforeEach(() => {
+    // Mock Date.now to have consistent behavior
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2023, 0, 1, 12, 0, 0)); // Noon on January 1st, 2023
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
+
+  test("shows bid form when auction time starts", async () => {
+    // Create auction that will start in 5 seconds
+    const startTime = Date.now() + 5000;
+    const endTime = Date.now() + 60000;
+    const registration = factoryRegistration();
+
+    const auction = factoryAuction({
+      status: "scheduled",
+      startDate: startTime,
+      endDate: endTime,
+      registration: registration,
+    });
+
+    // Render component when auction hasn't started yet
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Initially, the bid form should not be visible
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+
+    // Advance time past the start date
+    vi.advanceTimersByTime(10000); // 10 seconds
+
+    // Status should have changed to "started", and bid form should appear
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).not.toBeNull();
+    });
+  });
+
+  test("hides bid form when auction time ends", async () => {
+    // Create auction that will end in 5 seconds
+    const startTime = Date.now() - 10000; // Started 10 seconds ago
+    const endTime = Date.now() + 5000; // Ends in 5 seconds
+    const registration = factoryRegistration();
+
+    const auction = factoryAuction({
+      status: "started",
+      startDate: startTime,
+      endDate: endTime,
+      registration: registration,
+    });
+
+    // Render component when auction is in progress
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Initially, the bid form should be visible
+    expect(screen.queryByTestId("auction-widget-bid")).not.toBeNull();
+
+    // Advance time past the end date
+    vi.advanceTimersByTime(10000); // 10 seconds
+
+    // Status should have changed to "completed", and bid form should disappear
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+    });
+  });
+
+  test("reacts to both start and end times", async () => {
+    // Create auction that will start in 5 seconds and end in 15 seconds
+    const startTime = Date.now() + 5000; // Starts in 5 seconds
+    const endTime = Date.now() + 15000; // Ends in 15 seconds
+    const registration = factoryRegistration();
+
+    const auction = factoryAuction({
+      status: "scheduled",
+      startDate: startTime,
+      endDate: endTime,
+      registration: registration,
+    });
+
+    // Render component when auction hasn't started yet
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Initially, the bid form should not be visible
+    expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+
+    // Advance time to just after start
+    vi.advanceTimersByTime(7000); // 7 seconds
+
+    // Bid form should appear when auction starts
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).not.toBeNull();
+    });
+
+    // Advance time to after end
+    vi.advanceTimersByTime(10000); // Another 10 seconds (total 17 seconds)
+
+    // Bid form should disappear when auction ends
+    await waitFor(() => {
+      expect(screen.queryByTestId("auction-widget-bid")).toBeNull();
+    });
+  });
+});
