@@ -1,5 +1,11 @@
 # @encheres-immo/widget-client
 
+## 0.6.0
+
+### Minor Changes
+
+- 5c3c0f4: Added `status` property to the `Auction` type.
+
 ## 0.5.1
 
 ### Patch Changes
