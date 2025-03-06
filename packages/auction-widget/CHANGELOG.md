@@ -1,5 +1,13 @@
 # @encheres-immo/auction-widget
 
+## 0.6.4
+
+### Patch Changes
+
+- 5c3c0f4: Fixed a bug where auction informations were not always updated dynamically. Also, performance improvements.
+- Updated dependencies [5c3c0f4]
+  - @encheres-immo/widget-client@0.6.0
+
 ## 0.6.3
 
 ### Patch Changes
