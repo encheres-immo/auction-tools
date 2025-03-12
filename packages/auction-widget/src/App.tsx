@@ -60,9 +60,14 @@ const [auction, setAuction] = createStore<AuctionType>({
 function refreshAuction(propertyInfo: PropertyInfoType) {
   client.getNextAuctionById(propertyInfo).then((auction: AuctionType) => {
     setAuction(auction);
-    // Don't try to subscribe to private auctions before user is logged in
-    // It won't break the app, but it will throw an error in the console
-    if (!auction?.isPrivate) {
+    if (
+      // Don't try to subscribe to private auctions before user is logged in
+      // It won't break the app, but it will throw an error in the console
+      !auction?.isPrivate ||
+      (isLogged() &&
+        auction.registration &&
+        auction.registration.isRegistrationAccepted)
+    ) {
       setBids(auction.bids);
       client
         .subscribeToAuction(auction.id, (bid) => {
