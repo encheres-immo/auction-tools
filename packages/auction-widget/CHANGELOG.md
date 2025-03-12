@@ -1,5 +1,11 @@
 # @encheres-immo/auction-widget
 
+## 0.6.5
+
+### Patch Changes
+
+- 8bd8035: Fixed a bug that prevented the widget from updating in private auctions. Also increased the widget modal's `z-index` to ensure it appeared above other elements.
+
 ## 0.6.4
 
 ### Patch Changes
