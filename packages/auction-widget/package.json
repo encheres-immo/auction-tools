@@ -39,6 +39,6 @@
   },
   "dependencies": {
     "@encheres-immo/widget-client": "workspace:*",
-    "solid-js": "^1.9.5"
+    "solid-js": "^1.9.4"
   }
 }
