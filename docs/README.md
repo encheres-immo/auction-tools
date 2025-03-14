@@ -1,3 +1,3 @@
-# Enchères Immo's auction widget - Documentation
+# Enchères Immo's tools documentation
 
-WIP.
+*Coming soon*

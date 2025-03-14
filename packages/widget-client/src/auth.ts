@@ -26,7 +26,7 @@ export async function authenticate() {
   const params = parsedUrl.searchParams;
   const code = params.get("code");
   // WARNING: This is a lazy fix to avoid this type of error ->
-  // https://github.com/encheres-immo/auction-widget/issues/52
+  // https://github.com/encheres-immo/auction-tools/issues/52
   // If, in the future, we need to conserve params and anchor during the redirection,
   // we will need to remove this line and find a better solution.
   const cleanRedirectUrl = window.location.origin + window.location.pathname;

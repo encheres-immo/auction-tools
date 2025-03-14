@@ -1,16 +1,16 @@
 # Enchères Immo's widget client
 
-Quickly integrate Enchères Immo's API in your own auction JavaScript/TypeScript widget. Provides a simple interface to fetch auctions, authenticate users and place bids 🚀 
+Build your own real estate auction widget in JavaScript/TypeScript, powered by Enchères Immo's API 🚀 Provides a simple interface to fetch auctions, authenticate users and place bids.
 
 ## Quick Links
 
-📖 [Main repository](https://github.com/encheres-immo/auction-widget), with all our public packages.
+📖 [Main repository](https://github.com/encheres-immo/auction-tools), with all our public packages.
 
-🐛 [Report a bug](https://github.com/encheres-immo/auction-widget/issues), please read our [contributing guidelines](https://github.com/encheres-immo/auction-widget/blob/main/CONTRIBUTING.md) and [code of conduct](https://github.com/encheres-immo/auction-widget/blob/main/CODE_OF_CONDUCT.md) first.
+🐛 [Report a bug](https://github.com/encheres-immo/auction-tools/issues), please read our [contributing guidelines](https://github.com/encheres-immo/auction-tools/blob/main/CONTRIBUTING.md) and [code of conduct](https://github.com/encheres-immo/auction-tools/blob/main/CODE_OF_CONDUCT.md) first.
 
-🚨 [Report a security vulnerability](https://github.com/encheres-immo/auction-widget/security/advisories/new), and be sure to review our [security policy](https://github.com/encheres-immo/auction-widget/blob/main/SECURITY.md).
+🚨 [Report a security vulnerability](https://github.com/encheres-immo/auction-tools/security/advisories/new), and be sure to review our [security policy](https://github.com/encheres-immo/auction-tools/blob/main/SECURITY.md).
 
-💬 [Join the discussion](https://github.com/encheres-immo/auction-widget/discussions), if you have any questions, ideas, or suggestions.
+💬 [Join the discussion](https://github.com/encheres-immo/auction-tools/discussions), if you have any questions, ideas, or suggestions.
 
 ## Installation
 

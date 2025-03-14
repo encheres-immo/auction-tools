@@ -11,7 +11,7 @@ The following versions of our projects are currently supported with security upd
 
 ## Reporting a Vulnerability
 
-We take security issues very seriously. If you discover a vulnerability, please report it through our private reporting form: [Report a Security Vulnerability](https://github.com/encheres-immo/auction-widget/security/advisories/new).
+We take security issues very seriously. If you discover a vulnerability, please report it through our private reporting form: [Report a Security Vulnerability](https://github.com/encheres-immo/auction-tools/security/advisories/new).
 
 ### Guidelines for Reporting
 - Do **not** report vulnerabilities publicly via issues or discussions.
@@ -22,7 +22,7 @@ We take security issues very seriously. If you discover a vulnerability, please 
 - We will work to fix the issue as soon as possible. In most cases, a fix will be published within **one week** of confirming the vulnerability.
 
 ### Post-Fix Communication
-Once the fix is deployed, a **public security advisory** will be published here: [Security Advisories](https://github.com/encheres-immo/auction-widget/security/advisories).  
+Once the fix is deployed, a **public security advisory** will be published here: [Security Advisories](https://github.com/encheres-immo/auction-tools/security/advisories).  
 If applicable, credit will be given to the reporter for their responsible disclosure.
 
 We greatly appreciate your efforts to help us maintain the security of our projects.

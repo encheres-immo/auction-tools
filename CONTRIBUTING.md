@@ -4,9 +4,9 @@ First, a huge **thank you** for dedicating your time to helping us improve our p
 
 ## Before Opening Issues
 
-- **Do not report security vulnerabilities publicly** (e.g., in issues or discussions), please refer to our [security policy](https://github.com/encheres-immo/auction-widget/blob/main/SECURITY.md).
-- **Do not create issues for ideas or suggestions.** Instead, share your thoughts in our [GitHub Discussions](https://github.com/encheres-immo/auction-widget/discussions/categories/ideas).
-- **Do not create issues for questions.** Instead, ask your question in our [GitHub Discussions](https://github.com/encheres-immo/auction-widget/discussions/categories/q-a).
+- **Do not report security vulnerabilities publicly** (e.g., in issues or discussions), please refer to our [security policy](https://github.com/encheres-immo/auction-tools/blob/main/SECURITY.md).
+- **Do not create issues for ideas or suggestions.** Instead, share your thoughts in our [GitHub Discussions](https://github.com/encheres-immo/auction-tools/discussions/categories/ideas).
+- **Do not create issues for questions.** Instead, ask your question in our [GitHub Discussions](https://github.com/encheres-immo/auction-tools/discussions/categories/q-a).
 - **Check for duplicates.** Look through existing issues and discussions to see if your topic has already been addressed.
 - Provide as much detail as possible. However, don’t worry if it’s incomplete—our team will help refine it!
 
@@ -19,7 +19,7 @@ First, a huge **thank you** for dedicating your time to helping us improve our p
 
 ## Code of Conduct
 
-We’re committed to fostering a welcoming and respectful community. Any issue, PR, or discussion that violates our [code of conduct](https://github.com/encheres-immo/auction-widget/blob/main/CODE_OF_CONDUCT.md) will be deleted, and the authors will be **banned**.
+We’re committed to fostering a welcoming and respectful community. Any issue, PR, or discussion that violates our [code of conduct](https://github.com/encheres-immo/auction-tools/blob/main/CODE_OF_CONDUCT.md) will be deleted, and the authors will be **banned**.
 
 ---
 
