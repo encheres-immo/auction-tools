@@ -1,4 +1,4 @@
-# Enchères Immo's auction widget
+# Enchères Immo's open-source tools
 
 Boost your real estate sales with online auctions, powered by Enchères Immo's API 🚀 
 
@@ -7,7 +7,7 @@ Boost your real estate sales with online auctions, powered by Enchères Immo's A
 This repository contains all open-source packages developed by [Enchères Immo](https://encheres-immo.com/) :
 
 | Package                   | Link                                                                                                                                     | Description                        | README                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | --------------------------------------------- |
+| :------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------- | :-------------------------------------------- |
 | `docs`                    | WIP                                                                                                                                      | *Coming soon*                      | [README](./docs/README.md)                    |
 | `packages/auction-widget` | [![npm version](https://badge.fury.io/js/@encheres-immo%2Fauction-widget.svg)](https://badge.fury.io/js/@encheres-immo%2Fauction-widget) | An auction widget for your website | [README](./packages/auction-widget/README.md) |
 | `packages/widget-client`  | [![npm version](https://badge.fury.io/js/@encheres-immo%2Fwidget-client.svg)](https://badge.fury.io/js/@encheres-immo%2Fwidget-client)   | Build your own auction widget      | [README](./packages/widget-client/README.md)  |
