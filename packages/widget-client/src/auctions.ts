@@ -1,6 +1,6 @@
 import { config } from "../index.js";
 import { Socket } from "phoenix";
-import type { AuctionType, BidType, PropertyInfoType } from "../types.js";
+import type { AuctionKind, AuctionType, BidType, PropertyInfoType } from "../types.js";
 
 /**
  * Retrieves the next auction details either by Enchère Immo's property ID or from CRM's property information.
@@ -138,11 +138,14 @@ function formatAuction(data: any): AuctionType {
 
   return {
     id: data.id,
+    type: data.type as AuctionKind,
     status: data.status,
     startDate: data.startDate,
     endDate: data.endDate,
     startingPrice: data.startingPrice,
+    reservePrice: data.reservePrice ?? null,
     step: data.step,
+    stepIntervalSeconds: data.stepIntervalSeconds ?? null,
     bids: bids,
     highestBid: highestBid,
     agentEmail: data.agentEmail,
@@ -154,5 +157,5 @@ function formatAuction(data: any): AuctionType {
       code: data.currency.code,
       isBefore: data.currency.isBefore,
     },
-  } as AuctionType;
+  };
 }

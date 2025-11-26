@@ -1,14 +1,26 @@
 /**
+ * Auction types supported by the platform.
+ * - progressive: Standard ascending auction where bids increase over time
+ * - flash: Short-duration progressive auction with shorter extension windows
+ * - sealed: Blind auction where bids are hidden until the auction ends
+ * - digressive: Dutch auction where price decreases over time until someone bids
+ */
+export type AuctionKind = "progressive" | "flash" | "sealed" | "digressive";
+
+/**
  * An Enchère Immo auction is a timed event where participants can place bids on a
  * real estate property.
  */
 export type AuctionType = {
   id: string;
+  type: AuctionKind;
   status: "draft" | "scheduled" | "started" | "completed" | "cancelled";
   startDate: number;
   endDate: number;
   startingPrice: number;
+  reservePrice: number | null;
   step: number;
+  stepIntervalSeconds: number | null;
   bids: BidType[];
   highestBid: BidType;
   agentEmail: string;

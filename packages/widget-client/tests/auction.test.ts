@@ -26,10 +26,13 @@ describe("getNextAuctionById", () => {
     // Mock fetch response
     const mockData = {
       id: "auction-456",
+      type: "progressive",
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 100000,
+      reservePrice: 90000,
       step: 1000,
+      stepIntervalSeconds: null,
       bids: [
         {
           id: "bid-1",
@@ -75,10 +78,13 @@ describe("getNextAuctionById", () => {
     // Verify auction data is parsed correctly
     expect(auction).toEqual({
       id: "auction-456",
+      type: "progressive",
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 100000,
+      reservePrice: 90000,
       step: 1000,
+      stepIntervalSeconds: null,
       bids: [
         {
           id: "bid-1",
@@ -123,10 +129,13 @@ describe("getNextAuctionById", () => {
     // Mock fetch response
     const mockData = {
       id: "auction-789",
+      type: "sealed",
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 200000,
+      reservePrice: null,
       step: 5000,
+      stepIntervalSeconds: null,
       bids: [],
       agentEmail: "agent@example.com",
       agentPhone: "123456789",
@@ -159,10 +168,13 @@ describe("getNextAuctionById", () => {
     // Verify auction data is parsed correctly
     expect(auction).toEqual({
       id: "auction-789",
+      type: "sealed",
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 200000,
+      reservePrice: null,
       step: 5000,
+      stepIntervalSeconds: null,
       bids: [],
       highestBid: null,
       agentEmail: "agent@example.com",
@@ -175,6 +187,46 @@ describe("getNextAuctionById", () => {
         isBefore: false,
       },
     });
+  });
+
+  it("should fetch digressive auction with stepIntervalSeconds", async () => {
+    const propertyInfo: PropertyInfoType = {
+      propertyId: "digressive-property-123",
+    };
+
+    // Mock fetch response for a digressive (Dutch) auction
+    const mockData = {
+      id: "digressive-auction-456",
+      type: "digressive",
+      startDate: 1620000000,
+      endDate: 1620003600,
+      startingPrice: 500000,
+      reservePrice: 400000,
+      step: 10000,
+      stepIntervalSeconds: 30,
+      bids: [],
+      agentEmail: "agent@example.com",
+      agentPhone: "123456789",
+      registration: null,
+      isPrivate: false,
+      currency: {
+        symbol: "€",
+        code: "EUR",
+        isBefore: false,
+      },
+    };
+
+    (fetch as Mock).mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve(mockData),
+    });
+
+    const auction = await getNextAuctionById(propertyInfo);
+
+    // Verify digressive-specific fields are parsed correctly
+    expect(auction.type).toBe("digressive");
+    expect(auction.reservePrice).toBe(400000);
+    expect(auction.stepIntervalSeconds).toBe(30);
   });
 
   it("should log 'Unauthorized' and throw an error when response status is 401", async () => {
@@ -375,10 +427,13 @@ describe("registerUserToAuction", () => {
     // Mock fetch response
     const mockData = {
       id: "auction-123",
+      type: "progressive",
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 100000,
+      reservePrice: 90000,
       step: 1000,
+      stepIntervalSeconds: null,
       bids: [],
       agentEmail: "agent@example.com",
       agentPhone: "123456789",
@@ -418,10 +473,13 @@ describe("registerUserToAuction", () => {
     // Verify auction data is parsed correctly
     expect(auction).toEqual({
       id: "auction-123",
+      type: "progressive",
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 100000,
+      reservePrice: 90000,
       step: 1000,
+      stepIntervalSeconds: null,
       bids: [],
       highestBid: null,
       agentEmail: "agent@example.com",

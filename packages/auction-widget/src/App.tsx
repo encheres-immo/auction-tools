@@ -24,11 +24,14 @@ const [user, setUser] = createSignal<UserType | undefined>(undefined);
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>({
   id: "",
+  type: "progressive",
   status: "draft",
   startDate: 0,
   endDate: 0,
   startingPrice: 0,
+  reservePrice: null,
   step: 0,
+  stepIntervalSeconds: null,
   bids: [],
   registration: {
     isUserAllowed: false,

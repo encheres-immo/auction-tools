@@ -15,11 +15,14 @@ describe("placeBidOnAuction", () => {
   it("should place a bid successfully", async () => {
     const auction: AuctionType = {
       id: "auction-123",
+      type: "progressive",
       status: "started",
       startDate: 0,
       endDate: 0,
       startingPrice: 0,
+      reservePrice: null,
       step: 0,
+      stepIntervalSeconds: null,
       bids: [],
       highestBid: {
         id: "",
@@ -86,11 +89,14 @@ describe("placeBidOnAuction", () => {
   it("should log 'Unauthorized' when response status is 401", async () => {
     const auction: AuctionType = {
       id: "auction-123",
+      type: "progressive",
       status: "started",
       startDate: 0,
       endDate: 0,
       startingPrice: 0,
+      reservePrice: null,
       step: 0,
+      stepIntervalSeconds: null,
       bids: [],
       highestBid: {
         id: "",
@@ -133,11 +139,14 @@ describe("placeBidOnAuction", () => {
   it("should handle validation errors with status 422", async () => {
     const auction: AuctionType = {
       id: "auction-123",
+      type: "progressive",
       status: "started",
       startDate: 0,
       endDate: 0,
       startingPrice: 0,
+      reservePrice: null,
       step: 0,
+      stepIntervalSeconds: null,
       bids: [],
       highestBid: {
         id: "",
@@ -171,11 +180,14 @@ describe("placeBidOnAuction", () => {
   it("should throw an error when fetch fails", async () => {
     const auction: AuctionType = {
       id: "auction-123",
+      type: "progressive",
       status: "started",
       startDate: 0,
       endDate: 0,
       startingPrice: 0,
+      reservePrice: null,
       step: 0,
+      stepIntervalSeconds: null,
       bids: [],
       highestBid: {
         id: "",
