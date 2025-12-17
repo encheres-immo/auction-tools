@@ -24,11 +24,13 @@ const [user, setUser] = createSignal<UserType | undefined>(undefined);
 const [bids, setBids] = createStore<BidType[]>([]);
 const [auction, setAuction] = createStore<AuctionType>({
   id: "",
+  type: "progressive",
   status: "draft",
   startDate: 0,
   endDate: 0,
   startingPrice: 0,
   step: 0,
+  stepIntervalSeconds: null,
   bids: [],
   registration: {
     isUserAllowed: false,
@@ -70,24 +72,35 @@ function refreshAuction(propertyInfo: PropertyInfoType) {
     ) {
       setBids(auction.bids);
       client
-        .subscribeToAuction(auction.id, (bid) => {
-          setBids([...bids, bid]);
-          // dispatch event for external integrations
-          const event = new CustomEvent("auction-widget:new_bid", {
-            detail: {
-              amount: bid.amount,
-              bidder: bid.userAnonymousId,
-              date: bid.createdAt,
-            },
-          });
-          document.getElementById("auction-widget")?.dispatchEvent(event);
-          // replace highest bid in auction and update end date if needed
-          const newEndDate = bid.newEndDate || auction.endDate;
-          setAuction({
-            ...auction,
-            highestBid: bid,
-            endDate: newEndDate,
-          });
+        .subscribeToAuction(auction.id, {
+          onNewBid: (bid) => {
+            setBids([...bids, bid]);
+            // dispatch event for external integrations
+            const event = new CustomEvent("auction-widget:new_bid", {
+              detail: {
+                amount: bid.amount,
+                bidder: bid.userAnonymousId,
+                date: bid.createdAt,
+              },
+            });
+            document.getElementById("auction-widget")?.dispatchEvent(event);
+            // replace highest bid in auction and update end date if needed
+            const newEndDate = bid.newEndDate || auction.endDate;
+            setAuction({
+              ...auction,
+              highestBid: bid,
+              endDate: newEndDate,
+            });
+          },
+          onAuctionEnded: ({ finalPrice }) => {
+            // Update auction status and final price when auction ends
+            setAuction({ ...auction, status: "completed", finalPrice });
+            // dispatch event for external integrations
+            const event = new CustomEvent("auction-widget:auction_ended", {
+              detail: { finalPrice },
+            });
+            document.getElementById("auction-widget")?.dispatchEvent(event);
+          },
         })
         .catch((err: any) => {
           console.error("Auction Widget: Error subscribing to auction.", err);

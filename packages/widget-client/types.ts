@@ -1,16 +1,28 @@
 /**
+ * Auction type determines the bidding mechanism.
+ * - progressive: Standard ascending auction where bids increase
+ * - digressive: Dutch-style descending auction where price decreases over time
+ */
+export type AuctionKind = "progressive" | "digressive";
+
+/**
  * An Enchère Immo auction is a timed event where participants can place bids on a
  * real estate property.
  */
 export type AuctionType = {
   id: string;
+  type: AuctionKind;
   status: "draft" | "scheduled" | "started" | "completed" | "cancelled";
   startDate: number;
   endDate: number;
   startingPrice: number;
   step: number;
+  /** Interval in seconds between price decrements for digressive auctions. Null for progressive. */
+  stepIntervalSeconds: number | null;
   bids: BidType[];
   highestBid: BidType;
+  /** Final sale price when auction ends. Received via WebSocket 'ended' event. */
+  finalPrice?: number | null;
   agentEmail: string;
   agentPhone: string;
   currency: CurrencyType;
@@ -65,4 +77,23 @@ export type PropertyInfoType = {
   source?: string;
   sourceAgencyId?: string;
   sourceId?: string;
+};
+
+/**
+ * Payload received when an auction ends via WebSocket.
+ */
+export type AuctionEndedPayload = {
+  auctionId: string;
+  /** Final sale price. Null if auction ended without a winner (except digressive). */
+  finalPrice: number | null;
+};
+
+/**
+ * Callback options for auction WebSocket subscription.
+ */
+export type SubscribeToAuctionCallbacks = {
+  /** Called when a new bid is placed on the auction */
+  onNewBid?: (bid: BidType) => void;
+  /** Called when the auction ends */
+  onAuctionEnded?: (payload: AuctionEndedPayload) => void;
 };
