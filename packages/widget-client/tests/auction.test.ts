@@ -243,7 +243,9 @@ describe("subscribeToAuction", () => {
       channel: channelMock,
     };
 
-    SocketMock = vi.fn().mockImplementation(() => socketInstance);
+    SocketMock = vi.fn().mockImplementation(function () {
+      return socketInstance;
+    });
 
     vi.mocked(Socket).mockImplementation(SocketMock);
   });

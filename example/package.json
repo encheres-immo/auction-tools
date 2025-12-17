@@ -11,9 +11,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.6",
     "@encheres-immo/auction-widget": "workspace:*",
-    "astro": "^5.4.2",
-    "typescript": "^5.8.2"
+    "astro": "^5.16.6",
+    "typescript": "^5.9.3"
   }
 }
