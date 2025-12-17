@@ -16,6 +16,15 @@ type TimeRemaining = {
   totalSeconds: number;
 };
 
+type DigressiveStepInfo = {
+  /** Seconds remaining until next price step */
+  secondsToNextStep: number;
+  /** Formatted string for step countdown (e.g., "0j 0h 0m 25s") */
+  formatted: string;
+  /** Whether countdown is in warning state (≤10 seconds) */
+  isWarning: boolean;
+};
+
 export function useAuctionTimer(auction: () => AuctionType) {
   const [currentTime, setCurrentTime] = createSignal(Date.now());
   const [timeRemaining, setTimeRemaining] = createSignal<TimeRemaining>({
@@ -26,6 +35,12 @@ export function useAuctionTimer(auction: () => AuctionType) {
     totalSeconds: 0,
     formatted: "",
   });
+  const [digressiveStepInfo, setDigressiveStepInfo] =
+    createSignal<DigressiveStepInfo>({
+      secondsToNextStep: 0,
+      formatted: "",
+      isWarning: false,
+    });
 
   // These are derived from both auction status AND time calculations
   const [isNotStarted, setIsNotStarted] = createSignal(false);
@@ -50,11 +65,37 @@ export function useAuctionTimer(auction: () => AuctionType) {
     };
   }
 
+  /**
+   * Calculate step countdown for digressive auctions.
+   * Shows time until next price decrement.
+   */
+  function calculateDigressiveStepCountdown(
+    startDate: number,
+    stepIntervalSeconds: number,
+    now: number
+  ): DigressiveStepInfo {
+    const elapsedMs = now - startDate;
+    const elapsedSeconds = Math.max(0, elapsedMs / 1000);
+    const secondsInCurrentStep = elapsedSeconds % stepIntervalSeconds;
+    const secondsToNextStep = Math.ceil(
+      stepIntervalSeconds - secondsInCurrentStep
+    );
+
+    return {
+      secondsToNextStep,
+      formatted: `0j 0h 0m ${secondsToNextStep}s`,
+      isWarning: secondsToNextStep <= 10,
+    };
+  }
+
   // Memoize the actual auction data to reduce calculations
   const auctionData = createMemo(() => auction());
 
   // Track the last auction ID to detect when we're dealing with a new auction
   const [lastAuctionId, setLastAuctionId] = createSignal("");
+
+  // Helper to check if auction is digressive
+  const isDigressive = createMemo(() => auctionData().type === "digressive");
 
   // Update timer and determine status based on both auction state and time
   createEffect(() => {
@@ -107,6 +148,11 @@ export function useAuctionTimer(auction: () => AuctionType) {
         totalSeconds: 0,
         formatted: "",
       });
+      setDigressiveStepInfo({
+        secondsToNextStep: 0,
+        formatted: "",
+        isWarning: false,
+      });
     } else {
       // If not started, countdown to start; if in progress, countdown to end
       const targetDate = effectiveNotStarted
@@ -114,6 +160,21 @@ export function useAuctionTimer(auction: () => AuctionType) {
         : currentAuction.endDate;
 
       setTimeRemaining(calculateTimeRemaining(targetDate));
+
+      // For digressive auctions in progress, calculate step countdown
+      if (
+        currentAuction.type === "digressive" &&
+        effectiveInProgress &&
+        currentAuction.stepIntervalSeconds
+      ) {
+        setDigressiveStepInfo(
+          calculateDigressiveStepCountdown(
+            currentAuction.startDate,
+            currentAuction.stepIntervalSeconds,
+            now
+          )
+        );
+      }
     }
   });
 
@@ -127,6 +188,8 @@ export function useAuctionTimer(auction: () => AuctionType) {
 
   return {
     timeRemaining,
+    digressiveStepInfo,
+    isDigressive,
     isNotStarted,
     isInProgress,
     isEnded,

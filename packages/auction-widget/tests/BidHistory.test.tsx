@@ -180,3 +180,68 @@ describe("Bid component in bids history", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("Digressive auction bid history", () => {
+  let user: UserType;
+
+  beforeEach(() => {
+    user = factoryUser();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test("does not display bid history for digressive auction", () => {
+    const digressiveAuction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 1000,
+      stepIntervalSeconds: 60,
+    });
+    const bids = [factoryBid(), factoryBid()];
+
+    render(() => (
+      <BidHistory bids={bids} auction={digressiveAuction} user={user} />
+    ));
+
+    // Bid history should never be shown for digressive auctions
+    expect(screen.queryByText(/Historique des offres/i)).toBeNull();
+    const bidAmountElements = screen.queryAllByText(/[\d\s]+ €/i);
+    expect(bidAmountElements.length).toBe(0);
+  });
+
+  test("does not display bid history for ended digressive auction", () => {
+    const digressiveAuction = factoryAuction({
+      type: "digressive",
+      status: "completed",
+      startDate: Date.now() - 100000,
+      endDate: Date.now() - 1000,
+      stepIntervalSeconds: 60,
+    });
+    const bids = [factoryBid()];
+
+    render(() => (
+      <BidHistory bids={bids} auction={digressiveAuction} user={user} />
+    ));
+
+    // Bid history should never be shown for digressive auctions, even ended
+    expect(screen.queryByText(/Historique des offres/i)).toBeNull();
+  });
+
+  test("displays bid history for progressive auction with bids", () => {
+    const progressiveAuction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 1000,
+    });
+    const bids = [factoryBid(), factoryBid()];
+
+    render(() => (
+      <BidHistory bids={bids} auction={progressiveAuction} user={user} />
+    ));
+
+    // Bid history should be shown for progressive auctions
+    expect(screen.getByText(/Historique des offres/i)).toBeInTheDocument();
+  });
+});

@@ -26,6 +26,7 @@ interface BidHistoryProps {
 
 /**
  * Display every bid made on an auction.
+ * Hidden for digressive auctions (confidential participation).
  */
 const BidHistory: Component<BidHistoryProps> = (props) => {
   const [auctionInProgress, setAuctionInProgress] = createSignal(
@@ -38,10 +39,14 @@ const BidHistory: Component<BidHistoryProps> = (props) => {
     setAuctionInProgress(isAuctionInProgress(props.auction));
   });
 
+  // Never show bid history for digressive auctions
+  const isDigressive = () => props.auction.type === "digressive";
+
   return (
     <>
       <Show
         when={
+          !isDigressive() &&
           (isAuctionEnded(props.auction) ||
             (auctionInProgress() && props.bids.length > 0)) &&
           (!props.auction.isPrivate ||

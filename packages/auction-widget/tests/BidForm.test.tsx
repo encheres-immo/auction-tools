@@ -655,3 +655,191 @@ describe("Dynamic bid form updates", () => {
     });
   });
 });
+
+describe("Digressive auction bid form", () => {
+  let registration: RegistrationType;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2023, 0, 1, 12, 0, 0));
+    registration = factoryRegistration();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
+
+  test('displays "Enchère rapide" label for progressive auction', () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    expect(screen.getByText(/Enchère rapide/i)).toBeInTheDocument();
+  });
+
+  test("displays single bid button with price for digressive auction", () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      startingPrice: 500000,
+      step: 5000,
+      stepIntervalSeconds: 60,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Should have bid button showing current price (no 'Accepter' prefix)
+    const bidButton = screen.getByRole("button", { name: /500\s?000/i });
+    expect(bidButton).toBeInTheDocument();
+    // Should NOT contain "Accepter" text
+    expect(bidButton.textContent).not.toContain("Accepter");
+
+    // Should NOT have the three fast bid buttons
+    const fastBidButtons = screen.queryAllByRole("button", { name: /^\+/i });
+    expect(fastBidButtons.length).toBe(0);
+  });
+
+  test("displays three fast bid buttons for progressive auction", () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Should have three fast bid buttons
+    const fastBidButtons = screen.getAllByRole("button", { name: /^\+/i });
+    expect(fastBidButtons.length).toBe(3);
+  });
+
+  test("does not display custom amount input for digressive auction", () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      startingPrice: 500000,
+      step: 5000,
+      stepIntervalSeconds: 60,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Should NOT have custom amount input
+    const customInput = screen.queryByRole("spinbutton");
+    expect(customInput).toBeNull();
+  });
+
+  test("displays custom amount input for progressive auction", () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Should have custom amount input
+    const customInput = screen.getByRole("spinbutton");
+    expect(customInput).toBeInTheDocument();
+  });
+
+  test("opens confirmation modal with correct title for digressive auction", async () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      startingPrice: 500000,
+      step: 5000,
+      stepIntervalSeconds: 60,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Click bid button (shows price only)
+    const bidButton = screen.getByRole("button", { name: /500\s?000/i });
+    fireEvent.click(bidButton);
+
+    // Modal should appear with updated title
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Vous êtes sur le point d'enchérir/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test("opens confirmation modal with correct title for progressive auction", async () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      registration: registration,
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Click first fast bid button
+    const fastBidButtons = screen.getAllByRole("button", { name: /^\+/i });
+    fireEvent.click(fastBidButtons[0]);
+
+    // Modal should appear with progressive-specific title
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Vous êtes sur le point d'enchérir/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test("does not show previous bid in confirmation modal for digressive auction", async () => {
+    // For digressive auctions, even with a previous bid, the modal should NOT show
+    // "Offre précédente" because the auction closes on first accepted bid
+    const highestBid = factoryBid({ amount: 450000 });
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      startingPrice: 500000,
+      step: 5000,
+      stepIntervalSeconds: 60,
+      registration: registration,
+      highestBid: highestBid,
+      bids: [highestBid],
+    });
+
+    render(() => <BidForm auction={auction} isLogged={() => true} />);
+
+    // Click bid button (shows frozen price at highestBid.amount since a bid exists)
+    const bidButton = screen.getByRole("button", { name: /450\s?000/i });
+    fireEvent.click(bidButton);
+
+    // Modal should appear with updated title
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Vous êtes sur le point d'enchérir/i)
+      ).toBeInTheDocument();
+    });
+
+    // Should NOT show "Offre précédente" for digressive auctions
+    expect(screen.queryByText(/Offre précédente/i)).toBeNull();
+  });
+});

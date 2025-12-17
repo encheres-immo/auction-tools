@@ -2,6 +2,7 @@ import { createMemo, type Component, Show } from "solid-js";
 import { displayAmountWithCurrency, formatDate } from "./utils.jsx";
 import { AuctionType, UserType } from "@encheres-immo/widget-client/types";
 import { useAuctionTimer } from "./hooks/useAuctionTimer.js";
+import { useDigressivePrice } from "./hooks/useDigressivePrice.js";
 
 interface AuctionInfosProps {
   auction: AuctionType;
@@ -16,8 +17,17 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
   const auctionData = createMemo(() => props.auction);
 
   // Use the timer hook
-  const { timeRemaining, isNotStarted, isInProgress, isEnded } =
-    useAuctionTimer(auctionData);
+  const {
+    timeRemaining,
+    digressiveStepInfo,
+    isDigressive,
+    isNotStarted,
+    isInProgress,
+    isEnded,
+  } = useAuctionTimer(auctionData);
+
+  // Use the digressive price hook
+  const { priceState } = useDigressivePrice(auctionData);
 
   // Check if the user can see bid information in private auctions
   const canViewBids = createMemo(() => {
@@ -31,6 +41,46 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
     );
   });
 
+  /**
+   * Get the displayed price based on auction type and state.
+   * - Progressive: highest bid amount or null
+   * - Digressive in progress: current calculated price (decreasing over time)
+   * - Ended auction: finalPrice from WebSocket, or highest bid, or starting price
+   */
+  const displayedPrice = createMemo(() => {
+    const auction = auctionData();
+
+    // For ended auctions, prefer finalPrice from WebSocket event
+    if (isEnded()) {
+      if (auction.finalPrice != null) {
+        return auction.finalPrice;
+      }
+      // Fallback to highest bid or starting price
+      return auction.highestBid?.participantId
+        ? auction.highestBid.amount
+        : auction.startingPrice;
+    }
+
+    // In progress: digressive shows current calculated price, progressive shows highest bid
+    if (auction.type === "digressive") {
+      return priceState().currentPrice;
+    }
+    return auction.highestBid?.participantId ? auction.highestBid.amount : null;
+  });
+
+  /**
+   * Get the label for the price section.
+   * - Progressive: "Meilleure offre"
+   * - Digressive in progress: "Prix actuel"
+   * - Digressive ended: "Meilleure offre" (bluff behavior: always show as if sold)
+   */
+  const priceLabel = createMemo(() => {
+    if (isDigressive() && !isEnded()) {
+      return "Prix actuel";
+    }
+    return "Meilleure offre";
+  });
+
   return (
     <div>
       <div id="auction-widget-header">
@@ -42,8 +92,17 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
         </Show>
         <Show when={isInProgress()}>
           <div>
-            <p id="auction-widget-status">Se termine dans</p>
-            <p id="auction-widget-countdown">{timeRemaining().formatted}</p>
+            <p id="auction-widget-status">
+              {isDigressive() ? "Prochain palier" : "Se termine dans"}
+            </p>
+            <p
+              id="auction-widget-countdown"
+              class={digressiveStepInfo().isWarning ? "auction-widget-warning" : ""}
+            >
+              {isDigressive()
+                ? digressiveStepInfo().formatted
+                : timeRemaining().formatted}
+            </p>
           </div>
         </Show>
         <Show when={isEnded()}>
@@ -61,7 +120,9 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
           <div>
             <p class="auction-widget-detail auction-widget-label">Fin</p>
             <p class="auction-widget-detail">
-              {formatDate(auctionData().endDate)}
+              {isDigressive() && !isEnded()
+                ? "Inconnue"
+                : formatDate(auctionData().endDate)}
             </p>
           </div>
           <div>
@@ -101,15 +162,13 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
               }
             >
               <p class="auction-widget-detail auction-widget-label">
-                Meilleure offre
+                {priceLabel()}
               </p>
               <p class="auction-widget-detail auction-widget-accent">
-                {auctionData().highestBid?.participantId
-                  ? displayAmountWithCurrency(
-                      auctionData().highestBid.amount,
-                      auctionData().currency
-                    )
-                  : displayAmountWithCurrency(null, auctionData().currency)}
+                {displayAmountWithCurrency(
+                  displayedPrice(),
+                  auctionData().currency
+                )}
               </p>
             </Show>
           </div>

@@ -5,9 +5,11 @@ import client from "@encheres-immo/widget-client";
 import { displayCurrencySymbol, displayAmountWithCurrency } from "./utils.jsx";
 import CenteredModal from "./CenteredModal.jsx";
 import { useAuctionTimer } from "./hooks/useAuctionTimer.js";
+import { useDigressivePrice } from "./hooks/useDigressivePrice.js";
 
 /**
  * Display both the bid form (with fast bid buttons and bid input) and the confirm bid modal.
+ * For digressive auctions, shows a simplified "Accept price" interface.
  */
 const BidForm: Component<{
   isLogged: () => boolean;
@@ -28,12 +30,18 @@ const BidForm: Component<{
     displayAmountOfStep(3, false, props.auction)
   );
   const [minValue, setMinValue] = createSignal(0);
+  // Track if user has accepted the price in a digressive auction
+  const [hasAcceptedPrice, setHasAcceptedPrice] = createSignal(false);
+  const [acceptedPriceAmount, setAcceptedPriceAmount] = createSignal(0);
 
   // Create a memo to track auction changes
   const auctionData = createMemo(() => props.auction);
 
   // Use the timer hook to properly handle time-based status changes
-  const { isInProgress } = useAuctionTimer(auctionData);
+  const { isInProgress, isDigressive } = useAuctionTimer(auctionData);
+
+  // Use the digressive price hook
+  const { priceState } = useDigressivePrice(auctionData);
 
   function getBaseAmount(auction: AuctionType) {
     return auction.highestBid
@@ -48,8 +56,13 @@ const BidForm: Component<{
 
   /**
    * We display a warning message if the bid amount is too high.
+   * Not used for digressive auctions.
    */
   function checkIfAmountTooHigh(auction: AuctionType, bidAmount: number) {
+    if (auction.type === "digressive") {
+      setIsAmountTooHigh(false);
+      return;
+    }
     if (bidAmount > getBaseAmount(auction) + auction.step * 2) {
       setIsAmountTooHigh(true);
     } else {
@@ -92,6 +105,15 @@ const BidForm: Component<{
   }
 
   /**
+   * Open confirm modal for digressive auction (accept current price).
+   */
+  function openDigressiveConfirm() {
+    const currentPrice = priceState().currentPrice;
+    setAmount(currentPrice);
+    setIsConfirmBidOpen(true);
+  }
+
+  /**
    * Place a bid using the custom bid input.
    */
   function openConfirmBid() {
@@ -122,9 +144,16 @@ const BidForm: Component<{
           setIsConfirmBidOpen(false);
           setIsShowMinMessage(false);
           emitBidEvent(newBid);
-          setFastBidMsg1(displayAmountOfStep(1, true, auction));
-          setFastBidMsg2(displayAmountOfStep(2, true, auction));
-          setFastBidMsg3(displayAmountOfStep(3, true, auction));
+
+          // For digressive auctions, track that user has accepted the price
+          if (auction.type === "digressive") {
+            setHasAcceptedPrice(true);
+            setAcceptedPriceAmount(newBid.amount);
+          } else {
+            setFastBidMsg1(displayAmountOfStep(1, true, auction));
+            setFastBidMsg2(displayAmountOfStep(2, true, auction));
+            setFastBidMsg3(displayAmountOfStep(3, true, auction));
+          }
         })
         .catch((err) => {
           // We checked on the browser side, but a bid could have been placed in the meantime
@@ -176,64 +205,97 @@ const BidForm: Component<{
     >
       <div class="auction-widget-section auction-widget-border-t">
         <div id="auction-widget-bid" data-testid="auction-widget-bid">
-          <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
-            Enchère rapide
-          </p>
-          <div id="auction-widget-fast-bid">
-            <span>
+          {/* Digressive auction: simplified "Accept price" interface */}
+          <Show when={isDigressive()}>
+            <Show
+              when={!hasAcceptedPrice()}
+              fallback={
+                <div class="auction-widget-digressive-accepted">
+                  <p class="auction-widget-detail">
+                    Votre offre :{" "}
+                    {displayAmountWithCurrency(
+                      acceptedPriceAmount(),
+                      props.auction.currency
+                    )}
+                  </p>
+                </div>
+              }
+            >
               <button
                 class="auction-widget-btn auction-widget-custom"
-                onClick={placeStepBid(1, props.auction)}
+                onClick={openDigressiveConfirm}
               >
-                + {fastBidMsg1()}
+                {displayAmountWithCurrency(
+                  priceState().currentPrice,
+                  props.auction.currency
+                )}
               </button>
-            </span>
-            <span>
-              <button
-                class="auction-widget-btn auction-widget-custom"
-                onClick={placeStepBid(2, props.auction)}
-              >
-                + {fastBidMsg2()}
-              </button>
-            </span>
-            <span>
-              <button
-                class="auction-widget-btn auction-widget-custom"
-                onClick={placeStepBid(3, props.auction)}
-              >
-                + {fastBidMsg3()}
-              </button>
-            </span>
-          </div>
-          <div class="auction-widget-history-area">
+            </Show>
+          </Show>
+
+          {/* Progressive auction: full bid form with fast bid buttons and custom amount */}
+          <Show when={!isDigressive()}>
             <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
-              Votre montant
+              Enchère rapide
             </p>
-            <form id="auction-widget-bid-form" onSubmit={openConfirmBid()}>
-              {/* Bind the input's value to the reactive signal "amount" */}
-              <input
-                type="number"
-                value={amount()}
-                onInput={(e) =>
-                  setAmount(Number.parseInt(e.currentTarget.value))
-                }
-                min="0"
-                step="1"
-                required
-              />
-              <div id="auction-widget-currency">
-                <span>{displayCurrencySymbol(props.auction.currency)}</span>
-              </div>
-              <button
-                class="auction-widget-btn auction-widget-custom"
-                type="submit"
-              >
-                Enchérir
-              </button>
-            </form>
-          </div>
+            <div id="auction-widget-fast-bid">
+              <span>
+                <button
+                  class="auction-widget-btn auction-widget-custom"
+                  onClick={placeStepBid(1, props.auction)}
+                >
+                  + {fastBidMsg1()}
+                </button>
+              </span>
+              <span>
+                <button
+                  class="auction-widget-btn auction-widget-custom"
+                  onClick={placeStepBid(2, props.auction)}
+                >
+                  + {fastBidMsg2()}
+                </button>
+              </span>
+              <span>
+                <button
+                  class="auction-widget-btn auction-widget-custom"
+                  onClick={placeStepBid(3, props.auction)}
+                >
+                  + {fastBidMsg3()}
+                </button>
+              </span>
+            </div>
+            <div class="auction-widget-history-area">
+              <p class="auction-widget-detail auction-widget-label auction-widget-text-left">
+                Votre montant
+              </p>
+              <form id="auction-widget-bid-form" onSubmit={openConfirmBid()}>
+                {/* Bind the input's value to the reactive signal "amount" */}
+                <input
+                  type="number"
+                  value={amount()}
+                  onInput={(e) =>
+                    setAmount(Number.parseInt(e.currentTarget.value))
+                  }
+                  min="0"
+                  step="1"
+                  required
+                />
+                <div id="auction-widget-currency">
+                  <span>{displayCurrencySymbol(props.auction.currency)}</span>
+                </div>
+                <button
+                  class="auction-widget-btn auction-widget-custom"
+                  type="submit"
+                >
+                  Enchérir
+                </button>
+              </form>
+            </div>
+          </Show>
         </div>
-        <Show when={isConfirmBidOpen()}>
+
+        {/* Progressive auction confirm modal */}
+        <Show when={isConfirmBidOpen() && !isDigressive()}>
           <CenteredModal title="Vous êtes sur le point d'enchérir" icon="gavel">
             <table id="auction-widget-table">
               <tbody>
@@ -266,6 +328,47 @@ const BidForm: Component<{
               <p class="auction-widget-modal-warning">
                 Vous devez au moins enchérir{" "}
                 {displayAmountWithCurrency(minValue())}.
+              </p>
+            </Show>
+            <div class="auction-widget-action">
+              <button
+                class="auction-widget-btn auction-widget-custom"
+                onClick={confirmBid(amount(), props.auction)}
+              >
+                Confirmer
+              </button>
+              <button class="auction-widget-btn" onClick={closeConfirmBid()}>
+                Annuler
+              </button>
+            </div>
+          </CenteredModal>
+        </Show>
+
+        {/* Digressive auction confirm modal */}
+        <Show when={isConfirmBidOpen() && isDigressive()}>
+          <CenteredModal
+            title="Vous êtes sur le point d'enchérir"
+            icon="gavel"
+          >
+            <table id="auction-widget-table">
+              <tbody>
+                <tr>
+                  <td class="auction-widget-td">Votre offre</td>
+                  <td class="auction-widget-amount">
+                    {displayAmountWithCurrency(
+                      amount(),
+                      props.auction.currency
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="auction-widget-modal-info">
+              En enchérissant, vous clôturez la vente au prix indiqué.
+            </p>
+            <Show when={isShowMinMessage()}>
+              <p class="auction-widget-modal-warning">
+                Une erreur est survenue. Veuillez réessayer.
               </p>
             </Show>
             <div class="auction-widget-action">

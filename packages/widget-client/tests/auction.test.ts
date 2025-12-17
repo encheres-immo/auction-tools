@@ -75,10 +75,14 @@ describe("getNextAuctionById", () => {
     // Verify auction data is parsed correctly
     expect(auction).toEqual({
       id: "auction-456",
+      type: "progressive",
+      status: undefined,
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 100000,
       step: 1000,
+      stepIntervalSeconds: null,
+      finalPrice: null,
       bids: [
         {
           id: "bid-1",
@@ -159,10 +163,14 @@ describe("getNextAuctionById", () => {
     // Verify auction data is parsed correctly
     expect(auction).toEqual({
       id: "auction-789",
+      type: "progressive",
+      status: undefined,
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 200000,
       step: 5000,
+      stepIntervalSeconds: null,
+      finalPrice: null,
       bids: [],
       highestBid: null,
       agentEmail: "agent@example.com",
@@ -175,6 +183,48 @@ describe("getNextAuctionById", () => {
         isBefore: false,
       },
     });
+  });
+
+  it("should parse finalPrice for completed digressive auction", async () => {
+    const propertyInfo: PropertyInfoType = {
+      propertyId: "property-digressive",
+    };
+
+    // Mock fetch response for a completed digressive auction with finalPrice
+    const mockData = {
+      id: "auction-digressive",
+      type: "digressive",
+      status: "completed",
+      startDate: 1620000000,
+      endDate: 1620003600,
+      startingPrice: 500000,
+      step: 10000,
+      stepIntervalSeconds: 3600,
+      finalPrice: 420000, // Final price at which the auction ended
+      bids: [],
+      agentEmail: "agent@example.com",
+      agentPhone: "123456789",
+      registration: null,
+      isPrivate: false,
+      currency: {
+        symbol: "€",
+        code: "EUR",
+        isBefore: false,
+      },
+    };
+
+    (fetch as Mock).mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve(mockData),
+    });
+
+    const auction = await getNextAuctionById(propertyInfo);
+
+    // Verify finalPrice is correctly parsed from API response
+    expect(auction.finalPrice).toBe(420000);
+    expect(auction.type).toBe("digressive");
+    expect(auction.status).toBe("completed");
+    expect(auction.stepIntervalSeconds).toBe(3600);
   });
 
   it("should log 'Unauthorized' and throw an error when response status is 401", async () => {
@@ -360,6 +410,115 @@ describe("subscribeToAuction", () => {
     // Verify socket is disconnected on error
     expect(socketInstance.disconnect).toHaveBeenCalled();
   });
+
+  it("should call onAuctionEnded callback when ended event is received", async () => {
+    const auctionId = "auction-123";
+    const onNewBid = vi.fn();
+    const onAuctionEnded = vi.fn();
+
+    // Simulate successful channel join
+    channelInstance.receive.mockImplementation(function (
+      this: typeof channelInstance,
+      status: string,
+      callback: Function
+    ) {
+      if (status === "ok") {
+        callback({});
+      }
+      return this;
+    });
+
+    await subscribeToAuction(auctionId, { onNewBid, onAuctionEnded });
+
+    // Verify both event listeners are set up
+    expect(channelInstance.on).toHaveBeenCalledWith(
+      "outbid",
+      expect.any(Function)
+    );
+    expect(channelInstance.on).toHaveBeenCalledWith(
+      "ended",
+      expect.any(Function)
+    );
+
+    // Simulate 'ended' event with API payload format
+    const endedCallback = channelInstance.on.mock.calls.find(
+      (call: any) => call[0] === "ended"
+    )[1];
+    endedCallback({ auction_id: "auction-123", finalPrice: 450000 });
+
+    // Verify onAuctionEnded is called with normalized payload
+    expect(onAuctionEnded).toHaveBeenCalledWith({
+      auctionId: "auction-123",
+      finalPrice: 450000,
+    });
+    expect(onNewBid).not.toHaveBeenCalled();
+  });
+
+  it("should handle ended event with null finalPrice (no winner)", async () => {
+    const auctionId = "auction-123";
+    const onAuctionEnded = vi.fn();
+
+    // Simulate successful channel join
+    channelInstance.receive.mockImplementation(function (
+      this: typeof channelInstance,
+      status: string,
+      callback: Function
+    ) {
+      if (status === "ok") {
+        callback({});
+      }
+      return this;
+    });
+
+    await subscribeToAuction(auctionId, { onAuctionEnded });
+
+    // Simulate 'ended' event without winner
+    const endedCallback = channelInstance.on.mock.calls.find(
+      (call: any) => call[0] === "ended"
+    )[1];
+    endedCallback({ auction_id: "auction-123", finalPrice: null });
+
+    // Verify onAuctionEnded is called with null finalPrice
+    expect(onAuctionEnded).toHaveBeenCalledWith({
+      auctionId: "auction-123",
+      finalPrice: null,
+    });
+  });
+
+  it("should work with legacy function callback (backward compatibility)", async () => {
+    const auctionId = "auction-123";
+    const messageCallback = vi.fn();
+
+    // Simulate successful channel join
+    channelInstance.receive.mockImplementation(function (
+      this: typeof channelInstance,
+      status: string,
+      callback: Function
+    ) {
+      if (status === "ok") {
+        callback({});
+      }
+      return this;
+    });
+
+    await subscribeToAuction(auctionId, messageCallback);
+
+    // Verify outbid event listener is set up
+    expect(channelInstance.on).toHaveBeenCalledWith(
+      "outbid",
+      expect.any(Function)
+    );
+
+    // Simulate 'outbid' event
+    const bidPayload = { bid: { id: "bid-1", amount: 105000 } };
+    const outbidCallback = channelInstance.on.mock.calls.find(
+      (call: any) => call[0] === "outbid"
+    )[1];
+    outbidCallback(bidPayload);
+
+    // Verify messageCallback is called with bid data
+    expect(messageCallback).toHaveBeenCalledWith(bidPayload.bid);
+  });
 });
 
 describe("registerUserToAuction", () => {
@@ -420,10 +579,14 @@ describe("registerUserToAuction", () => {
     // Verify auction data is parsed correctly
     expect(auction).toEqual({
       id: "auction-123",
+      type: "progressive",
+      status: undefined,
       startDate: 1620000000,
       endDate: 1620003600,
       startingPrice: 100000,
       step: 1000,
+      stepIntervalSeconds: null,
+      finalPrice: null,
       bids: [],
       highestBid: null,
       agentEmail: "agent@example.com",

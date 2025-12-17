@@ -1,6 +1,11 @@
 import { config } from "../index.js";
 import { Socket } from "phoenix";
-import type { AuctionType, BidType, PropertyInfoType } from "../types.js";
+import type {
+  AuctionType,
+  BidType,
+  PropertyInfoType,
+  SubscribeToAuctionCallbacks,
+} from "../types.js";
 
 /**
  * Retrieves the next auction details either by Enchère Immo's property ID or from CRM's property information.
@@ -34,11 +39,21 @@ export async function getNextAuctionById(
 
 /**
  * Connects to the Phoenix WebSocket channel for a specific Enchère Immo auction.
+ * @param auctionId - The ID of the auction to subscribe to
+ * @param callbacksOrMessageCallback - Either a callbacks object or a legacy message callback function
  */
 export function subscribeToAuction(
   auctionId: string,
-  messageCallback: (payload: BidType) => void
+  callbacksOrMessageCallback:
+    | SubscribeToAuctionCallbacks
+    | ((payload: BidType) => void)
 ) {
+  // Support both legacy function callback and new callbacks object
+  const callbacks: SubscribeToAuctionCallbacks =
+    typeof callbacksOrMessageCallback === "function"
+      ? { onNewBid: callbacksOrMessageCallback }
+      : callbacksOrMessageCallback;
+
   return new Promise((resolve, reject) => {
     if (config.socket != null) {
       config.socket.disconnect();
@@ -53,10 +68,20 @@ export function subscribeToAuction(
 
     let channel = config.socket.channel(`auction:${auctionId}`, {});
 
-    // Set up message event listener
+    // Set up bid event listener
     channel.on("outbid", (payload: any) => {
-      if (messageCallback) {
-        messageCallback(payload.bid);
+      if (callbacks.onNewBid) {
+        callbacks.onNewBid(payload.bid);
+      }
+    });
+
+    // Set up auction ended event listener
+    channel.on("ended", (payload: any) => {
+      if (callbacks.onAuctionEnded) {
+        callbacks.onAuctionEnded({
+          auctionId: payload.auction_id,
+          finalPrice: payload.finalPrice,
+        });
       }
     });
 
@@ -138,11 +163,14 @@ function formatAuction(data: any): AuctionType {
 
   return {
     id: data.id,
+    type: data.type ?? "progressive",
     status: data.status,
     startDate: data.startDate,
     endDate: data.endDate,
     startingPrice: data.startingPrice,
     step: data.step,
+    stepIntervalSeconds: data.stepIntervalSeconds ?? null,
+    finalPrice: data.finalPrice ?? null,
     bids: bids,
     highestBid: highestBid,
     agentEmail: data.agentEmail,

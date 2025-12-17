@@ -242,3 +242,146 @@ describe("Dynamic auction status updates", () => {
     });
   });
 });
+
+describe("Digressive auction display", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2023, 0, 1, 12, 0, 0));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
+
+  test('displays "Prochain palier" for digressive auction in progress', () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      stepIntervalSeconds: 60,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Prochain palier/i)).toBeInTheDocument();
+  });
+
+  test('displays "Se termine dans" for progressive auction in progress', () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Se termine dans/i)).toBeInTheDocument();
+  });
+
+  test('displays "Inconnue" for end date in digressive auction', () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      stepIntervalSeconds: 60,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Inconnue/i)).toBeInTheDocument();
+  });
+
+  test("displays actual end date for progressive auction", () => {
+    const endDate = Date.now() + 100000;
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    const formattedEndDate = new Date(endDate).toLocaleString();
+    expect(screen.getByText(formattedEndDate)).toBeInTheDocument();
+  });
+
+  test('displays "Prix actuel" label for digressive auction in progress', () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+      startingPrice: 500000,
+      step: 5000,
+      stepIntervalSeconds: 60,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Prix actuel/i)).toBeInTheDocument();
+  });
+
+  test('displays "Meilleure offre" label for progressive auction', () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "started",
+      startDate: Date.now() - 10000,
+      endDate: Date.now() + 100000,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
+  });
+
+  test('displays "Meilleure offre" label for ended digressive auction (bluff behavior)', () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "completed",
+      startDate: Date.now() - 100000,
+      endDate: Date.now() - 10000,
+      stepIntervalSeconds: 60,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
+  });
+
+  test("displays finalPrice for ended digressive auction when available", () => {
+    const auction = factoryAuction({
+      type: "digressive",
+      status: "completed",
+      startDate: Date.now() - 100000,
+      endDate: Date.now() - 10000,
+      startingPrice: 500000,
+      stepIntervalSeconds: 60,
+      finalPrice: 450000,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/450\s?000\s?€/)).toBeInTheDocument();
+  });
+
+  test("displays finalPrice for ended progressive auction when available", () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "completed",
+      startDate: Date.now() - 100000,
+      endDate: Date.now() - 10000,
+      startingPrice: 100000,
+      finalPrice: 150000,
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/150\s?000\s?€/)).toBeInTheDocument();
+  });
+
+  test("falls back to highestBid when finalPrice is not available", () => {
+    const auction = factoryAuction({
+      type: "progressive",
+      status: "completed",
+      startDate: Date.now() - 100000,
+      endDate: Date.now() - 10000,
+      highestBid: {
+        id: "bid-1",
+        amount: 120000,
+        createdAt: Date.now() - 50000,
+        newEndDate: 0,
+        userAnonymousId: "user-1",
+        participantId: "participant-1",
+      },
+    });
+    render(() => <AuctionInfos auction={auction} user={user} />);
+    expect(screen.getByText(/120\s?000\s?€/)).toBeInTheDocument();
+  });
+});

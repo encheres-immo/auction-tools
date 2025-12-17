@@ -4,6 +4,7 @@ import {
   PropertyInfoType,
   RegistrationType,
   UserType,
+  AuctionKind,
 } from "@encheres-immo/widget-client/types";
 
 /**
@@ -26,11 +27,13 @@ export function factoryAuction(
 ): AuctionType {
   const baseAuction: AuctionType = {
     id: "auction1",
+    type: "progressive",
     status: "scheduled",
     startDate: Date.now() + 10000, // Starts in 10 seconds
     endDate: Date.now() + 20000, // Ends in 20 seconds
     startingPrice: 10000,
     step: 100,
+    stepIntervalSeconds: null,
     bids: [],
     highestBid: {
       id: "",
@@ -52,6 +55,19 @@ export function factoryAuction(
   };
   // This factory is in fact just a spread operator... But shh! 🤫
   return { ...baseAuction, ...auctionParams };
+}
+
+/**
+ * Factory function to create a digressive auction with sensible defaults.
+ */
+export function factoryDigressiveAuction(
+  auctionParams: Partial<AuctionType> = {}
+): AuctionType {
+  return factoryAuction({
+    type: "digressive",
+    stepIntervalSeconds: 60,
+    ...auctionParams,
+  });
 }
 
 /**
