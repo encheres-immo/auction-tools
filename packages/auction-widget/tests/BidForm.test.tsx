@@ -684,7 +684,7 @@ describe("Digressive auction bid form", () => {
     expect(screen.getByText(/Enchère rapide/i)).toBeInTheDocument();
   });
 
-  test("displays single accept button for digressive auction", () => {
+  test("displays single bid button with price for digressive auction", () => {
     const auction = factoryAuction({
       type: "digressive",
       status: "started",
@@ -698,10 +698,11 @@ describe("Digressive auction bid form", () => {
 
     render(() => <BidForm auction={auction} isLogged={() => true} />);
 
-    // Should have accept button with current price
-    const acceptButton = screen.getByRole("button", { name: /Accepter/i });
-    expect(acceptButton).toBeInTheDocument();
-    expect(acceptButton.textContent).toContain("500000");
+    // Should have bid button showing current price (no 'Accepter' prefix)
+    const bidButton = screen.getByRole("button", { name: /500\s?000/i });
+    expect(bidButton).toBeInTheDocument();
+    // Should NOT contain "Accepter" text
+    expect(bidButton.textContent).not.toContain("Accepter");
 
     // Should NOT have the three fast bid buttons
     const fastBidButtons = screen.queryAllByRole("button", { name: /^\+/i });
@@ -773,14 +774,14 @@ describe("Digressive auction bid form", () => {
 
     render(() => <BidForm auction={auction} isLogged={() => true} />);
 
-    // Click accept button
-    const acceptButton = screen.getByRole("button", { name: /Accepter/i });
-    fireEvent.click(acceptButton);
+    // Click bid button (shows price only)
+    const bidButton = screen.getByRole("button", { name: /500\s?000/i });
+    fireEvent.click(bidButton);
 
-    // Modal should appear with digressive-specific title
+    // Modal should appear with updated title
     await waitFor(() => {
       expect(
-        screen.getByText(/Vous êtes sur le point d'accepter ce prix/i)
+        screen.getByText(/Vous êtes sur le point d'enchérir/i)
       ).toBeInTheDocument();
     });
   });
@@ -809,6 +810,8 @@ describe("Digressive auction bid form", () => {
   });
 
   test("does not show previous bid in confirmation modal for digressive auction", async () => {
+    // For digressive auctions, even with a previous bid, the modal should NOT show
+    // "Offre précédente" because the auction closes on first accepted bid
     const highestBid = factoryBid({ amount: 450000 });
     const auction = factoryAuction({
       type: "digressive",
@@ -825,18 +828,18 @@ describe("Digressive auction bid form", () => {
 
     render(() => <BidForm auction={auction} isLogged={() => true} />);
 
-    // Click accept button
-    const acceptButton = screen.getByRole("button", { name: /Accepter/i });
-    fireEvent.click(acceptButton);
+    // Click bid button (shows frozen price at highestBid.amount since a bid exists)
+    const bidButton = screen.getByRole("button", { name: /450\s?000/i });
+    fireEvent.click(bidButton);
 
-    // Modal should appear
+    // Modal should appear with updated title
     await waitFor(() => {
       expect(
-        screen.getByText(/Vous êtes sur le point d'accepter ce prix/i)
+        screen.getByText(/Vous êtes sur le point d'enchérir/i)
       ).toBeInTheDocument();
     });
 
-    // Should NOT show "Offre précédente"
+    // Should NOT show "Offre précédente" for digressive auctions
     expect(screen.queryByText(/Offre précédente/i)).toBeNull();
   });
 });

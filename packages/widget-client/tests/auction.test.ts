@@ -82,6 +82,7 @@ describe("getNextAuctionById", () => {
       startingPrice: 100000,
       step: 1000,
       stepIntervalSeconds: null,
+      finalPrice: null,
       bids: [
         {
           id: "bid-1",
@@ -169,6 +170,7 @@ describe("getNextAuctionById", () => {
       startingPrice: 200000,
       step: 5000,
       stepIntervalSeconds: null,
+      finalPrice: null,
       bids: [],
       highestBid: null,
       agentEmail: "agent@example.com",
@@ -181,6 +183,48 @@ describe("getNextAuctionById", () => {
         isBefore: false,
       },
     });
+  });
+
+  it("should parse finalPrice for completed digressive auction", async () => {
+    const propertyInfo: PropertyInfoType = {
+      propertyId: "property-digressive",
+    };
+
+    // Mock fetch response for a completed digressive auction with finalPrice
+    const mockData = {
+      id: "auction-digressive",
+      type: "digressive",
+      status: "completed",
+      startDate: 1620000000,
+      endDate: 1620003600,
+      startingPrice: 500000,
+      step: 10000,
+      stepIntervalSeconds: 3600,
+      finalPrice: 420000, // Final price at which the auction ended
+      bids: [],
+      agentEmail: "agent@example.com",
+      agentPhone: "123456789",
+      registration: null,
+      isPrivate: false,
+      currency: {
+        symbol: "€",
+        code: "EUR",
+        isBefore: false,
+      },
+    };
+
+    (fetch as Mock).mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve(mockData),
+    });
+
+    const auction = await getNextAuctionById(propertyInfo);
+
+    // Verify finalPrice is correctly parsed from API response
+    expect(auction.finalPrice).toBe(420000);
+    expect(auction.type).toBe("digressive");
+    expect(auction.status).toBe("completed");
+    expect(auction.stepIntervalSeconds).toBe(3600);
   });
 
   it("should log 'Unauthorized' and throw an error when response status is 401", async () => {
@@ -542,6 +586,7 @@ describe("registerUserToAuction", () => {
       startingPrice: 100000,
       step: 1000,
       stepIntervalSeconds: null,
+      finalPrice: null,
       bids: [],
       highestBid: null,
       agentEmail: "agent@example.com",

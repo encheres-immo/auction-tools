@@ -212,7 +212,7 @@ const BidForm: Component<{
               fallback={
                 <div class="auction-widget-digressive-accepted">
                   <p class="auction-widget-detail">
-                    Vous avez accepté le prix de{" "}
+                    Votre offre :{" "}
                     {displayAmountWithCurrency(
                       acceptedPriceAmount(),
                       props.auction.currency
@@ -225,7 +225,6 @@ const BidForm: Component<{
                 class="auction-widget-btn auction-widget-custom"
                 onClick={openDigressiveConfirm}
               >
-                Accepter{" "}
                 {displayAmountWithCurrency(
                   priceState().currentPrice,
                   props.auction.currency
@@ -348,13 +347,13 @@ const BidForm: Component<{
         {/* Digressive auction confirm modal */}
         <Show when={isConfirmBidOpen() && isDigressive()}>
           <CenteredModal
-            title="Vous êtes sur le point d'accepter ce prix"
+            title="Vous êtes sur le point d'enchérir"
             icon="gavel"
           >
             <table id="auction-widget-table">
               <tbody>
                 <tr>
-                  <td class="auction-widget-td">Prix accepté</td>
+                  <td class="auction-widget-td">Votre offre</td>
                   <td class="auction-widget-amount">
                     {displayAmountWithCurrency(
                       amount(),
@@ -365,7 +364,7 @@ const BidForm: Component<{
               </tbody>
             </table>
             <p class="auction-widget-modal-info">
-              En acceptant ce prix, vous clôturez la vente au prix indiqué.
+              En enchérissant, vous clôturez la vente au prix indiqué.
             </p>
             <Show when={isShowMinMessage()}>
               <p class="auction-widget-modal-warning">

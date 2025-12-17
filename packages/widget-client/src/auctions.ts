@@ -170,6 +170,7 @@ function formatAuction(data: any): AuctionType {
     startingPrice: data.startingPrice,
     step: data.step,
     stepIntervalSeconds: data.stepIntervalSeconds ?? null,
+    finalPrice: data.finalPrice ?? null,
     bids: bids,
     highestBid: highestBid,
     agentEmail: data.agentEmail,

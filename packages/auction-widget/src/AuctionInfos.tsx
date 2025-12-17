@@ -72,11 +72,11 @@ const AuctionInfos: Component<AuctionInfosProps> = (props) => {
    * Get the label for the price section.
    * - Progressive: "Meilleure offre"
    * - Digressive in progress: "Prix actuel"
-   * - Digressive ended: "Prix de vente"
+   * - Digressive ended: "Meilleure offre" (bluff behavior: always show as if sold)
    */
   const priceLabel = createMemo(() => {
-    if (isDigressive()) {
-      return isEnded() ? "Prix de vente" : "Prix actuel";
+    if (isDigressive() && !isEnded()) {
+      return "Prix actuel";
     }
     return "Meilleure offre";
   });

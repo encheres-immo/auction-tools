@@ -327,7 +327,7 @@ describe("Digressive auction display", () => {
     expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
   });
 
-  test('displays "Prix de vente" for ended digressive auction', () => {
+  test('displays "Meilleure offre" label for ended digressive auction (bluff behavior)', () => {
     const auction = factoryAuction({
       type: "digressive",
       status: "completed",
@@ -336,7 +336,7 @@ describe("Digressive auction display", () => {
       stepIntervalSeconds: 60,
     });
     render(() => <AuctionInfos auction={auction} user={user} />);
-    expect(screen.getByText(/Prix de vente/i)).toBeInTheDocument();
+    expect(screen.getByText(/Meilleure offre/i)).toBeInTheDocument();
   });
 
   test("displays finalPrice for ended digressive auction when available", () => {
