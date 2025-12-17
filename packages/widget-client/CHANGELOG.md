@@ -1,5 +1,11 @@
 # @encheres-immo/widget-client
 
+## 0.7.0
+
+### Minor Changes
+
+- 9426e2d: The auction widget now supports digressive (Dutch) auctions where the price decreases over time until a participant accepts. Progressive auctions remain fully functional with no breaking changes.
+
 ## 0.6.0
 
 ### Minor Changes

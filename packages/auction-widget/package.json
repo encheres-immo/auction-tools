@@ -1,6 +1,6 @@
 {
   "name": "@encheres-immo/auction-widget",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "type": "module",
   "description": "Bring our real estate auction widget to your website, powered by SolidJS & Enchères Immo's API",
   "scripts": {
